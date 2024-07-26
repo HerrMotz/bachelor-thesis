@@ -1,5 +1,8 @@
 #!/bin/bash
 
-cat OntologieStartTBox.owl > OntologieJoint.owl
-echo "\n\n#ABox" >> OntologieJoint.owl
-cat OntologieStartIndividuals >> OntologieJoint.owl
+NEW="OntologieJoint.owl"
+
+cat OntologieStartTBox.owl > "$NEW"
+echo "" >> "$NEW"
+echo "#ABox" >> "$NEW"
+cat OntologieStartIndividuals.owl >> "$NEW"
