@@ -11,10 +11,10 @@ Individual: Henricus_de_Bocholdia
         hatStudienfach "Kirchenrecht",
         hatDatum "1410-04-09",
         hatProvision Pfarrkirche_Bodegraven,
-        hatInkardination Diözese_Utrecht,
-        istPetent Petent
+        hatInkardination Diözese_Utrecht
 
 Individual: Giselbert_de_Lochhorst
+    Types: Natürliche_Person
 
 Individual: St_Salvator_Utrecht
     Types: Stiftskirche
@@ -29,6 +29,7 @@ Individual: Pfarrkirche_Bodegraven
         hatNeuePfründe St_Salvator_Utrecht
 
 Individual: Diözese_Utrecht
+    Types: Natürliche_Person
 
 Individual: Nicolaus_Fabri
     Types: Natürliche_Person, Kleriker
@@ -38,12 +39,13 @@ Individual: Nicolaus_Fabri
         hatNachname "Fabri",
         hatInkardination Diözese_Mainz,
         hatDatum "1411-11-03",
-        hatProvision Altar_St_Katharina,
-        istPetent Petent
+        hatProvision Altar_St_Katharina
 
 Individual: Johannes_Cruszhar
+    Types: Natürliche_Person
 
 Individual: Johannes_Erbischof_Mainz
+    Types: Natürliche_Person
 
 Individual: Pfarrkirche_Giesenhain
     Types: Pfarrkirche
@@ -56,6 +58,7 @@ Individual: Pfarrkirche_Giesenhain
         hatEinsetzung Johannes_Erbischof_Mainz
 
 Individual: Diözese_Mainz
+   Types: Pfarrkirche # TODO berichtigen
 
 Individual: Johannes_de_Echte
     Types: Natürliche_Person
@@ -69,16 +72,19 @@ Individual: Johannes_de_Echte
         hatDatum "1437-11-02",
         befindetSich Römische_Kurie,
         hatWeiterePfründe Kapelle_St_Spiritus_Duderstadt,
-        hatDispens Uneheliche_Geburt,
-        istPetent Petent
+        hatDispens Uneheliche_Geburt
 
 Individual: Johannes_Alberti_de_Echte
+    Types: Natürliche_Person
 
 Individual: Johannes_de_Eck
+    Types: Natürliche_Person
 
 Individual: Hermanni_Rulen
+    Types: Natürliche_Person
 
 Individual: Johannes_von_Bendeleyben
+    Types: Natürliche_Person
 
 Individual: Stiftskirche_Nordhausen
     Types: Stiftskirche
