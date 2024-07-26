@@ -29,7 +29,7 @@ Individual: Pfarrkirche_Bodegraven
         hatNeuePfründe St_Salvator_Utrecht
 
 Individual: Diözese_Utrecht
-    Types: Natürliche_Person
+    Types: Diözese
 
 Individual: Nicolaus_Fabri
     Types: Natürliche_Person, Kleriker
@@ -58,7 +58,7 @@ Individual: Pfarrkirche_Giesenhain
         hatEinsetzung Johannes_Erbischof_Mainz
 
 Individual: Diözese_Mainz
-   Types: Pfarrkirche # TODO berichtigen
+   Types: Diözese
 
 Individual: Johannes_de_Echte
     Types: Natürliche_Person
