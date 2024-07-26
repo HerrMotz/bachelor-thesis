@@ -1,0 +1,364 @@
+Prefix: : <http://www.semanticweb.org/johannes/ontologies/2024/5/untitled-ontology-3#>
+Prefix: owl: <http://www.w3.org/2002/07/owl#>
+Prefix: rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+Prefix: rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+Prefix: xml: <http://www.w3.org/XML/1998/namespace>
+Prefix: xsd: <http://www.w3.org/2001/XMLSchema#>
+
+
+
+Ontology: <http://www.semanticweb.org/johannes/ontologies/2024/5/untitled-ontology-3>
+
+
+ObjectProperty: befindetSich
+
+    Domain: 
+        Natürliche_Person
+    
+    Range: 
+        Institution
+    
+    
+ObjectProperty: containsMember
+
+    Domain: 
+        Petentengruppe
+    
+    Range: 
+        Juristische_Person or Natürliche_Person
+    
+    
+ObjectProperty: hasMember
+
+    Domain: 
+        owl:Thing
+    
+    Range: 
+        owl:Thing
+    
+    
+ObjectProperty: hatAmt
+
+    Domain: 
+        Natürliche_Person
+    
+    Range: 
+        Kirchliches_Amt or Orden or Weltliches_Amt
+    
+    
+ObjectProperty: hatAmtsTitel
+
+    Domain: 
+        Kirchliches_Amt
+    
+    Range: 
+        Amtstitel
+    
+    
+ObjectProperty: hatDispens
+
+    Domain: 
+        Natürliche_Person
+    
+    Range: 
+        Dispens
+    
+    
+ObjectProperty: hatDiözese
+
+    Domain: 
+        Institution
+    
+    Range: 
+        Diözese
+    
+    
+ObjectProperty: hatEinsetzung
+
+    Domain: 
+        Institution
+    
+    Range: 
+        Natürliche_Person
+    
+    
+ObjectProperty: hatInkardination
+
+    Domain: 
+        Natürliche_Person
+    
+    Range: 
+        Diözese
+    
+    
+ObjectProperty: hatInstitution
+
+    Domain: 
+        Natürliche_Person
+    
+    Range: 
+        Institution
+    
+    
+ObjectProperty: hatNeuePfründe
+
+    Domain: 
+        Institution
+    
+    Range: 
+        Institution
+    
+    
+ObjectProperty: hatOrt
+
+    Domain: 
+        Institution
+    
+    Range: 
+        Ort
+    
+    
+ObjectProperty: hatPatrozinium
+
+    Domain: 
+        Institution
+    
+    Range: 
+        Patrozinium
+    
+    
+ObjectProperty: hatProvision
+
+    Domain: 
+        Natürliche_Person
+    
+    Range: 
+        Institution
+    
+    
+ObjectProperty: hatVorbesitzer
+
+    Domain: 
+        Institution
+    
+    Range: 
+        Natürliche_Person
+    
+    
+ObjectProperty: hatWeiterePfründe
+
+    Domain: 
+        Natürliche_Person
+    
+    Range: 
+        Institution
+    
+    
+ObjectProperty: istKind
+
+    Domain: 
+        Natürliche_Person
+    
+    Range: 
+        Natürliche_Person
+    
+    
+ObjectProperty: istPetent
+
+    Domain: 
+        Person
+    
+    Range: 
+        Petent
+    
+    
+DataProperty: hatAkademischerGrad
+
+    
+DataProperty: hatAliasname
+
+    
+DataProperty: hatDatum
+
+    
+DataProperty: hatDispensgrund
+
+    
+DataProperty: hatHerkunftsname
+
+    
+DataProperty: hatNachname
+
+    
+DataProperty: hatStudienfach
+
+    
+DataProperty: hatVakanzgrund
+
+    
+DataProperty: hatVorname
+
+    
+DataProperty: hatWeitereNamen
+
+    
+DataProperty: hatWeitereOrtsangabe
+
+    
+Class: Acolyth
+
+    SubClassOf: 
+        Weihegrad
+    
+    
+Class: AkademischerGrad
+
+    
+Class: Altar
+
+    SubClassOf: 
+        Institution
+    
+    
+Class: Altarist
+
+    SubClassOf: 
+        Kirchliches_Amt
+    
+    
+Class: Amt
+
+    
+Class: Amtstitel
+
+    
+Class: Cantor
+
+    SubClassOf: 
+        Kirchliches_Amt
+    
+    
+Class: Diakon
+
+    SubClassOf: 
+        Weihegrad
+    
+    
+Class: Dispens
+
+    
+Class: Diözese
+
+    
+Class: Inkardination
+
+    
+Class: Institution
+
+    
+Class: Juristische_Person
+
+    
+Class: Kanoniker
+
+    SubClassOf: 
+        Kirchliches_Amt
+    
+    
+Class: Kirche
+
+    
+Class: Kirchliches_Amt
+
+    SubClassOf: 
+        Amt
+    
+    
+Class: Kleriker
+
+    
+Class: Lektor
+
+    SubClassOf: 
+        Weihegrad
+    
+    
+Class: Name
+
+    
+Class: Natürliche_Person
+
+    
+Class: Orden
+
+    SubClassOf: 
+        Amt
+    
+    
+Class: Ort
+
+    
+Class: Patrozinium
+
+    
+Class: Person
+
+    
+Class: Petent
+
+    
+Class: Petentengruppe
+
+    SubClassOf: 
+        containsMember some Juristische_Person,
+        containsMember some Natürliche_Person
+    
+    
+Class: Pfarrer
+
+    SubClassOf: 
+        Kirchliches_Amt
+    
+    
+Class: Pfarrkirche
+
+    SubClassOf: 
+        Institution
+    
+    
+Class: Presbyter
+
+    SubClassOf: 
+        Weihegrad
+    
+    
+Class: Stiftskirche
+
+    SubClassOf: 
+        Institution
+    
+    
+Class: Subdiakon
+
+    SubClassOf: 
+        Weihegrad
+    
+    
+Class: Vikar
+
+    SubClassOf: 
+        Kirchliches_Amt
+    
+    
+Class: Weihegrad
+
+    
+Class: Weltliches_Amt
+
+    SubClassOf: 
+        Amt
+    
+    
+Class: owl:Thing
+
+    
