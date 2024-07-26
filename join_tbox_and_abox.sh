@@ -2,7 +2,7 @@
 
 NEW="OntologieJoint.owl"
 
-cat OntologieStartTBox.owl > "$NEW"
+cat OntologieTBox.owl > "$NEW"
 echo "" >> "$NEW"
 echo "#ABox" >> "$NEW"
-cat OntologieStartIndividuals.owl >> "$NEW"
+cat OntologieABox.owl >> "$NEW"
