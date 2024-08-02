@@ -9,10 +9,10 @@ As part of HisQu and πάρεδρος, I propose a collection of tools, which al
 ## Related Works
 - https://github.com/sparna-git/Sparnatural
 - https://query.wikidata.org/querybuilder/
+- https://qlever.cs.uni-freiburg.de/wikidata/B39udm (Hannah Bast, hat auch Paper publiziert)
 
 ## Methods
-- sugesstion of predicates using word association/fuzzy search
-- 
+- sugesstion of predicates using word association/fuzzy search (QLever)
 
 ## SPARQL (SPARQL Protocol And RDF Query Language)
 
