@@ -1,6 +1,6 @@
 <template>
   <div style="visibility: hidden">
-    <span class="label link node"></span>
+    <span class="label link node new-link"></span>
   </div>
   <div ref="graphContainer" class="graph-container" style="border: 2pt solid black"></div>
 </template>
@@ -27,12 +27,31 @@ export default {
         { source: 2, target: 4 },
         { source: 3, target: 5 },
       ],
+      newLink: null,
+      startNode: null,
+      nodeRadius: 10, // Radius of the nodes
     };
   },
   mounted() {
     this.createForceGraph();
   },
   methods: {
+    addNewConnection(d1, d2) {
+      console.log("add new connection between", d1, "and", d2);
+      this.links.push({ source: d1.id, target: d2.id });
+      this.updateGraph();
+    },
+
+    removeConnection(d1, d2) {
+      console.log("remove connection between", d1, "and", d2);
+      this.links = this.links.filter(
+          (link) =>
+              !(link.source.id === d1.id && link.target.id === d2.id) &&
+              !(link.source.id === d2.id && link.target.id === d1.id)
+      );
+      this.updateGraph();
+    },
+
     createForceGraph() {
       const svg = d3
           .select(this.$refs.graphContainer)
@@ -61,7 +80,7 @@ export default {
           .enter()
           .append("circle")
           .attr("class", "node")
-          .attr("r", 10)
+          .attr("r", this.nodeRadius)
           .attr("fill", "#69b3a2")
           .call(
               d3
@@ -88,31 +107,61 @@ export default {
             .attr("x2", (d) => d.target.x)
             .attr("y2", (d) => d.target.y);
 
-        node
-            .attr("cx", (d) => d.x)
-            .attr("cy", (d) => d.y);
+        node.attr("cx", (d) => d.x).attr("cy", (d) => d.y);
 
-        label
-            .attr("x", (d) => d.x)
-            .attr("y", (d) => d.y);
+        label.attr("x", (d) => d.x).attr("y", (d) => d.y);
       });
 
+      const vm = this;
+
       function dragstarted(event, d) {
-        // if (!event.active) simulation.alphaTarget(0.3).restart();
-        // d.fx = d.x;
-        // d.fy = d.y;
+        // Remember the start node
+        vm.startNode = d;
+        // Start drawing a line
+        vm.newLink = svg
+            .append("line")
+            .attr("class", "new-link")
+            .attr("stroke", "#999")
+            .attr("stroke-width", 1.5)
+            .attr("x1", d.x)
+            .attr("y1", d.y)
+            .attr("x2", d.x)
+            .attr("y2", d.y);
       }
 
       function dragged(event, d) {
-        // d.fx = event.x;
-        // d.fy = event.y;
+        // Redraw the line to the current position
+        if (vm.newLink) {
+          vm.newLink.attr("x2", event.x).attr("y2", event.y);
+        }
       }
 
       function dragended(event, d) {
-        // if (!event.active) simulation.alphaTarget(0);
-        // d.fx = null;
-        // d.fy = null;
+        // Check if the drag ends within a node radius of another node
+        const targetNode = vm.nodes.find(
+            (node) =>
+                node !== vm.startNode &&
+                Math.abs(node.x - event.x) <= vm.nodeRadius &&
+                Math.abs(node.y - event.y) <= vm.nodeRadius
+        );
+
+        if (targetNode) {
+          vm.addNewConnection(vm.startNode, targetNode);
+        }
+        // Delete the temporary line
+        if (vm.newLink) {
+          vm.newLink.remove();
+          vm.newLink = null;
+        }
+        vm.startNode = null;
       }
+
+      this.updateGraph = function () {
+        link.data(this.links);
+        simulation.nodes(this.nodes);
+        simulation.force("link").links(this.links);
+        simulation.alpha(1).restart();
+      };
     },
   },
 };
@@ -138,5 +187,9 @@ export default {
   font-size: 12px;
   color: white;
   pointer-events: none;
+}
+.new-link {
+  stroke: #ff0000;
+  stroke-dasharray: 5, 5;
 }
 </style>
