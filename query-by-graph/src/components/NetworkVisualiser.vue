@@ -72,7 +72,16 @@ export default {
           .append("line")
           .attr("class", "link")
           .attr("stroke", "#999")
-          .attr("stroke-width", 1.5);
+          .attr("stroke-width", 1.5)
+          .on("click", (event, d) => {
+            this.removeConnection(d.source, d.target);
+          })
+          .on("mouseover", function (event, d) {
+            d3.select(this).attr("stroke", "red");
+          })
+          .on("mouseout", function (event, d) {
+            d3.select(this).attr("stroke", "#999");
+          });
 
       const node = svg
           .selectAll(".node")
@@ -107,9 +116,20 @@ export default {
             .attr("x2", (d) => d.target.x)
             .attr("y2", (d) => d.target.y);
 
-        node.attr("cx", (d) => d.x).attr("cy", (d) => d.y);
+        node
+            .attr("cx", (d) => {
+              // Constrain the node positions within the boundaries
+              d.x = Math.max(this.nodeRadius, Math.min(this.width - this.nodeRadius, d.x));
+              return d.x;
+            })
+            .attr("cy", (d) => {
+              d.y = Math.max(this.nodeRadius, Math.min(this.height - this.nodeRadius, d.y));
+              return d.y;
+            });
 
-        label.attr("x", (d) => d.x).attr("y", (d) => d.y);
+        label
+            .attr("x", (d) => d.x)
+            .attr("y", (d) => d.y);
       });
 
       const vm = this;
@@ -157,12 +177,79 @@ export default {
       }
 
       this.updateGraph = function () {
-        link.data(this.links);
-        simulation.nodes(this.nodes);
-        simulation.force("link").links(this.links);
-        simulation.alpha(1).restart();
+        const link = svg.selectAll(".link").data(this.links);
+
+        // Remove old links
+        link.exit().remove();
+
+        // Add new links
+        link.enter()
+            .append("line")
+            .attr("class", "link")
+            .attr("stroke", "#999")
+            .attr("stroke-width", 1.5)
+            .on("click", (event, d) => {
+              this.removeConnection(d.source, d.target);
+            })
+            .on("mouseover", function (event, d) {
+              d3.select(this).attr("stroke", "red");
+            })
+            .on("mouseout", function (event, d) {
+              d3.select(this).attr("stroke", "#999");
+            });
+
+        const node = svg.selectAll(".node").data(this.nodes);
+        const label = svg.selectAll(".label").data(this.nodes);
+
+        node.enter()
+            .append("circle")
+            .attr("class", "node")
+            .attr("r", this.nodeRadius)
+            .attr("fill", "#69b3a2")
+            .call(
+                d3.drag()
+                    .on("start", dragstarted)
+                    .on("drag", dragged)
+                    .on("end", dragended)
+            );
+
+        label.enter()
+            .append("text")
+            .attr("class", "label")
+            .attr("dy", -10)
+            .attr("text-anchor", "middle")
+            .text((d) => d.label);
+
+        const simulation = d3.forceSimulation(this.nodes)
+            .force("link", d3.forceLink(this.links).id((d) => d.id).distance(100))
+            .force("charge", d3.forceManyBody().strength(-200))
+            .force("center", d3.forceCenter(this.width / 2, this.height / 2));
+
+        simulation.on("tick", () => {
+          svg.selectAll(".link")
+              .attr("x1", (d) => d.source.x)
+              .attr("y1", (d) => d.source.y)
+              .attr("x2", (d) => d.target.x)
+              .attr("y2", (d) => d.target.y);
+
+          svg.selectAll(".node")
+              .attr("cx", (d) => {
+                // Constrain the node positions within the boundaries
+                d.x = Math.max(this.nodeRadius, Math.min(this.width - this.nodeRadius, d.x));
+                return d.x;
+              })
+              .attr("cy", (d) => {
+                d.y = Math.max(this.nodeRadius, Math.min(this.height - this.nodeRadius, d.y));
+                return d.y;
+              });
+
+          svg.selectAll(".label")
+              .attr("x", (d) => d.x)
+              .attr("y", (d) => d.y);
+        });
       };
-    },
+    }
+
   },
 };
 </script>
@@ -173,21 +260,25 @@ export default {
   justify-content: center;
   align-items: center;
 }
+
 .node {
   cursor: pointer;
   stroke: #fff;
   stroke-width: 1.5px;
 }
+
 .link {
   stroke: #999;
   stroke-opacity: 0.6;
 }
+
 .label {
   font-family: Arial, sans-serif;
   font-size: 12px;
   color: white;
   pointer-events: none;
 }
+
 .new-link {
   stroke: #ff0000;
   stroke-dasharray: 5, 5;
