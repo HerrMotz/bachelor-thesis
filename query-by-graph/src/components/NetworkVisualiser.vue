@@ -30,6 +30,8 @@ export default {
       newLink: null,
       startNode: null,
       nodeRadius: 10, // Radius of the nodes
+      multipleOfNodeRadius: 50,
+      stroke: 5,
     };
   },
   mounted() {
@@ -42,12 +44,12 @@ export default {
       this.updateGraph();
     },
 
-    removeConnection(d1, d2) {
-      console.log("remove connection between", d1, "and", d2);
+    removeConnection(sourceId, targetId) {
+      console.log("remove connection between", sourceId, "and", targetId);
       this.links = this.links.filter(
           (link) =>
-              !(link.source.id === d1.id && link.target.id === d2.id) &&
-              !(link.source.id === d2.id && link.target.id === d1.id)
+              !(link.source.id === sourceId && link.target.id === targetId) &&
+              !(link.source.id === targetId && link.target.id === sourceId)
       );
       this.updateGraph();
     },
@@ -59,22 +61,28 @@ export default {
           .attr("width", this.width)
           .attr("height", this.height);
 
+      // Initialize node positions
+      this.nodes.forEach(node => {
+        node.x = this.width / 2 + (Math.random() - 0.5) * 100;
+        node.y = this.height / 2 + (Math.random() - 0.5) * 100;
+      });
+
       const simulation = d3
           .forceSimulation(this.nodes)
           .force("link", d3.forceLink(this.links).id((d) => d.id).distance(100))
           .force("charge", d3.forceManyBody().strength(-200))
           .force("center", d3.forceCenter(this.width / 2, this.height / 2));
 
-      const link = svg
+      let link = svg
           .selectAll(".link")
           .data(this.links)
           .enter()
           .append("line")
           .attr("class", "link")
           .attr("stroke", "#999")
-          .attr("stroke-width", 1.5)
+          .attr("stroke-width", this.stroke)
           .on("click", (event, d) => {
-            this.removeConnection(d.source, d.target);
+            this.removeConnection(d.source.id, d.target.id);
           })
           .on("mouseover", function (event, d) {
             d3.select(this).attr("stroke", "red");
@@ -83,7 +91,7 @@ export default {
             d3.select(this).attr("stroke", "#999");
           });
 
-      const node = svg
+      let node = svg
           .selectAll(".node")
           .data(this.nodes)
           .enter()
@@ -99,7 +107,7 @@ export default {
                   .on("end", dragended)
           );
 
-      const label = svg
+      let label = svg
           .selectAll(".label")
           .data(this.nodes)
           .enter()
@@ -119,11 +127,11 @@ export default {
         node
             .attr("cx", (d) => {
               // Constrain the node positions within the boundaries
-              d.x = Math.max(this.nodeRadius, Math.min(this.width - this.nodeRadius, d.x));
+              d.x = Math.max(this.multipleOfNodeRadius, Math.min(this.width - this.nodeRadius, d.x));
               return d.x;
             })
             .attr("cy", (d) => {
-              d.y = Math.max(this.nodeRadius, Math.min(this.height - this.nodeRadius, d.y));
+              d.y = Math.max(this.multipleOfNodeRadius, Math.min(this.height - this.nodeRadius, d.y));
               return d.y;
             });
 
@@ -142,7 +150,7 @@ export default {
             .append("line")
             .attr("class", "new-link")
             .attr("stroke", "#999")
-            .attr("stroke-width", 1.5)
+            .attr("stroke-width", this.stroke)
             .attr("x1", d.x)
             .attr("y1", d.y)
             .attr("x2", d.x)
@@ -177,19 +185,17 @@ export default {
       }
 
       this.updateGraph = function () {
-        const link = svg.selectAll(".link").data(this.links);
-
-        // Remove old links
+        link = link.data(this.links, d => `${d.source.id}-${d.target.id}`);
         link.exit().remove();
 
-        // Add new links
-        link.enter()
+        link = link.enter()
             .append("line")
             .attr("class", "link")
             .attr("stroke", "#999")
-            .attr("stroke-width", 1.5)
+            .attr("stroke-width", this.stroke)
+            .merge(link)
             .on("click", (event, d) => {
-              this.removeConnection(d.source, d.target);
+              this.removeConnection(d.source.id, d.target.id);
             })
             .on("mouseover", function (event, d) {
               d3.select(this).attr("stroke", "red");
@@ -198,14 +204,15 @@ export default {
               d3.select(this).attr("stroke", "#999");
             });
 
-        const node = svg.selectAll(".node").data(this.nodes);
-        const label = svg.selectAll(".label").data(this.nodes);
+        node = node.data(this.nodes, d => d.id);
+        node.exit().remove();
 
-        node.enter()
+        node = node.enter()
             .append("circle")
             .attr("class", "node")
             .attr("r", this.nodeRadius)
             .attr("fill", "#69b3a2")
+            .merge(node)
             .call(
                 d3.drag()
                     .on("start", dragstarted)
@@ -213,43 +220,22 @@ export default {
                     .on("end", dragended)
             );
 
-        label.enter()
+        label = label.data(this.nodes, d => d.id);
+        label.exit().remove();
+
+        label = label.enter()
             .append("text")
             .attr("class", "label")
             .attr("dy", -10)
             .attr("text-anchor", "middle")
+            .merge(label)
             .text((d) => d.label);
 
-        const simulation = d3.forceSimulation(this.nodes)
-            .force("link", d3.forceLink(this.links).id((d) => d.id).distance(100))
-            .force("charge", d3.forceManyBody().strength(-200))
-            .force("center", d3.forceCenter(this.width / 2, this.height / 2));
-
-        simulation.on("tick", () => {
-          svg.selectAll(".link")
-              .attr("x1", (d) => d.source.x)
-              .attr("y1", (d) => d.source.y)
-              .attr("x2", (d) => d.target.x)
-              .attr("y2", (d) => d.target.y);
-
-          svg.selectAll(".node")
-              .attr("cx", (d) => {
-                // Constrain the node positions within the boundaries
-                d.x = Math.max(this.nodeRadius, Math.min(this.width - this.nodeRadius, d.x));
-                return d.x;
-              })
-              .attr("cy", (d) => {
-                d.y = Math.max(this.nodeRadius, Math.min(this.height - this.nodeRadius, d.y));
-                return d.y;
-              });
-
-          svg.selectAll(".label")
-              .attr("x", (d) => d.x)
-              .attr("y", (d) => d.y);
-        });
+        simulation.nodes(this.nodes);
+        simulation.force("link").links(this.links);
+        simulation.alpha(1).restart();
       };
     }
-
   },
 };
 </script>
@@ -264,7 +250,7 @@ export default {
 .node {
   cursor: pointer;
   stroke: #fff;
-  stroke-width: 1.5px;
+  stroke-width: 5px;
 }
 
 .link {
