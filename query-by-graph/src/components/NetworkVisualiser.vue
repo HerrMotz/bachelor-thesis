@@ -5,6 +5,8 @@
   <PropertySelection @selected-property="setSelectedProperty" />
   <div ref="graphContainer" class="graph-container" style="border: 2pt solid black"></div>
   LOL {{selectedProperty}}
+
+  <button @click="moveNodesAround">Randomise node position</button>
 </template>
 
 <script>
@@ -41,6 +43,14 @@ export default {
     this.createForceGraph();
   },
   methods: {
+    moveNodesAround() {
+      this.nodes.forEach((node) => {
+        node.x = this.width / 2 + (Math.random() - 0.5) * 100;
+        node.y = this.height / 2 + (Math.random() - 0.5) * 100;
+      });
+      this.updateGraph();
+    },
+
     setSelectedProperty(value) {
       console.log(value)
       this.selectedProperty = value;
