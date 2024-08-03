@@ -2,45 +2,53 @@
   <div style="visibility: hidden">
     <span class="label link node new-link"></span>
   </div>
+  <PropertySelection @selected-property="setSelectedProperty" />
   <div ref="graphContainer" class="graph-container" style="border: 2pt solid black"></div>
+  LOL {{selectedProperty}}
 </template>
 
 <script>
 import * as d3 from "d3";
+import PropertySelection from "./PropertySelection.vue";
 
 export default {
   name: "NetworkVisualiser",
+  components: {PropertySelection},
   data() {
     return {
       width: 800,
       height: 600,
       nodes: [
-        { id: 1, label: "Node 1" },
-        { id: 2, label: "Node 2" },
-        { id: 3, label: "Node 3" },
-        { id: 4, label: "Node 4" },
-        { id: 5, label: "Node 5" },
+        { id: 1, label: "?1" },
+        { id: 2, label: "Q21880" },
+        { id: 3, label: "?3" },
+        { id: 4, label: "?4" },
       ],
       links: [
-        { source: 1, target: 2 },
-        { source: 1, target: 3 },
-        { source: 2, target: 4 },
-        { source: 3, target: 5 },
+        { source: 1, target: 2, label: "P160" },
+        { source: 1, target: 3, label: "P141" },
+        { source: 3, target: 4, label: "P160" },
       ],
       newLink: null,
       startNode: null,
-      nodeRadius: 10, // Radius of the nodes
-      multipleOfNodeRadius: 50,
+      nodeRadius: 30, // Radius of the nodes
+      multipleOfNodeRadius: 40,
       stroke: 5,
+      selectedProperty: null,
     };
   },
   mounted() {
     this.createForceGraph();
   },
   methods: {
+    setSelectedProperty(value) {
+      console.log(value)
+      this.selectedProperty = value;
+    },
+
     addNewConnection(d1, d2) {
       console.log("add new connection between", d1, "and", d2);
-      this.links.push({ source: d1.id, target: d2.id });
+      this.links.push({source: d1.id, target: d2.id, label: this.selectedProperty.label});
       this.updateGraph();
     },
 
@@ -62,15 +70,18 @@ export default {
           .attr("height", this.height);
 
       // Initialize node positions
-      this.nodes.forEach(node => {
+      this.nodes.forEach((node) => {
         node.x = this.width / 2 + (Math.random() - 0.5) * 100;
         node.y = this.height / 2 + (Math.random() - 0.5) * 100;
       });
 
       const simulation = d3
           .forceSimulation(this.nodes)
-          .force("link", d3.forceLink(this.links).id((d) => d.id).distance(100))
-          .force("charge", d3.forceManyBody().strength(-200))
+          .force(
+              "link",
+              d3.forceLink(this.links).id((d) => d.id).distance(300)
+          )
+          .force("charge", d3.forceManyBody().strength(-100))
           .force("center", d3.forceCenter(this.width / 2, this.height / 2));
 
       let link = svg
@@ -90,6 +101,16 @@ export default {
           .on("mouseout", function (event, d) {
             d3.select(this).attr("stroke", "#999");
           });
+
+      let linkLabel = svg
+          .selectAll(".link-label")
+          .data(this.links)
+          .enter()
+          .append("text")
+          .attr("class", "link-label")
+          .attr("dy", -5)
+          .attr("text-anchor", "middle")
+          .text((d) => d.label);
 
       let node = svg
           .selectAll(".node")
@@ -113,7 +134,7 @@ export default {
           .enter()
           .append("text")
           .attr("class", "label")
-          .attr("dy", -10)
+          .attr("dy", 5)
           .attr("text-anchor", "middle")
           .text((d) => d.label);
 
@@ -124,20 +145,28 @@ export default {
             .attr("x2", (d) => d.target.x)
             .attr("y2", (d) => d.target.y);
 
+        linkLabel
+            .attr("x", (d) => (d.source.x + d.target.x) / 2)
+            .attr("y", (d) => (d.source.y + d.target.y) / 2);
+
         node
             .attr("cx", (d) => {
               // Constrain the node positions within the boundaries
-              d.x = Math.max(this.multipleOfNodeRadius, Math.min(this.width - this.nodeRadius, d.x));
+              d.x = Math.max(
+                  this.multipleOfNodeRadius,
+                  Math.min(this.width - this.nodeRadius, d.x)
+              );
               return d.x;
             })
             .attr("cy", (d) => {
-              d.y = Math.max(this.multipleOfNodeRadius, Math.min(this.height - this.nodeRadius, d.y));
+              d.y = Math.max(
+                  this.multipleOfNodeRadius,
+                  Math.min(this.height - this.nodeRadius, d.y)
+              );
               return d.y;
             });
 
-        label
-            .attr("x", (d) => d.x)
-            .attr("y", (d) => d.y);
+        label.attr("x", (d) => d.x).attr("y", (d) => d.y);
       });
 
       const vm = this;
@@ -185,10 +214,11 @@ export default {
       }
 
       this.updateGraph = function () {
-        link = link.data(this.links, d => `${d.source.id}-${d.target.id}`);
+        link = link.data(this.links, (d) => `${d.source.id}-${d.target.id}`);
         link.exit().remove();
 
-        link = link.enter()
+        link = link
+            .enter()
             .append("line")
             .attr("class", "link")
             .attr("stroke", "#999")
@@ -204,26 +234,41 @@ export default {
               d3.select(this).attr("stroke", "#999");
             });
 
-        node = node.data(this.nodes, d => d.id);
+        linkLabel = linkLabel.data(this.links, (d) => `${d.source.id}-${d.target.id}`);
+        linkLabel.exit().remove();
+
+        linkLabel = linkLabel
+            .enter()
+            .append("text")
+            .attr("class", "link-label")
+            .attr("dy", -5)
+            .attr("text-anchor", "middle")
+            .merge(linkLabel)
+            .text((d) => d.label);
+
+        node = node.data(this.nodes, (d) => d.id);
         node.exit().remove();
 
-        node = node.enter()
+        node = node
+            .enter()
             .append("circle")
             .attr("class", "node")
             .attr("r", this.nodeRadius)
             .attr("fill", "#69b3a2")
             .merge(node)
             .call(
-                d3.drag()
+                d3
+                    .drag()
                     .on("start", dragstarted)
                     .on("drag", dragged)
                     .on("end", dragended)
             );
 
-        label = label.data(this.nodes, d => d.id);
+        label = label.data(this.nodes, (d) => d.id);
         label.exit().remove();
 
-        label = label.enter()
+        label = label
+            .enter()
             .append("text")
             .attr("class", "label")
             .attr("dy", -10)
@@ -235,7 +280,7 @@ export default {
         simulation.force("link").links(this.links);
         simulation.alpha(1).restart();
       };
-    }
+    },
   },
 };
 </script>
@@ -261,6 +306,13 @@ export default {
 .label {
   font-family: Arial, sans-serif;
   font-size: 12px;
+  color: white;
+  pointer-events: none;
+}
+
+.link-label {
+  font-family: Arial, sans-serif;
+  font-size: 10px;
   color: white;
   pointer-events: none;
 }
