@@ -9,15 +9,18 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "d3": "^7.9.0",
     "vue": "^3.4.31",
-    "d3-force": "^3.0.0"
+    "rete": "^2.0.3",
+    "rete-area-plugin": "^2.0.4",
+    "rete-connection-plugin": "^2.0.2",
+    "rete-vue-plugin": "^2.0.3"
   },
   "devDependencies": {
     "@types/d3": "^7.4.3",
     "@vitejs/plugin-vue": "^5.0.5",
     "typescript": "^5.2.2",
     "vite": "^5.3.4",
-    "vue-tsc": "^2.0.24"
+    "vue-tsc": "^2.0.24",
+    "sass": "^1.77.8"
   }
 }

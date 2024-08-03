@@ -1,13 +1,25 @@
-<script setup lang="ts">
-import NetworkVisualiser from "./components/NetworkVisualiser.vue";
-</script>
-
 <template>
-  <div>
-    <NetworkVisualiser></NetworkVisualiser>
-  </div>
+  <div class="rete" ref="rete"></div>
 </template>
 
-<style scoped>
+<script>
+import { defineComponent } from 'vue'
+import { createEditor } from './editor'
+
+export default defineComponent({
+  mounted(){
+    createEditor(this.$refs.rete)
+  }
+})
+</script>
+
+<style lang="scss">
+body {
+  margin: 0;
+}
+.rete {
+  width: 100vw;
+  height: 100vh;
+}
 
 </style>
