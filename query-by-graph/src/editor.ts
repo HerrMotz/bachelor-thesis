@@ -48,8 +48,8 @@ export async function createEditor(container: HTMLElement) {
         // TODO keep the existing properties
         //  this is a "might do" feature
         props.data.property = {
-            id: selectedProperty?.id || "Nothing",
-            label: selectedProperty?.label || "selected"
+            id: selectedProperty?.id || "No ID",
+            label: selectedProperty?.label || "No Label"
         }
         const label = "connection";
 
@@ -108,7 +108,9 @@ export async function createEditor(container: HTMLElement) {
 
             if (source === "root") {
                 console.log("Add node")
-                const node = new ClassicPreset.Node(selectedIndividual?.label || "Nothing");
+                const node = new ClassicPreset.Node(
+                    (selectedIndividual?.id || "No ID") + ", " + (selectedIndividual?.label || "No Label")
+                );
                 node.addOutput("b", new ClassicPreset.Output(socket));
                 await editor.addNode(node);
                 area.area.setPointerFrom(event);
@@ -131,6 +133,7 @@ export async function createEditor(container: HTMLElement) {
     editor.use(area);
     area.use(connection);
     area.use(render);
+    area.use(history);
 
     AreaExtensions.simpleNodesOrder(area);
 
@@ -176,6 +179,8 @@ export async function createEditor(container: HTMLElement) {
         setSelectedIndividual: (individual: EntityType) => {
             selectedIndividual = individual
         },
+        undo: () => history.undo(),
+        redo: () => history.redo(),
         destroy: () => area.destroy()
     };
 }

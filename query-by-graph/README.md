@@ -70,9 +70,9 @@ against a SPARQL endpoint.
 - [x] Adding and deleting individuals
 - [ ] Adding variable individuals
 - [x] Directed properties/edges
+- [ ] Fix, that disconnecting a connection relabels it with the currently selected property
 - [ ] Think of a way to recommend available properties to the user
 - [ ] Build this property recommending tool
-
 - [ ] Build a SPARQL select query
 - [ ] SPARQL syntax highlighter
 

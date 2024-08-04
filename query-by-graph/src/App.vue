@@ -25,7 +25,7 @@ const mockProperties = [
 ];
 
 const mockIndividuals = [
-  {id: "21880", label: "Universität Jena"},
+  {id: "Q21880", label: "Universität Jena"},
   {id: "Q5879", label: "Johann Wolfgang von Goethe"},
   {id: "Q123", label: "Individual 123"},
 ]
@@ -34,6 +34,8 @@ interface Editor {
   removeSelectedConnection: () => void;
   setSelectedProperty: (property: EntityType) => void;
   setSelectedIndividual: (property: EntityType) => void;
+  undo: () => void;
+  redo: () => void;
 }
 </script>
 
@@ -44,14 +46,42 @@ interface Editor {
       <div class="w-4/5 min-h-full p-4 bg-amber-50">
         <h2 class="text-xl font-semibold mb-4">
           Visual Query Builder
-          <span class="text-sm ml-4 font-medium">
+          <span class="text-sm ml-2 font-medium">
             Each Box is a SPARQL-Individual and each Connection between them is a SPARQL-Property
           </span>
         </h2>
         <div ref="rete" style="height: calc(100% - 44px);"></div>
       </div>
-      <div v-if="editor" class="w-1/5 flex-col flex gap-6 min-h-full p-4">
-        <h2 class="text-xl font-semibold">Toolbox</h2>
+      <div v-if="editor" class="w-1/5 overflow-auto flex-col flex gap-6 max-h-full p-4">
+        <h2 class="text-xl font-semibold">
+          Toolbox
+          <span class="text-sm ml-2 font-medium">
+            Perform actions on the graph
+          </span>
+        </h2>
+
+        <div class="flex-col flex gap-2">
+          <h4 class="font-semibold">History</h4>
+          <div class="flex gap-4">
+          <Button class="grow" @click="() => { // why the hell is this necessary in TypeScript with Vue3 D':
+              if (editor) {
+                editor.then((e: Editor) => e.undo());
+              }
+            }">
+            Undo
+            <kbd class="inline-flex items-center rounded border border-gray-200 px-1 font-sans text-xs text-gray-200">CTRL+Y</kbd>
+          </Button>
+          <Button class="grow" @click="() => { // why the hell is this necessary in TypeScript with Vue3 D':
+              if (editor) {
+                editor.then((e: Editor) => e.redo());
+              }
+            }">
+
+            Redo
+            <kbd class="inline-flex items-center rounded border border-gray-200 px-1 font-sans text-xs text-gray-200">CTRL+Z</kbd>
+          </Button>
+          </div>
+        </div>
 
         <div class="flex-col flex gap-2">
           <h4 class="font-semibold">Create Individual</h4>
