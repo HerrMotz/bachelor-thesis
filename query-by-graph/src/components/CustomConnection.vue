@@ -5,7 +5,7 @@
     <g>
       <!-- This positions the label -->
       <rect :x="centerX" :y="centerY" :width="rectLength" height="40" fill="white" stroke="black"></rect>
-      <text :x="centerX+12" :y="centerY+25">{{data.id}}</text>
+      <text :x="centerX+12" :y="centerY+25" ref="textElement" class="font-mono">{{boxText}}</text>
     </g>
   </svg>
 </template>
@@ -21,12 +21,27 @@ import { defineComponent } from 'vue'
 export default defineComponent({
   name: "CustomConnection",
   props: ['data', 'start', 'end', 'path'],
+  data() {
+    return {
+      isMounted: false
+    }
+  },
+  mounted() {
+    this.isMounted = true;
+  },
   computed: {
+    boxText() {
+      return this.data.property.id + " - " + this.data.property.label;
+    },
     rectLength() {
-      return this.data.id.length*10;
+      if (!this.isMounted) {
+        return 0;
+      } else {
+        return this.$refs.textElement?.getBBox().width*1.1;
+      }
     },
     centerX() {
-      return (this.end.x + this.start.x) / 2 - this.rectLength/2;
+      return (this.end.x + this.start.x) / 2 - this.rectLength / 2;
     },
     centerY() {
       return (this.end.y + this.start.y) / 2 - 20;

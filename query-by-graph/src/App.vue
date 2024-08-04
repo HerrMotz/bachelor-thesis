@@ -5,7 +5,6 @@ import { createEditor } from "./editor.ts";
 import PropertySelection from "./components/PropertySelection.vue";
 import Button from "./components/Button.vue";
 
-const selectedProperty = ref();
 const editor = ref<Promise<Editor> | null>(null);  // Define the type of editor as Promise<Editor> | null
 const rete = ref();
 
@@ -16,7 +15,8 @@ onMounted(() => {
 });
 
 interface Editor {
-  removeSelected: () => void;
+  removeSelectedConnection: () => void;
+  setSelectedProperty: (property: { propertyId: string, propertyLabel: string }) => void;
 }
 </script>
 
@@ -32,7 +32,11 @@ interface Editor {
         <h2 class="text-xl font-semibold">Toolbox</h2>
         <div class="flex-col flex gap-2">
           <h4 class="font-semibold">Create connection</h4>
-          <PropertySelection @selected-property="selectedProperty" class="bg-amber-300 rounded-2xl p-2" />
+          <PropertySelection @selected-property="(prop) => { // why the hell is this necessary in TypeScript with Vue3 D':
+              if (editor) {
+                editor.then((e: Editor) => e.setSelectedProperty(prop));
+              }
+            }" class="bg-amber-300 rounded-2xl p-2" />
           <p class="text-gray-600 text-sm hover:text-gray-900 transition-all">
             <em>Hint:</em>
             After selecting the appropriate property, add a new connection by clicking
@@ -45,7 +49,7 @@ interface Editor {
           <Button
               @click="() => { // why the hell is this necessary in TypeScript with Vue3 D':
               if (editor) {
-                editor.then((e: Editor) => e.removeSelected());
+                editor.then((e: Editor) => e.removeSelectedConnection());
               }
             }">
             Delete selected
