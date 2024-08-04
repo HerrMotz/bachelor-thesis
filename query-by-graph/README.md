@@ -16,3 +16,14 @@ For other scripts see `package.json` file.
 ```bash
 npm run dev
 ```
+
+## Graph Legend
+- **Node**: ontology individual (Qxxxx)
+- **Connection**: property (Pxxxx)
+
+## To-Do
+- [x] Drawing labels on the connections
+- [ ] Inject custom data into the custom connection component
+- [ ] Make the connections selectable and deletable
+- [ ] Adding new connections with custom data
+
