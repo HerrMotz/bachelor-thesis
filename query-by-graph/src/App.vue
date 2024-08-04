@@ -2,7 +2,9 @@
 import { onMounted, ref } from 'vue';
 import { createEditor } from "./editor.ts";
 
-import PropertySelection from "./components/PropertySelection.vue";
+import EntityType from "./types/EntityType.ts";
+
+import EntitySelector from "./components/EntitySelector.vue";
 import Button from "./components/Button.vue";
 
 const editor = ref<Promise<Editor> | null>(null);  // Define the type of editor as Promise<Editor> | null
@@ -14,9 +16,24 @@ onMounted(() => {
   }
 });
 
+// mock property numbers array like P160, P141, etc.
+const mockProperties = [
+  { id: "P160", label: "Ausbildende Institution" },
+  { id: "P141", label: "Vater" },
+  { id: "P31", label: "Property 31" },
+  { id: "P279", label: "Property 279" },
+];
+
+const mockIndividuals = [
+  {id: "21880", label: "Universität Jena"},
+  {id: "Q5879", label: "Johann Wolfgang von Goethe"},
+  {id: "Q123", label: "Individual 123"},
+]
+
 interface Editor {
   removeSelectedConnection: () => void;
-  setSelectedProperty: (property: { propertyId: string, propertyLabel: string }) => void;
+  setSelectedProperty: (property: EntityType) => void;
+  setSelectedIndividual: (property: EntityType) => void;
 }
 </script>
 
@@ -30,13 +47,27 @@ interface Editor {
       </div>
       <div v-if="editor" class="w-1/5 flex-col flex gap-6 min-h-full p-4">
         <h2 class="text-xl font-semibold">Toolbox</h2>
+
+        <div class="flex-col flex gap-2">
+          <h4 class="font-semibold">Create Individual</h4>
+          <EntitySelector :entities="mockIndividuals" @selected-entity="(prop: EntityType) => { // why the hell is this necessary in TypeScript with Vue3 D':
+              if (editor) {
+                editor.then((e: Editor) => e.setSelectedIndividual(prop));
+              }
+            }" class="bg-amber-300 rounded-2xl p-2">
+            Individual Selector
+          </EntitySelector>
+        </div>
+
         <div class="flex-col flex gap-2">
           <h4 class="font-semibold">Create connection</h4>
-          <PropertySelection @selected-property="(prop) => { // why the hell is this necessary in TypeScript with Vue3 D':
+          <EntitySelector :entities="mockProperties" @selected-entity="(prop: EntityType) => { // why the hell is this necessary in TypeScript with Vue3 D':
               if (editor) {
                 editor.then((e: Editor) => e.setSelectedProperty(prop));
               }
-            }" class="bg-amber-300 rounded-2xl p-2" />
+            }" class="bg-amber-300 rounded-2xl p-2">
+            Property Selector
+          </EntitySelector>
           <p class="text-gray-600 text-sm hover:text-gray-900 transition-all">
             <em>Hint:</em>
             After selecting the appropriate property, add a new connection by clicking
