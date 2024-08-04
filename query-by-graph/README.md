@@ -69,7 +69,7 @@ against a SPARQL endpoint.
 - [x] Make the connections selectable and deletable
 - [x] Adding and deleting individuals
 - [ ] Adding variable individuals
-- [ ] Directed properties/edges
+- [x] Directed properties/edges
 - [ ] Think of a way to recommend available properties to the user
 - [ ] Build this property recommending tool
 

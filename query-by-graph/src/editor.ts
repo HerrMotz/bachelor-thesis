@@ -1,9 +1,12 @@
 import {NodeEditor, GetSchemes, ClassicPreset} from "rete";
-import {AreaPlugin, AreaExtensions} from "rete-area-plugin";
+import {AreaPlugin, AreaExtensions, Area2D} from "rete-area-plugin";
 import {
     ConnectionPlugin,
     Presets as ConnectionPresets
 } from "rete-connection-plugin";
+import {ConnectionPathPlugin} from "rete-connection-path-plugin";
+// See https://retejs.org/examples/connection-path
+import { curveStep } from "d3-shape";
 import {
     HistoryExtensions,
     HistoryPlugin,
@@ -84,6 +87,15 @@ export async function createEditor(container: HTMLElement) {
             }
         }
     }));
+
+    const pathPlugin = new ConnectionPathPlugin<Schemes, Area2D<Schemes>>({
+        curve: (c) => c.curve || curveStep,
+        // transformer: () => Transformers.classic({ vertical: false }),
+        arrow: () => true
+    });
+
+    // @ts-ignore
+    render.use(pathPlugin);
 
     connection.addPreset(ConnectionPresets.classic.setup());
 
