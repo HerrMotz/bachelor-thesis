@@ -12,6 +12,7 @@
 import { defineComponent } from 'vue'
 
 export default defineComponent({
+  name: "CustomConnection",
   props: ['data', 'start', 'end', 'path'],
   computed: {
     rectLength() {
