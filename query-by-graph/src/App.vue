@@ -42,7 +42,12 @@ interface Editor {
     <div class="text-3xl text-center mb-10 font-bold">Query by Graph</div>
     <div class="flex w-full min-h-full bg-amber-100 rounded-2xl" style="height: 100%; min-height: 100%;">
       <div class="w-4/5 min-h-full p-4 bg-amber-50">
-        <h2 class="text-xl font-semibold mb-4">Visual Query Builder</h2>
+        <h2 class="text-xl font-semibold mb-4">
+          Visual Query Builder
+          <span class="text-sm ml-4 font-medium">
+            Each Box is a SPARQL-Individual and each Connection between them is a SPARQL-Property
+          </span>
+        </h2>
         <div ref="rete" style="height: calc(100% - 44px);"></div>
       </div>
       <div v-if="editor" class="w-1/5 flex-col flex gap-6 min-h-full p-4">
@@ -76,7 +81,7 @@ interface Editor {
           </p>
         </div>
         <div class="flex-col flex gap-2">
-          <h4 class="font-semibold">Delete connections</h4>
+          <h4 class="font-semibold">Delete selected connections</h4>
           <Button
               @click="() => { // why the hell is this necessary in TypeScript with Vue3 D':
               if (editor) {
