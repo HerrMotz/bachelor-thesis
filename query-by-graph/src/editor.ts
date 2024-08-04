@@ -4,10 +4,16 @@ import {
     ConnectionPlugin,
     Presets as ConnectionPresets
 } from "rete-connection-plugin";
+import {
+    HistoryExtensions,
+    HistoryPlugin,
+    Presets as HistoryPresets
+} from "rete-history-plugin";
 import {VuePlugin, Presets, VueArea2D} from "rete-vue-plugin";
 import {h} from "vue";
 import CustomConnection from "./components/CustomConnection.vue";
 import {removeNodeWithConnections} from "./utils.ts";
+import EntityType from "./types/EntityType.ts";
 
 type Schemes = GetSchemes<
     ClassicPreset.Node,
@@ -24,8 +30,14 @@ export async function createEditor(container: HTMLElement) {
     const render = new VuePlugin<Schemes, AreaExtra>();
     const selector = AreaExtensions.selector();
     const accumulating = AreaExtensions.accumulateOnCtrl();
+    const history = new HistoryPlugin<Schemes>();
 
-    let selectedProperty: {id: string, label: string} | null = null;
+    HistoryExtensions.keyboard(history);
+
+    history.addPreset(HistoryPresets.classic.setup());
+
+    let selectedProperty: EntityType | null = null;
+    let selectedIndividual: EntityType | null = null;
 
     function SelectableConnectionBind(props: { data: Schemes["Connection"] }) {
         const id = props.data.id;
@@ -75,6 +87,35 @@ export async function createEditor(container: HTMLElement) {
 
     connection.addPreset(ConnectionPresets.classic.setup());
 
+    area.addPipe(async (context) => {
+        if (context.type === "contextmenu") {
+            const source = context.data.context;
+            const event = context.data.event;
+            event.preventDefault();
+            event.stopPropagation();
+
+            if (source === "root") {
+                console.log("Add node")
+                const node = new ClassicPreset.Node(selectedIndividual?.label || "Nothing");
+                node.addOutput("b", new ClassicPreset.Output(socket));
+                await editor.addNode(node);
+                area.area.setPointerFrom(event);
+
+                await area.translate(node.id, area.area.pointer);
+            } else if (source instanceof ClassicPreset.Node) {
+                console.log("Remove node", source.id);
+                for (const c of editor
+                    .getConnections()
+                    .filter((c) => c.source === source.id || c.target === source.id)) {
+                    await editor.removeConnection(c.id);
+                }
+                await editor.removeNode(source.id);
+            }
+        }
+
+        return context;
+    });
+
     editor.use(area);
     area.use(connection);
     area.use(render);
@@ -89,7 +130,7 @@ export async function createEditor(container: HTMLElement) {
     a.addOutput("a", new ClassicPreset.Output(socket));
     await editor.addNode(a);
 
-    const b = new ClassicPreset.Node("Uni Jena, Q21880");
+    const b = new ClassicPreset.Node("Universität Jena, Q21880");
     b.addControl(
         "b",
         new ClassicPreset.InputControl("text", {initial: "hello"})
@@ -117,8 +158,11 @@ export async function createEditor(container: HTMLElement) {
                 }
             }
         },
-        setSelectedProperty: (property: {id: string, label: string}) => {
+        setSelectedProperty: (property: EntityType) => {
             selectedProperty = property
+        },
+        setSelectedIndividual: (individual: EntityType) => {
+            selectedIndividual = individual
         },
         destroy: () => area.destroy()
     };
