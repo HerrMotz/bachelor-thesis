@@ -1,7 +1,9 @@
 <template>
   <svg width="250" height="250" xmlns="http://www.w3.org/2000/svg">
-    <path :d="path" />
+    <!-- This highlights the path on selection -->
+    <path :d="path" :class="[$props.data.selected ? 'hover:stroke-red-400 stroke-red-500' : 'hover:stroke-blue-400 stroke-blue-600']" />
     <g>
+      <!-- This positions the label -->
       <rect :x="centerX" :y="centerY" :width="rectLength" height="40" fill="white" stroke="black"></rect>
       <text :x="centerX+12" :y="centerY+25">{{data.id}}</text>
     </g>
@@ -10,6 +12,11 @@
 
 <script>
 import { defineComponent } from 'vue'
+
+// This connection component has the following features:
+// - it displays a label in the middle of the connection
+// - the label container/border adjusts to the length of the label
+// - it can be selected by clicking on it
 
 export default defineComponent({
   name: "CustomConnection",
@@ -38,7 +45,6 @@ svg {
   path {
     fill: none;
     stroke-width: 5px;
-    stroke: red;
     pointer-events: auto;
   }
 }
