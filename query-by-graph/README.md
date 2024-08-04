@@ -65,7 +65,17 @@ against a SPARQL endpoint.
 ## To-Do
 
 - [x] Drawing labels on the connections
-- [ ] Inject custom data into the custom connection component
-- [ ] Make the connections selectable and deletable
-- [ ] Adding new connections with custom data
+- [x] Inject custom data into the custom connection component
+- [x] Make the connections selectable and deletable
+- [x] Adding and deleting individuals
+- [ ] Adding variable individuals
+- [ ] Directed properties/edges
+- [ ] Think of a way to recommend available properties to the user
+- [ ] Build this property recommending tool
+
+- [ ] Build a SPARQL select query
+- [ ] SPARQL syntax highlighter
+
+## Might do
+- [ ] Multiple outputs/inputs? (Make always one input/output available for a new connection)
 
