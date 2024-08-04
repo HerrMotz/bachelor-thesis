@@ -57,7 +57,7 @@ export async function createEditor(container: HTMLElement) {
     b.addInput("b", new ClassicPreset.Input(socket));
     await editor.addNode(b);
 
-    await area.translate(b.id, { x: 320, y: 0 });
+    await area.translate(b.id, { x: 520, y: 0 });
 
     await editor.addConnection(new ClassicPreset.Connection(a, "a", b, "b"));
 
