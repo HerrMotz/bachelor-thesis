@@ -5,7 +5,7 @@
     <g>
       <!-- This positions the label -->
       <rect :x="centerX" :y="centerY" :width="rectLength" height="40" fill="white" stroke="black"></rect>
-      <text :x="centerX+12" :y="centerY+25">{{data.id}}</text>
+      <text :x="centerX+12" :y="centerY+25">{{data.property}}</text>
     </g>
   </svg>
 </template>

@@ -25,8 +25,14 @@ export async function createEditor(container: HTMLElement) {
     const selector = AreaExtensions.selector();
     const accumulating = AreaExtensions.accumulateOnCtrl();
 
+    let selectedProperty: {id: string, label: string} | null = null;
+
     function SelectableConnectionBind(props: { data: Schemes["Connection"] }) {
         const id = props.data.id;
+        props.data.property = {
+            id: selectedProperty?.id || "No property selected",
+            label: selectedProperty?.label || "No property selected"
+        }
         const label = "connection";
 
         // Initialize the custom connection with the custom props
@@ -107,6 +113,9 @@ export async function createEditor(container: HTMLElement) {
                     await removeNodeWithConnections(editor, item.id);
                 }
             }
+        },
+        setCurrentProperty: (property: {id: string, label: string}) => {
+            selectedProperty = property
         },
         destroy: () => area.destroy()
     };
