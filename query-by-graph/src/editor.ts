@@ -5,6 +5,7 @@ import {
     Presets as ConnectionPresets
 } from "rete-connection-plugin";
 import { VuePlugin, Presets, VueArea2D } from "rete-vue-plugin";
+import CustomConnection from "./components/CustomConnection.vue";
 
 type Schemes = GetSchemes<
     ClassicPreset.Node,
@@ -24,7 +25,13 @@ export async function createEditor(container: HTMLElement) {
         accumulating: AreaExtensions.accumulateOnCtrl()
     });
 
-    render.addPreset(Presets.classic.setup());
+    render.addPreset(Presets.classic.setup({
+        customize: {
+            connection() {
+                return CustomConnection;
+            }
+        }
+    }));
 
     connection.addPreset(ConnectionPresets.classic.setup());
 
@@ -34,7 +41,7 @@ export async function createEditor(container: HTMLElement) {
 
     AreaExtensions.simpleNodesOrder(area);
 
-    const a = new ClassicPreset.Node("A");
+    const a = new ClassicPreset.Node("?1");
     a.addControl(
         "a",
         new ClassicPreset.InputControl("text", { initial: "hello" })
@@ -42,7 +49,7 @@ export async function createEditor(container: HTMLElement) {
     a.addOutput("a", new ClassicPreset.Output(socket));
     await editor.addNode(a);
 
-    const b = new ClassicPreset.Node("B");
+    const b = new ClassicPreset.Node("Uni Jena, Q21880");
     b.addControl(
         "b",
         new ClassicPreset.InputControl("text", { initial: "hello" })

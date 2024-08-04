@@ -13,7 +13,8 @@
     "rete": "^2.0.3",
     "rete-area-plugin": "^2.0.4",
     "rete-connection-plugin": "^2.0.2",
-    "rete-vue-plugin": "^2.0.3"
+    "rete-vue-plugin": "^2.0.3",
+    "rete-render-utils": "^2.0.2"
   },
   "devDependencies": {
     "@types/d3": "^7.4.3",
