@@ -15,7 +15,8 @@
     "rete-render-utils": "^2.0.2",
     "rete-vue-plugin": "^2.0.3",
     "rete-history-plugin": "^2.0.1",
-    "vue": "^3.4.31"
+    "vue": "^3.4.31",
+    "rete-connection-path-plugin": "^2.0.1"
   },
   "devDependencies": {
     "@types/d3": "^7.4.3",
