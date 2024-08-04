@@ -1,6 +1,4 @@
 <script setup lang="ts">
-
-import {defineEmits} from "vue";
 import EntityType from "../types/EntityType.ts";
 
 const props = defineProps({
