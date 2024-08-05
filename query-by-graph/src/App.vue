@@ -2,6 +2,8 @@
 import {onMounted, ref} from 'vue';
 import {createEditor} from "./editor.ts";
 
+import 'highlight.js/lib/common';
+
 import EntityType from "./lib/types/EntityType.ts";
 
 import EntitySelector from "./components/EntitySelector.vue";
@@ -29,6 +31,15 @@ const mockIndividuals = [
   {id: "Q123", label: "Individual 123"},
 ]
 
+const mockCode =
+`PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+
+SELECT *
+WHERE {
+  ?entity rdfs:label ?name .
+}
+LIMIT 20`
+
 interface Editor {
   removeSelectedConnection: () => void;
   setSelectedProperty: (property: EntityType) => void;
@@ -41,9 +52,9 @@ interface Editor {
 <template>
   <div class="h-screen min-h-screen place-items-center bg-white px-6 pb-24 pt-12 sm:pb-32 sm:pt-12 lg:px-8">
     <div class="text-3xl text-center mb-10 font-bold">Query by Graph</div>
-    <div class="flex w-full min-h-full bg-amber-100 rounded-2xl" style="height: 100%; min-height: 100%;">
+    <div class="flex w-full min-h-full bg-amber-100 rounded-2xl" style="height: 60%; min-height: 520px;">
       <div class="w-4/5 min-h-full bg-amber-50">
-        <h2 class="text-xl font-semibold mb-4 bg-amber-100 rounded-tl-2xl p-4">
+        <h2 class="text-xl font-semibold bg-amber-100 rounded-tl-2xl p-4">
           <!-- This has the same propeties as the toolbox heading -->
           Visual Query Builder
           <span class="text-sm ml-2 font-medium">
@@ -94,6 +105,11 @@ interface Editor {
             }" class="bg-amber-300 rounded-2xl p-2">
               Individual Selector
             </EntitySelector>
+            <p class="text-gray-600 text-sm hover:text-gray-900 transition-all">
+              <em>Hint:</em>
+              Select an individual below. Then, <b>right-click</b> on the canvas to create a new individual. You can
+              <b>delete it</b> by also right-clicking on it.
+            </p>
           </div>
 
           <div class="flex-col flex gap-2">
@@ -129,6 +145,18 @@ interface Editor {
             </p>
           </div>
         </div>
+      </div>
+    </div>
+    <div class="mt-10">
+      <h2 class="text-xl font-semibold bg-amber-100 rounded-t-2xl p-4">
+        <!-- This has the same propeties as the toolbox heading -->
+        Generated SPARQL Query
+        <span class="text-sm ml-2 font-medium">
+            This contains the generated SPARQL code from above. It is updated with every change above.
+        </span>
+      </h2>
+      <div class="bg-amber-50 mb-20">
+        <highlightjs class="min-h-20 bg-amber-50" language="sparql" :code="mockCode" />
       </div>
     </div>
   </div>
