@@ -53,7 +53,7 @@ interface Editor {
 
 <template>
   <div>
-    <div class="place-items-center bg-white px-6 pb-24 pt-12 sm:pb-32 sm:pt-12 lg:px-8" style="min-height: calc(100vh - 50px)">
+    <div class="place-items-center bg-white px-6 pb-24 pt-12 sm:pb-2 sm:pt-12 lg:px-8" style="min-height: calc(100vh - 40px)">
       <div class="text-3xl text-center mb-10 font-bold">Query by Graph</div>
       <div class="flex w-full min-h-full bg-amber-100 rounded-2xl" style="min-height: 520px;">
         <div class="w-4/5 min-h-full bg-amber-50">
@@ -168,7 +168,8 @@ interface Editor {
       <!-- Footer -->
       <div class="text-center text-gray-600 text-sm">
         <p>
-          Made with ❤️ by <a href="https://www.daniel-motz.de">Daniel Motz</a>
+          <a class="underline" href="https://github.com/HerrMotz/bachelor-thesis/">Repository</a> &middot;
+          Made with ❤️ by <a class="underline" href="https://www.daniel-motz.de">Daniel Motz</a>
         </p>
       </div>
     </div>
