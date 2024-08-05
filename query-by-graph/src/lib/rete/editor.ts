@@ -137,7 +137,7 @@ export async function createEditor(container: HTMLElement) {
                     const exists = editor.getNodes().find(n => n.label === nodeLabel);
                     if (exists) {
                         console.log("Node already exists", exists.id);
-                        alert("This individual already exists!", exists.id);
+                        alert("This individual already exists. Please reuse the existing individual.");
                         return context;
                     }
                 }
