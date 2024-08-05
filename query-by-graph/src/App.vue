@@ -48,6 +48,7 @@ interface Editor {
   setSelectedIndividual: (property: EntityType) => void;
   undo: () => void;
   redo: () => void;
+  exportAsJson: () => any; //[{ id: string, label: string, inputs:  }];
 }
 </script>
 
@@ -140,6 +141,22 @@ interface Editor {
                 }
               }">
                 Delete selected
+              </Button>
+              <p class="text-gray-600 text-sm hover:text-gray-900 transition-all">
+                <em>Hint:</em>
+                Select a connection by clicking on it and then click the button above to delete it.
+                This only works when at least one connection is selected (red).
+              </p>
+            </div>
+            <div class="flex-col flex gap-2">
+              <h4 class="font-semibold">Export as JSON</h4>
+              <Button
+                  @click="() => { // why the hell is this necessary in TypeScript with Vue3 D':
+                if (editor) {
+                  editor.then((e: Editor) => console.log(e.exportAsJson()));
+                }
+              }">
+                Export JSON
               </Button>
               <p class="text-gray-600 text-sm hover:text-gray-900 transition-all">
                 <em>Hint:</em>

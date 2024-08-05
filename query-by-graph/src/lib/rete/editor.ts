@@ -66,7 +66,8 @@ export async function createEditor(container: HTMLElement) {
                     {
                         id,
                         label,
-                        translate() {},
+                        translate() {
+                        },
                         unselect() {
                             props.data.selected = false;
                             area.update("connection", id);
@@ -196,6 +197,23 @@ export async function createEditor(container: HTMLElement) {
         },
         undo: () => history.undo(),
         redo: () => history.redo(),
-        destroy: () => area.destroy()
+        destroy: () => area.destroy(),
+        exportAsJson: () => {
+            return editor.getNodes().map(n => {
+                console.log(n.inputs)
+                console.log(n.outputs)
+                return {
+                    id: n.id,
+                    label: n.label,
+                    inputs: Object.entries(n.inputs).map(([key, value]) => {
+                        return {
+                            input: key,
+                            connections: value
+                        }
+                    }),
+                    outputs: [],
+                }
+            })
+        },
     };
 }
