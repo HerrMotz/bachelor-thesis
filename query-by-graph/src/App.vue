@@ -7,8 +7,6 @@ import EntityType from "./types/EntityType.ts";
 import EntitySelector from "./components/EntitySelector.vue";
 import Button from "./components/Button.vue";
 
-import { greet } from "../pkg";
-
 const editor = ref<Promise<Editor> | null>(null);  // Define the type of editor as Promise<Editor> | null
 const rete = ref();
 
@@ -39,8 +37,6 @@ interface Editor {
   undo: () => void;
   redo: () => void;
 }
-
-alert(greet("Daniel"));
 </script>
 
 <template>
