@@ -184,8 +184,8 @@ export async function createEditor(container: HTMLElement) {
     AreaExtensions.zoomAt(area, editor.getNodes());
 
     return {
-        removeSelectedConnection: async () => {
-            console.log("TEST")
+        removeSelectedConnections: async () => {
+            console.log("Remove selected connections")
             for (const item of [...editor.getConnections()]) {
                 if (item.selected) {
                     await editor.removeConnection(item.id);

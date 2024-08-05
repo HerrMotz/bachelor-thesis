@@ -43,7 +43,7 @@ WHERE {
 LIMIT 20`
 
 interface Editor {
-  removeSelectedConnection: () => void;
+  removeSelectedConnections: () => void;
   setSelectedProperty: (property: EntityType) => void;
   setSelectedIndividual: (property: EntityType) => void;
   undo: () => void;
@@ -136,7 +136,7 @@ interface Editor {
               <Button
                   @click="() => { // why the hell is this necessary in TypeScript with Vue3 D':
                 if (editor) {
-                  editor.then((e: Editor) => e.removeSelectedConnection());
+                  editor.then((e: Editor) => e.removeSelectedConnections());
                 }
               }">
                 Delete selected
