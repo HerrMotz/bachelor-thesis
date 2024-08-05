@@ -134,6 +134,12 @@ export async function createEditor(container: HTMLElement) {
 
                 } else {
                     nodeLabel = (selectedIndividual?.id || "No ID") + ", " + (selectedIndividual?.label || "No Label")
+                    const exists = editor.getNodes().find(n => n.label === nodeLabel);
+                    if (exists) {
+                        console.log("Node already exists", exists.id);
+                        alert("This individual already exists!", exists.id);
+                        return context;
+                    }
                 }
 
                 const node = new ClassicPreset.Node(

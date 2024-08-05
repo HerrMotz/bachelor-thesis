@@ -91,6 +91,7 @@ against a SPARQL endpoint.
 - [ ] Fix, that disconnecting a connection relabels it with the currently selected property
 - [ ] Think of a way to recommend available properties to the user
 - [ ] Build this property recommending tool
+- [ ] Should I allow duplicate individuals?
 - [ ] Build a SPARQL select query
 - [ ] SPARQL syntax highlighter
 
