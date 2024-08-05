@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import EntityType from "../types/EntityType.ts";
+import EntityType from "../lib/types/EntityType.ts";
 
 const props = defineProps({
   entities: {type: Array<EntityType>, required: true}

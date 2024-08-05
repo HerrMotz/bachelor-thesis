@@ -2,11 +2,10 @@
 import {onMounted, ref} from 'vue';
 import {createEditor} from "./editor.ts";
 
-import EntityType from "./types/EntityType.ts";
+import EntityType from "./lib/types/EntityType.ts";
 
 import EntitySelector from "./components/EntitySelector.vue";
 import Button from "./components/Button.vue";
-
 const editor = ref<Promise<Editor> | null>(null);  // Define the type of editor as Promise<Editor> | null
 const rete = ref();
 
