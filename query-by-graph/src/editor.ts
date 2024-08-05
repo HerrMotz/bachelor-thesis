@@ -15,8 +15,8 @@ import {
 import {VuePlugin, Presets, VueArea2D} from "rete-vue-plugin";
 import {h} from "vue";
 import CustomConnection from "./components/CustomConnection.vue";
-import {removeNodeWithConnections} from "./utils.ts";
-import EntityType from "./types/EntityType.ts";
+import {removeNodeWithConnections} from "./lib/rete/rete.ts";
+import EntityType from "./lib/types/EntityType.ts";
 
 class Connection extends ClassicPreset.Connection<
     ClassicPreset.Node,
