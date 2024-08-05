@@ -6,7 +6,7 @@ import {
 } from "rete-connection-plugin";
 import {ConnectionPathPlugin} from "rete-connection-path-plugin";
 // See https://retejs.org/examples/connection-path
-import { curveStep, CurveFactory } from "d3-shape";
+import { CurveFactory } from "d3-shape";
 import {
     HistoryExtensions,
     HistoryPlugin,
@@ -24,7 +24,6 @@ class Connection extends ClassicPreset.Connection<
 > {
     selected?: boolean;
     property?: EntityType;
-    curve?: CurveFactory;
 }
 
 type Schemes = GetSchemes<ClassicPreset.Node, Connection>;
@@ -95,8 +94,6 @@ export async function createEditor(container: HTMLElement) {
     }));
 
     const pathPlugin = new ConnectionPathPlugin<Schemes, Area2D<Schemes>>({
-        curve: (c) => c.curve || curveStep,
-        // transformer: () => Transformers.classic({ vertical: false }),
         arrow: () => true
     });
 
