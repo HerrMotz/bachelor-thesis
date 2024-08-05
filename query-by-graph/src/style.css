@@ -1,3 +1,6 @@
+@import "lib/highlight/default.css";
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
