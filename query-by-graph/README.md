@@ -86,16 +86,16 @@ against a SPARQL endpoint.
 - [x] Inject custom data into the custom connection component
 - [x] Make the connections selectable and deletable
 - [x] Adding and deleting individuals
-- [ ] Adding variable individuals
+- [x] Adding variable individuals
 - [x] Directed properties/edges
-- [ ] Fix, that disconnecting a connection relabels it with the currently selected property; maybe
-- [ ] Automatically arrange nodes on button press
 - [ ] Think of a way to recommend available properties to the user
 - [ ] Build this property recommending tool
-- [ ] Should I allow duplicate individuals?
 - [ ] Build a SPARQL select query
-- [ ] SPARQL syntax highlighter
+- [x] SPARQL syntax highlighter
+- [x] Multiple outputs/inputs
+- [ ] Export/Import
 
-## Might do
-- [ ] Multiple outputs/inputs? (Make always one input/output available for a new connection)
-
+## Might-Do
+- [ ] Fix, that disconnecting a connection relabels it with the currently selected property
+- [ ] Should I allow duplicate individuals?
+- [ ] Automatically arrange nodes on button press
