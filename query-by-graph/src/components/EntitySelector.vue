@@ -12,8 +12,9 @@ const emit = defineEmits<{
 
 emit('selectedEntity', entities[0]);
 
-function emitSelectedEntity(event) {
-  emit('selectedEntity', entities[event.target.value]);
+function emitSelectedEntity(event: Event) {
+  const target = (<HTMLInputElement>event.target)
+  emit('selectedEntity', entities[parseInt(target?.value)]);
 }
 
 </script>

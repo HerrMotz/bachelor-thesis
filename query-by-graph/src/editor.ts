@@ -6,7 +6,7 @@ import {
 } from "rete-connection-plugin";
 import {ConnectionPathPlugin} from "rete-connection-path-plugin";
 // See https://retejs.org/examples/connection-path
-import { curveStep } from "d3-shape";
+import { curveStep, CurveFactory } from "d3-shape";
 import {
     HistoryExtensions,
     HistoryPlugin,
@@ -18,10 +18,16 @@ import CustomConnection from "./components/CustomConnection.vue";
 import {removeNodeWithConnections} from "./utils.ts";
 import EntityType from "./types/EntityType.ts";
 
-type Schemes = GetSchemes<
+class Connection extends ClassicPreset.Connection<
     ClassicPreset.Node,
-    ClassicPreset.Connection<ClassicPreset.Node, ClassicPreset.Node>
->;
+    ClassicPreset.Node
+> {
+    selected?: boolean;
+    property?: EntityType;
+    curve?: CurveFactory;
+}
+
+type Schemes = GetSchemes<ClassicPreset.Node, Connection>;
 type AreaExtra = VueArea2D<Schemes>;
 
 export async function createEditor(container: HTMLElement) {
