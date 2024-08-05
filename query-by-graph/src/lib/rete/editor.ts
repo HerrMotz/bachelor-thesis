@@ -115,8 +115,7 @@ export async function createEditor(container: HTMLElement) {
             if (source === "root") {
                 console.log("Add node")
 
-                let nodeLabel = "No Label";
-                let newId = null;
+                let nodeLabel;
 
                 // check if it is a variable individual
                 // if so, find the highest variable id, increment it by one and assign
@@ -130,8 +129,7 @@ export async function createEditor(container: HTMLElement) {
                     if (!highestId) {
                         selectedIndividual.id = "?1";
                     } else {
-                        newId = (parseInt(highestId.label.slice(1)) + 1)
-                        selectedIndividual.id = "?" + newId;
+                        selectedIndividual.id = "?" + (parseInt(highestId.label.slice(1)) + 1);
                     }
 
                     selectedIndividual.label = ""
@@ -146,18 +144,6 @@ export async function createEditor(container: HTMLElement) {
                 );
 
                 node.addOutput("b", new ClassicPreset.Output(socket));
-                if (newId) {
-                node.addControl(
-                    "c",
-                    new ClassicPreset.InputControl("number", {
-                        initial: newId,
-                        change(value) {
-                            node.label = "?"+value;
-                            area.update("node", node.id);
-                        },
-                    })
-                );
-                }
                 await editor.addNode(node);
                 area.area.setPointerFrom(event);
 
@@ -184,24 +170,10 @@ export async function createEditor(container: HTMLElement) {
     AreaExtensions.simpleNodesOrder(area);
 
     const a = new ClassicPreset.Node("?1");
-    a.addControl(
-        "a",
-        new ClassicPreset.InputControl("number", {
-            initial: "1",
-            change(value) {
-                a.label = "?"+value;
-                area.update("node", a.id);
-            },
-        })
-    );
     a.addOutput("a", new ClassicPreset.Output(socket));
     await editor.addNode(a);
 
     const b = new ClassicPreset.Node("Universität Jena, Q21880");
-    b.addControl(
-        "b",
-        new ClassicPreset.InputControl("text", {initial: "hello"})
-    );
     b.addInput("b", new ClassicPreset.Input(socket));
     await editor.addNode(b);
 
