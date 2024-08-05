@@ -5,8 +5,6 @@ import {
     Presets as ConnectionPresets
 } from "rete-connection-plugin";
 import {ConnectionPathPlugin} from "rete-connection-path-plugin";
-// See https://retejs.org/examples/connection-path
-import { CurveFactory } from "d3-shape";
 import {
     HistoryExtensions,
     HistoryPlugin,
@@ -63,6 +61,7 @@ export async function createEditor(container: HTMLElement) {
         return h(CustomConnection, {
             ...props, onClick: () => {
                 console.log("Selected connection", id)
+                console.log("accumulate", accumulating.active())
                 selector.add(
                     {
                         id,
@@ -112,7 +111,7 @@ export async function createEditor(container: HTMLElement) {
             if (source === "root") {
                 console.log("Add node")
 
-                let nodeLabel;
+                let nodeLabel: string;
 
                 // check if it is a variable individual
                 // if so, find the highest variable id, increment it by one and assign
@@ -146,8 +145,8 @@ export async function createEditor(container: HTMLElement) {
                     nodeLabel
                 );
 
-                node.addInput("a", new ClassicPreset.Input(socket));
-                node.addOutput("b", new ClassicPreset.Output(socket));
+                node.addInput("a", new ClassicPreset.Input(socket, "", true));
+                node.addOutput("b", new ClassicPreset.Output(socket, "", true));
                 await editor.addNode(node);
                 area.area.setPointerFrom(event);
 
