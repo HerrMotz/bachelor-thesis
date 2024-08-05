@@ -2,24 +2,40 @@
 
 ## Tech Stack / Developer notes
 
-This project uses Vue 3 and TypeScript in Vite. Learn more
+This project uses Vue 3, TypeScript and Rust in Vite. Learn more
 about the recommended Project Setup and IDE Support in the
 [Vue Docs TypeScript Guide](https://vuejs.org/guide/typescript/overview.html#project-setup).
 
-This application solely runs in the browser. This repository
+For Rust, I recommend using Visual Studio Code.
+
+This application _solely runs in the browser_. This repository
 does not contain a backend. The data fetching can be configured
 in the environment files. See [Vite Docs](https://vitejs.dev/guide/env-and-mode)
 for more details.
 
-As of now, the application does not come with a backend.
-Furthermore, there are no plans/needs to add a backend.
+## Why use Rust (as WASM)?
+The choice to write the conversion algorithm from "Visual Query" 
+to SPARQL in Rust is based on the following reasons.
+
+The algorithm should be:
+- reusable / separable,
+- fast and
+- provable to be correct.
 
 ## Installation
 
+### Vite+Vue Frontend
 To install all dependencies, run the following command:
 
 ```bash
 npm install
+```
+
+### Rust
+To install the Rust dependencies, run the following command:
+
+```bash
+cargo install wasm-pack
 ```
 
 ## Run Scripts
@@ -27,12 +43,14 @@ npm install
 ### Running the Application for Development (hot-reload)
 
 ```bash
+wasm-pack build
 npm run dev
 ```
 
 ### Building for Production
 
 ```bash
+wasm-pack build
 npm run build
 ```
 
