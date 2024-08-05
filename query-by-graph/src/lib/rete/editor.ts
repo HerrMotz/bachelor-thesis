@@ -143,6 +143,7 @@ export async function createEditor(container: HTMLElement) {
                     nodeLabel
                 );
 
+                node.addInput("a", new ClassicPreset.Input(socket));
                 node.addOutput("b", new ClassicPreset.Output(socket));
                 await editor.addNode(node);
                 area.area.setPointerFrom(event);
@@ -169,19 +170,7 @@ export async function createEditor(container: HTMLElement) {
 
     AreaExtensions.simpleNodesOrder(area);
 
-    const a = new ClassicPreset.Node("?1");
-    a.addOutput("a", new ClassicPreset.Output(socket));
-    await editor.addNode(a);
-
-    const b = new ClassicPreset.Node("Universität Jena, Q21880");
-    b.addInput("b", new ClassicPreset.Input(socket));
-    await editor.addNode(b);
-
-    await area.translate(b.id, {x: 520, y: 0});
-
-    await editor.addConnection(new ClassicPreset.Connection(a, "a", b, "b"));
-
-    AreaExtensions.zoomAt(area, editor.getNodes());
+    await AreaExtensions.zoomAt(area, editor.getNodes());
 
     return {
         removeSelectedConnections: async () => {
