@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import {onMounted, ref} from 'vue';
-import {createEditor} from "./editor.ts";
+import {createEditor} from "./lib/rete/editor.ts";
 
 import 'highlight.js/lib/common';
 
@@ -27,6 +27,7 @@ const mockProperties = [
 ];
 
 const mockIndividuals = [
+  {id: "?", label: "Variable Individual"},
   {id: "Q21880", label: "Universität Jena"},
   {id: "Q5879", label: "Johann Wolfgang von Goethe"},
   {id: "Q123", label: "Individual 123"},

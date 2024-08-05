@@ -14,9 +14,9 @@ import {
 } from "rete-history-plugin";
 import {VuePlugin, Presets, VueArea2D} from "rete-vue-plugin";
 import {h} from "vue";
-import CustomConnection from "./components/CustomConnection.vue";
-import {removeNodeWithConnections} from "./lib/rete/rete.ts";
-import EntityType from "./lib/types/EntityType.ts";
+import CustomConnection from "../../components/CustomConnection.vue";
+import {removeNodeWithConnections} from "./utils.ts";
+import EntityType from "../types/EntityType.ts";
 
 class Connection extends ClassicPreset.Connection<
     ClassicPreset.Node,
@@ -114,10 +114,50 @@ export async function createEditor(container: HTMLElement) {
 
             if (source === "root") {
                 console.log("Add node")
+
+                let nodeLabel = "No Label";
+                let newId = null;
+
+                // check if it is a variable individual
+                // if so, find the highest variable id, increment it by one and assign
+                // it to the "to be created"-node
+                if (selectedIndividual?.id.startsWith("?")) {
+                    const highestId = editor.getNodes()
+                        .filter(n => n.label.startsWith("?"))
+                        .sort()
+                        .reverse()[0];
+
+                    if (!highestId) {
+                        selectedIndividual.id = "?1";
+                    } else {
+                        newId = (parseInt(highestId.label.slice(1)) + 1)
+                        selectedIndividual.id = "?" + newId;
+                    }
+
+                    selectedIndividual.label = ""
+                    nodeLabel = selectedIndividual.id
+
+                } else {
+                    nodeLabel = (selectedIndividual?.id || "No ID") + ", " + (selectedIndividual?.label || "No Label")
+                }
+
                 const node = new ClassicPreset.Node(
-                    (selectedIndividual?.id || "No ID") + ", " + (selectedIndividual?.label || "No Label")
+                    nodeLabel
                 );
+
                 node.addOutput("b", new ClassicPreset.Output(socket));
+                if (newId) {
+                node.addControl(
+                    "c",
+                    new ClassicPreset.InputControl("number", {
+                        initial: newId,
+                        change(value) {
+                            node.label = "?"+value;
+                            area.update("node", node.id);
+                        },
+                    })
+                );
+                }
                 await editor.addNode(node);
                 area.area.setPointerFrom(event);
 
@@ -146,7 +186,13 @@ export async function createEditor(container: HTMLElement) {
     const a = new ClassicPreset.Node("?1");
     a.addControl(
         "a",
-        new ClassicPreset.InputControl("text", {initial: "hello"})
+        new ClassicPreset.InputControl("number", {
+            initial: "1",
+            change(value) {
+                a.label = "?"+value;
+                area.update("node", a.id);
+            },
+        })
     );
     a.addOutput("a", new ClassicPreset.Output(socket));
     await editor.addNode(a);
