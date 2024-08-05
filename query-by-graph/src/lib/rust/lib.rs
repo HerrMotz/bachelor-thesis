@@ -11,6 +11,3 @@ extern "C" {
 pub fn greet(name: &str) -> String {
     format!("Hello dear, {}!", name)
 }
-
-#[wasm_bindgen]
-pub fn
