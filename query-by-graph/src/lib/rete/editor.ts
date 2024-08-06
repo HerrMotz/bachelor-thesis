@@ -38,7 +38,7 @@ export async function createEditor(container: HTMLElement) {
     const accumulating = AreaExtensions.accumulateOnCtrl();
     const history = new HistoryPlugin<Schemes>();
 
-    let vueCallback: (context: any) => void = null;
+    let vueCallback: (context: any) => void;
 
     HistoryExtensions.keyboard(history);
 
@@ -165,7 +165,7 @@ export async function createEditor(container: HTMLElement) {
             }
         }
 
-        if (vueCallback !== null) {
+        if (vueCallback !== undefined) {
             vueCallback(context);
         }
         return context;

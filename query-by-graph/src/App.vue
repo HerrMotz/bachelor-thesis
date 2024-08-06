@@ -66,17 +66,6 @@ const mockIndividuals = [
   {id: "Q5879", label: "Johann Wolfgang von Goethe"},
   {id: "Q123", label: "Individual 123"},
 ]
-
-const exportedData = [
-  {
-    "property": {
-      "id": "P160",
-      "label": "Ausbildende Institution"
-    },
-    "source": "?1",
-    "target": "?2"
-  }
-]
 </script>
 
 <template>
