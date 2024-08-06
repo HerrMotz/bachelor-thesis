@@ -1,4 +1,4 @@
-function hljsDefineSparql(hljs) {
+function hljsDefineSparql(hljs: any) {
     return {
         case_insensitive: true,
         keywords: {
