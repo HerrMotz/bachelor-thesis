@@ -22,6 +22,7 @@ type Schemes = GetSchemes<ClassicPreset.Node, Connection>;
 
 interface Editor {
   addPipe: (middleware: Pipe<Root<Schemes>>) => void;
+  setVueCallback: (callback: (context: any) => void) => void;
   removeSelectedConnections: () => Promise<void>;
   setSelectedProperty: (property: EntityType) => void;
   setSelectedIndividual: (property: EntityType) => void;
@@ -38,7 +39,7 @@ const code = ref("");
 onMounted(async () => {
   if (rete.value) {
     editor.value = await createEditor(rete.value);
-    editor.value.addPipe((context) => { // add pipe to parent scope
+    editor.value?.setVueCallback((context) => { // add pipe to parent scope
       if (["connectioncreate", "connectionremove"].includes(context.type)) {
         console.log(context)
         setTimeout(() => {
@@ -47,8 +48,6 @@ onMounted(async () => {
           code.value = graph_to_query_wasm(JSON.stringify(connections));
         }, 200);
       }
-
-      return context;
     });
   }
 });
