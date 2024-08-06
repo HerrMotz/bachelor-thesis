@@ -43,7 +43,7 @@ pub fn graph_to_query_wasm(json: &str) -> String {
 
 fn graph_to_query(connections: Vec<Connection>) -> String {
     let mut sparql = String::from("PREFIX : <http://example.org/>\n");
-    sparql.push_str("SELECT * {\n");
+    sparql.push_str("SELECT * WHERE {\n");
 
     for connection in connections {
         sparql.push_str(&format!(
