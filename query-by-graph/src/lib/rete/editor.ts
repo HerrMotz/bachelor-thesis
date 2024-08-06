@@ -1,7 +1,8 @@
 import {NodeEditor, GetSchemes, ClassicPreset} from "rete";
 import {AreaPlugin, AreaExtensions, Area2D} from "rete-area-plugin";
 import {
-    ConnectionPlugin,
+    ClassicFlow,
+    ConnectionPlugin, getSourceTarget,
     Presets as ConnectionPresets
 } from "rete-connection-plugin";
 import {ConnectionPathPlugin} from "rete-connection-path-plugin";
@@ -94,6 +95,29 @@ export async function createEditor(container: HTMLElement) {
             }
         }
     }));
+
+    connection.addPreset(() => new ClassicFlow({
+        makeConnection(from, to, context) {
+            const [source, target] = getSourceTarget(from, to) || [null, null];
+            const { editor } = context;
+
+            if (source && target) {
+                editor.addConnection(
+                    new Connection(
+                        editor.getNode(source.nodeId),
+                        source.key,
+                        editor.getNode(target.nodeId),
+                        target.key
+                    )
+                );
+                console.log("editor")
+                console.log(editor)
+                console.log(editor.getConnections())
+                vueCallback(editor.getConnections());
+                return true; // ensure that the connection has been successfully added
+            }
+        }
+    }))
 
     const pathPlugin = new ConnectionPathPlugin<Schemes, Area2D<Schemes>>({
         arrow: () => true
@@ -204,7 +228,6 @@ export async function createEditor(container: HTMLElement) {
         destroy: () => area.destroy(),
         exportConnections: () => {
             return editor.getConnections().map(c => {
-                console.log(c)
                 return {
                     property: c.property,
                     source: editor.getNode(c.source).label,

@@ -39,11 +39,12 @@ onMounted(async () => {
   if (rete.value) {
     editor.value = await createEditor(rete.value);
     editor.value?.setVueCallback((context) => { // add pipe to parent scope
-      if (["connectioncreate", "connectionremove"].includes(context.type)) {
-        const connections = editor.value!.exportConnections()
-        console.log(connections)
-        code.value = graph_to_query_wasm(JSON.stringify(connections));
-      }
+      const connections = editor.value!.exportConnections()
+      console.log("Vue context")
+      console.log(context)
+      console.log("Vue connections")
+      console.log(connections)
+      code.value = graph_to_query_wasm(JSON.stringify(connections));
     });
   }
 });
