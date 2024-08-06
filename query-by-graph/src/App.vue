@@ -10,15 +10,6 @@ import EntityType from "./lib/types/EntityType.ts";
 
 import EntitySelector from "./components/EntitySelector.vue";
 import Button from "./components/Button.vue";
-import {ClassicPreset, GetSchemes, Pipe, Root} from "rete";
-class Connection extends ClassicPreset.Connection<
-    ClassicPreset.Node,
-    ClassicPreset.Node
-> {
-  selected?: boolean;
-  property?: EntityType;
-}
-type Schemes = GetSchemes<ClassicPreset.Node, Connection>;
 
 interface Editor {
   setVueCallback: (callback: (context: any) => void) => void;
