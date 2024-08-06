@@ -24,6 +24,17 @@ The algorithm should be:
 
 ## Installation
 
+For a guide on WASM with Vite look [here](https://github.com/shadanan/vite-rust-wasm).
+
+### Prerequisites
+- Node.js
+- Rust with Cargo
+
+install wasm-pack:
+```bash
+cargo install wasm-pack
+```
+
 ### Vite+Vue Frontend
 To install all dependencies, run the following command:
 

@@ -1,0 +1,8 @@
+{
+  "property": {
+    "id": "P160",
+    "label": "Ausbildende Institution"
+  },
+  "source": "?1",
+  "target": "?2"
+}

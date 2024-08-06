@@ -38,6 +38,8 @@ export async function createEditor(container: HTMLElement) {
     const accumulating = AreaExtensions.accumulateOnCtrl();
     const history = new HistoryPlugin<Schemes>();
 
+    let vueCallback = null;
+
     HistoryExtensions.keyboard(history);
 
     history.addPreset(HistoryPresets.classic.setup());
@@ -146,8 +148,8 @@ export async function createEditor(container: HTMLElement) {
                     nodeLabel
                 );
 
-                node.addInput("a", new ClassicPreset.Input(socket, "", true));
-                node.addOutput("b", new ClassicPreset.Output(socket, "", true));
+                node.addInput("i0", new ClassicPreset.Input(socket, "", true));
+                node.addOutput("o0", new ClassicPreset.Output(socket, "", true));
                 await editor.addNode(node);
                 area.area.setPointerFrom(event);
 
@@ -175,7 +177,17 @@ export async function createEditor(container: HTMLElement) {
 
     await AreaExtensions.zoomAt(area, editor.getNodes());
 
+    // editor.addPipe((context) => { // add pipe to parent scope
+    //     console.log('parent', context); // number
+    //
+    //     return context;
+    // });
+
     return {
+        setVueCallback: (callback: any) => {
+            vueCallback = callback;
+        },
+        addPipe: (pipe: any) => editor.addPipe(pipe),
         removeSelectedConnections: async () => {
             console.log("Remove selected connections")
             for (const item of [...editor.getConnections()]) {
@@ -198,21 +210,14 @@ export async function createEditor(container: HTMLElement) {
         undo: () => history.undo(),
         redo: () => history.redo(),
         destroy: () => area.destroy(),
-        exportAsJson: () => {
-            return editor.getNodes().map(n => {
-                console.log(n.inputs)
-                console.log(n.outputs)
+        exportConnections: () => {
+            return editor.getConnections().map(c => {
+                console.log(c)
                 return {
-                    id: n.id,
-                    label: n.label,
-                    inputs: Object.entries(n.inputs).map(([key, value]) => {
-                        return {
-                            input: key,
-                            connections: value
-                        }
-                    }),
-                    outputs: [],
-                }
+                    property: c.property,
+                    source: editor.getNode(c.source).label,
+                    target: editor.getNode(c.target).label,
+                };
             })
         },
     };
