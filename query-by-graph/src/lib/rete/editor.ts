@@ -164,10 +164,6 @@ export async function createEditor(container: HTMLElement) {
                 await editor.removeNode(source.id);
             }
         }
-
-        if (vueCallback !== undefined) {
-            vueCallback(context);
-        }
         return context;
     });
 
@@ -180,17 +176,10 @@ export async function createEditor(container: HTMLElement) {
 
     await AreaExtensions.zoomAt(area, editor.getNodes());
 
-    // editor.addPipe((context) => { // add pipe to parent scope
-    //     console.log('parent', context); // number
-    //
-    //     return context;
-    // });
-
     return {
         setVueCallback: (callback: any) => {
             vueCallback = callback;
         },
-        addPipe: (pipe: any) => editor.addPipe(pipe),
         removeSelectedConnections: async () => {
             console.log("Remove selected connections")
             for (const item of [...editor.getConnections()]) {

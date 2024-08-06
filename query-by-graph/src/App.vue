@@ -21,7 +21,6 @@ class Connection extends ClassicPreset.Connection<
 type Schemes = GetSchemes<ClassicPreset.Node, Connection>;
 
 interface Editor {
-  addPipe: (middleware: Pipe<Root<Schemes>>) => void;
   setVueCallback: (callback: (context: any) => void) => void;
   removeSelectedConnections: () => Promise<void>;
   setSelectedProperty: (property: EntityType) => void;
@@ -41,12 +40,9 @@ onMounted(async () => {
     editor.value = await createEditor(rete.value);
     editor.value?.setVueCallback((context) => { // add pipe to parent scope
       if (["connectioncreate", "connectionremove"].includes(context.type)) {
-        console.log(context)
-        setTimeout(() => {
-          const connections = editor.value!.exportConnections()
-          console.log(connections)
-          code.value = graph_to_query_wasm(JSON.stringify(connections));
-        }, 200);
+        const connections = editor.value!.exportConnections()
+        console.log(connections)
+        code.value = graph_to_query_wasm(JSON.stringify(connections));
       }
     });
   }
@@ -70,10 +66,11 @@ const mockIndividuals = [
 
 <template>
   <div>
-    <div class="place-items-center bg-white px-6 pb-24 pt-12 sm:pb-2 sm:pt-12 lg:px-8" style="min-height: calc(100vh - 40px)">
+    <div class="place-items-center bg-white px-6 pb-24 pt-12 sm:pb-2 sm:pt-12 lg:px-8"
+         style="">
       <div class="text-3xl text-center mb-10 font-bold">Query by Graph</div>
-      <div class="flex w-full min-h-full bg-amber-100 rounded-2xl" style="min-height: 520px;">
-        <div class="w-4/5 min-h-full bg-amber-50">
+      <div class="flex w-full bg-amber-100 rounded-2xl" style="">
+        <div class="w-4/5 bg-amber-50">
           <h2 class="text-xl font-semibold bg-amber-100 rounded-tl-2xl p-4">
             <!-- This has the same propeties as the toolbox heading -->
             Visual Query Builder
@@ -81,16 +78,16 @@ const mockIndividuals = [
               Each Box is a SPARQL-Individual and each Connection between them is a SPARQL-Property
             </span>
           </h2>
-          <div ref="rete" style="height: calc(100% - 44px);"></div>
+          <div ref="rete" class="h-full"></div>
         </div>
-        <div v-if="editor" class="w-1/5 overflow-auto">
+        <div v-if="editor" class="w-1/5 overflow-auto" style="max-height: 60vh;">
           <h2 class="text-xl font-semibold bg-amber-200 rounded-tr-2xl p-4">
             Toolbox
             <span class="text-sm ml-2 font-medium">
               Perform actions on the graph
             </span>
           </h2>
-          <div class="flex-col flex gap-6 max-h-full p-4">
+          <div class="flex-col flex gap-6 p-4">
             <div class="flex-col flex gap-2">
               <h4 class="font-semibold">History</h4>
               <div class="flex gap-4">
