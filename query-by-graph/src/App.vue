@@ -44,7 +44,9 @@ onMounted(async () => {
       console.log(context)
       console.log("Vue connections")
       console.log(connections)
-      code.value = graph_to_query_wasm(JSON.stringify(connections));
+      setTimeout(() => {
+        code.value = graph_to_query_wasm(JSON.stringify(connections));
+      }, 1);
     });
   }
 });
