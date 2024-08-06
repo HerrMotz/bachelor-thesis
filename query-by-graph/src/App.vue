@@ -1,6 +1,8 @@
 <script setup lang="ts">
-import {onMounted, ref} from 'vue';
+import { onMounted, ref} from 'vue';
 import {createEditor} from "./lib/rete/editor.ts";
+
+import {graph_to_query_wasm} from "../pkg";
 
 import 'highlight.js/lib/common';
 
@@ -8,13 +10,46 @@ import EntityType from "./lib/types/EntityType.ts";
 
 import EntitySelector from "./components/EntitySelector.vue";
 import Button from "./components/Button.vue";
+import {ClassicPreset, GetSchemes, Pipe, Root} from "rete";
+class Connection extends ClassicPreset.Connection<
+    ClassicPreset.Node,
+    ClassicPreset.Node
+> {
+  selected?: boolean;
+  property?: EntityType;
+}
+type Schemes = GetSchemes<ClassicPreset.Node, Connection>;
 
-const editor = ref<Promise<Editor> | null>(null);  // Define the type of editor as Promise<Editor> | null
+interface Editor {
+  addPipe: (middleware: Pipe<Root<Schemes>>) => void;
+  removeSelectedConnections: () => Promise<void>;
+  setSelectedProperty: (property: EntityType) => void;
+  setSelectedIndividual: (property: EntityType) => void;
+  undo: () => void;
+  redo: () => void;
+  exportConnections: () => any; //[{ id: string, label: string, inputs:  }];
+}
+
+const editor = ref<Editor>();  // Define the type of editor as Promise<Editor> | null
 const rete = ref();
 
-onMounted(() => {
+const code = ref("");
+
+onMounted(async () => {
   if (rete.value) {
-    editor.value = createEditor(rete.value);
+    editor.value = await createEditor(rete.value);
+    editor.value.addPipe((context) => { // add pipe to parent scope
+      if (["connectioncreate", "connectionremove"].includes(context.type)) {
+        console.log(context)
+        setTimeout(() => {
+          const connections = editor.value!.exportConnections()
+          console.log(connections)
+          code.value = graph_to_query_wasm(JSON.stringify(connections));
+        }, 200);
+      }
+
+      return context;
+    });
   }
 });
 
@@ -33,23 +68,16 @@ const mockIndividuals = [
   {id: "Q123", label: "Individual 123"},
 ]
 
-const mockCode =
-    `PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
-
-SELECT *
-WHERE {
-  ?entity rdfs:label ?name .
-}
-LIMIT 20`
-
-interface Editor {
-  removeSelectedConnections: () => void;
-  setSelectedProperty: (property: EntityType) => void;
-  setSelectedIndividual: (property: EntityType) => void;
-  undo: () => void;
-  redo: () => void;
-  exportAsJson: () => any; //[{ id: string, label: string, inputs:  }];
-}
+const exportedData = [
+  {
+    "property": {
+      "id": "P160",
+      "label": "Ausbildende Institution"
+    },
+    "source": "?1",
+    "target": "?2"
+  }
+]
 </script>
 
 <template>
@@ -78,18 +106,18 @@ interface Editor {
             <div class="flex-col flex gap-2">
               <h4 class="font-semibold">History</h4>
               <div class="flex gap-4">
-                <Button class="grow" @click="() => { // why the hell is this necessary in TypeScript with Vue3 D':
+                <Button class="grow" @click="() => {
                 if (editor) {
-                  editor.then((e: Editor) => e.undo());
+                  editor.undo();
                 }
               }">
                   Undo
                   <kbd
                       class="inline-flex items-center rounded border border-gray-200 px-1 font-sans text-xs text-gray-200">CTRL+Y</kbd>
                 </Button>
-                <Button class="grow" @click="() => { // why the hell is this necessary in TypeScript with Vue3 D':
+                <Button class="grow" @click="() => {
                 if (editor) {
-                  editor.then((e: Editor) => e.redo());
+                  editor.redo();
                 }
               }">
 
@@ -104,7 +132,7 @@ interface Editor {
               <h4 class="font-semibold">Create Individual</h4>
               <EntitySelector :entities="mockIndividuals" @selected-entity="(prop: EntityType) => { // why the hell is this necessary in TypeScript with Vue3 D':
                 if (editor) {
-                  editor.then((e: Editor) => e.setSelectedIndividual(prop));
+                  editor.setSelectedIndividual(prop);
                 }
               }" class="bg-amber-300 rounded-2xl p-2">
                 Individual Selector
@@ -120,7 +148,7 @@ interface Editor {
               <h4 class="font-semibold">Create connection</h4>
               <EntitySelector :entities="mockProperties" @selected-entity="(prop: EntityType) => { // why the hell is this necessary in TypeScript with Vue3 D':
                 if (editor) {
-                  editor.then((e: Editor) => e.setSelectedProperty(prop));
+                  editor.setSelectedProperty(prop);
                 }
               }" class="bg-amber-300 rounded-2xl p-2">
                 Property Selector
@@ -137,7 +165,7 @@ interface Editor {
               <Button
                   @click="() => { // why the hell is this necessary in TypeScript with Vue3 D':
                 if (editor) {
-                  editor.then((e: Editor) => e.removeSelectedConnections());
+                  editor.removeSelectedConnections();
                 }
               }">
                 Delete selected
@@ -149,14 +177,14 @@ interface Editor {
               </p>
             </div>
             <div class="flex-col flex gap-2">
-              <h4 class="font-semibold">Export as JSON</h4>
+              <h4 class="font-semibold">Build SPARQL</h4>
               <Button
                   @click="() => { // why the hell is this necessary in TypeScript with Vue3 D':
                 if (editor) {
-                  editor.then((e: Editor) => console.log(e.exportAsJson()));
+                  console.log(editor.exportConnections());
                 }
               }">
-                Export JSON
+                Convert to SPARQL
               </Button>
               <p class="text-gray-600 text-sm hover:text-gray-900 transition-all">
                 <em>Hint:</em>
@@ -176,7 +204,7 @@ interface Editor {
           </span>
         </h2>
         <div class="bg-amber-50">
-          <highlightjs class="min-h-20 bg-amber-50" language="sparql" :code="mockCode"/>
+          <highlightjs class="min-h-20 bg-amber-50" language="sparql" :code="code"/>
         </div>
       </div>
 
