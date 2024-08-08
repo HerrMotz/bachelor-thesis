@@ -9,6 +9,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "highlight.js": "^11.10.0",
     "rete": "^2.0.3",
     "rete-area-plugin": "^2.0.4",
     "rete-connection-path-plugin": "^2.0.1",
@@ -16,10 +17,10 @@
     "rete-history-plugin": "^2.0.1",
     "rete-render-utils": "^2.0.2",
     "rete-vue-plugin": "^2.0.3",
-    "vue": "^3.4.31",
-    "highlight.js": "^11.10.0"
+    "vue": "^3.4.31"
   },
   "devDependencies": {
+    "@heroicons/vue": "^2.1.5",
     "@tailwindcss/forms": "^0.5.7",
     "@types/d3": "^7.4.3",
     "@vitejs/plugin-vue": "^5.0.5",

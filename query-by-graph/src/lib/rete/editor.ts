@@ -67,8 +67,9 @@ export async function createEditor(container: HTMLElement) {
     //  this is a "might do" feature
     props.data.property = {
       id: selectedProperty?.id || "No ID",
-      label: selectedProperty?.label || "No Label"
-    }
+      label: selectedProperty?.label || "No Label",
+    };
+
     const label = "connection";
 
     // Initialize the custom connection with the custom props
@@ -81,8 +82,7 @@ export async function createEditor(container: HTMLElement) {
           {
             id,
             label,
-            translate() {
-            },
+            translate() {},
             unselect() {
               props.data.selected = false;
               area.update("connection", id);
@@ -138,13 +138,14 @@ export async function createEditor(container: HTMLElement) {
             .sort()
             .reverse()[0];
 
+          // hacky way to make the node instantiation in line 159 use the correct id
           if (!highestId) {
             selectedIndividual.id = "?1";
           } else {
             selectedIndividual.id = "?" + (parseInt(highestId.label.slice(1)) + 1);
           }
-
           editorLabel = selectedIndividual.id
+          console.log("HERE", selectedIndividual.id);
 
         } else {
           editorLabel = (selectedIndividual?.id || "No ID") + ", " + (selectedIndividual?.label || "No Label")
@@ -156,10 +157,13 @@ export async function createEditor(container: HTMLElement) {
           }
         }
 
+        console.log("HERE 2", selectedIndividual?.id, selectedIndividual?.label);
         const node = new Node(editorLabel, {
           id: selectedIndividual?.id || "No ID",
           label: selectedIndividual?.label || "No Label"
         });
+
+        console.log("Node", node.entity);
 
         node.addInput("i0", new ClassicPreset.Input(socket, "", true));
         node.addOutput("o0", new ClassicPreset.Output(socket, "", true));

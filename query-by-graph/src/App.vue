@@ -11,6 +11,7 @@ import EntityType from "./lib/types/EntityType.ts";
 import EntitySelector from "./components/EntitySelector.vue";
 import Button from "./components/Button.vue";
 import ConnectionInterfaceType from "./lib/types/ConnectionInterfaceType.ts";
+import ClipboardButton from "./components/ClipboardButton.vue";
 
 interface Editor {
   setVueCallback: (callback: (context: any) => void) => void;
@@ -31,17 +32,19 @@ onMounted(async () => {
   if (rete.value) {
     editor.value = await createEditor(rete.value);
     editor.value?.setVueCallback((context) => { // add pipe to parent scope
-      const connections = editor.value!.exportConnections()
-      console.log("Vue context")
-      console.log(context)
-      console.log("Vue connections")
-      console.log(connections)
-      setTimeout(() => {
-        code.value = graph_to_query_wasm(JSON.stringify(connections));
-      }, 1);
+      if (context.type === "connectioncreated" || context.type === "connectionremoved") {
+        setTimeout(() => {
+          const connections = editor.value!.exportConnections()
+          code.value = graph_to_query_wasm(JSON.stringify(connections));
+        }, 0);
+      }
     });
   }
 });
+
+const copyToClipboard = () => {
+  navigator.clipboard.writeText(code.value);
+}
 
 // mock property numbers array like P160, P141, etc.
 const mockProperties = [
@@ -191,8 +194,9 @@ const mockIndividuals = [
               This contains the generated SPARQL code from above. It is updated with every change above.
           </span>
         </h2>
-        <div class="bg-amber-50">
-          <highlightjs class="min-h-20 bg-amber-50" language="sparql" :code="code"/>
+        <div class="bg-amber-50 flex w-full flex-row">
+          <highlightjs class="min-h-20 grow bg-amber-50" language="sparql" :code="code"/>
+          <ClipboardButton class="inline-flex mt-4 mr-4" @click="copyToClipboard();" />
         </div>
       </div>
 
