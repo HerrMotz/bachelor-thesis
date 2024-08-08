@@ -193,12 +193,6 @@ export async function createEditor(container: HTMLElement) {
 
   await AreaExtensions.zoomAt(area, editor.getNodes());
 
-  // editor.addPipe((context) => { // add pipe to parent scope
-  //     console.log('parent', context); // number
-  //
-  //     return context;
-  // });
-
   return {
     setVueCallback: (callback: any) => {
       vueCallback = callback;
