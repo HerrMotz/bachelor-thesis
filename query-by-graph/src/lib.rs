@@ -1,5 +1,6 @@
 mod utils;
 
+use std::collections::HashSet;
 use wasm_bindgen::prelude::*;
 use serde_json::from_str;
 use serde::Deserialize;
@@ -44,11 +45,21 @@ pub fn graph_to_query_wasm(json: &str) -> String {
 }
 
 fn graph_to_query(connections: Vec<Connection>) -> String {
-    let mut sparql = String::from("PREFIX : <http://example.org/>\n");
-    sparql.push_str("SELECT * WHERE {\n");
+    // Collect sources and targets whose id starts with a question mark
+    let mut filtered_sources = HashSet::new();
+    let mut filtered_targets = HashSet::new();
+
+    let mut where_clause:String;
 
     for connection in connections {
-        sparql.push_str(&format!(
+        if connection.source.id.starts_with('?') {
+            filtered_sources.insert(&connection.source.id);
+        }
+        if connection.target.id.starts_with('?') {
+            filtered_targets.insert(&connection.target.id);
+        }
+
+        where_clause.push_str(&format!(
             "{}wd:{} wdt:{} wd:{} . # {} -- {} -> {}\n",
             " ".repeat(INDENTATION_COUNT),
             connection.source.id, connection.property.id, connection.target.id,
@@ -56,7 +67,12 @@ fn graph_to_query(connections: Vec<Connection>) -> String {
         ));
     }
 
-    sparql.push_str("}");
+    filtered_sources.extend(filtered_targets);
 
-    sparql
+    let concatenated_string = filtered_sources.iter().join(", ");
+
+    format!(
+        "PREFIX : <http://example.org/>\nSELECT {} WHERE {{\n{}\n}}",
+        concatenated_string, where_clause
+    )
 }
