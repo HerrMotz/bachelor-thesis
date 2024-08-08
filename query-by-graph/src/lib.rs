@@ -51,7 +51,7 @@ fn graph_to_query(connections: Vec<Connection>) -> String {
         sparql.push_str(&format!(
             "{}wd:{} wdt:{} wd:{} . # {} -- {} -> {}\n",
             " ".repeat(INDENTATION_COUNT),
-            connection.source.id, connection.property.id, connection.source.id,
+            connection.source.id, connection.property.id, connection.target.id,
             connection.source.label, connection.property.label, connection.target.label
         ));
     }
