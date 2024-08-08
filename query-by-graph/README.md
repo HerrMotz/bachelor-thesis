@@ -14,10 +14,12 @@ in the environment files. See [Vite Docs](https://vitejs.dev/guide/env-and-mode)
 for more details.
 
 ## Why use Rust (as WASM)?
-The choice to write the conversion algorithm from "Visual Query" 
+
+The choice to write the conversion algorithm from "Visual Query"
 to SPARQL in Rust is based on the following reasons.
 
 The algorithm should be:
+
 - reusable,
 - fast and
 - provable to be correct.
@@ -28,6 +30,7 @@ these goals.
 ## Installation/Requirements for Building
 
 The application consist of two parts:
+
 - The "Query by Graph" conversion algorithm, written in Rust, compiled as WASM
 - The Vue UI, built with Vite
 
@@ -35,10 +38,12 @@ Therefore, we first need to build the Rust WASM (as a package) and then
 the Vue UI. For more info on a "WASM with Vite"-projects, look [here](https://github.com/shadanan/vite-rust-wasm).
 
 For building, you will need the following tools:
+
 - Node.js (node, npm)
 - Rust with Cargo
 
 ### Vite+Vue Frontend
+
 To install all dependencies, run the following command:
 
 ```bash
@@ -46,6 +51,7 @@ npm install
 ```
 
 ### Rust
+
 To install the Rust dependencies, run the following command:
 
 ```bash
@@ -75,19 +81,22 @@ For other scripts see `package.json` file.
 ## Program description
 
 ### Functionality
+
 It allows the user to build simple SPARQL queries using a
 visual query builder. The query can then be run
 against a SPARQL endpoint.
 
 ### Feature List
-| Feature                                                         | Description                                     | Implemented |
-|-----------------------------------------------------------------|-------------------------------------------------|-------------|
-| Tracing connectivity between points in the visual query builder | https://jsplumbtoolkit.com/demonstrations/paths | No          |
-| Building SPARQL SELECT queries                                  | with arbitrary properties                       | No          |
-| Running SPARQL queries                                          | against a SPARQL endpoint                       | No          |
-| Displaying the results of the SPARQL query                      | in a table                                      | No          |
-| Saving and loading queries                                      | to and from the local storage                   | No          |
-| Exporting the query                                             | as a SPARQL query text                          | No          |
+
+| Feature                                                         | Description                                                                | Implemented |
+|-----------------------------------------------------------------|----------------------------------------------------------------------------|-------------|
+| Tracing connectivity between points in the visual query builder | https://jsplumbtoolkit.com/demonstrations/paths                            | No          |
+| Building SPARQL SELECT queries                                  | with arbitrary properties                                                  | No          |
+| Running SPARQL queries                                          | against a SPARQL endpoint                                                  | No          |
+| Displaying the results of the SPARQL query                      | in a table                                                                 | No          |
+| Saving and loading queries                                      | to and from the local storage                                              | No          |
+| Exporting the query                                             | as a SPARQL query text                                                     | No          |
+| Checking that a query makes sense                               | Maybe checking with LLMs, whether a property makes sense for an individual | No          |
 
 ### Graph Legend
 
@@ -110,13 +119,14 @@ against a SPARQL endpoint.
 - [ ] Export/Import
 
 
-- [ ] Prefixing 
+- [ ] Prefixing
 - [ ] also for multiple datbases
 
 
 - [ ] Explain what is being done in the UI
 
 ## Might-Do
+
 - [ ] Fix, that disconnecting a connection relabels it with the currently selected property
 - [ ] Should I allow duplicate individuals?
 - [ ] Automatically arrange nodes on button press
