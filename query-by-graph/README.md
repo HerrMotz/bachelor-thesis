@@ -18,22 +18,25 @@ The choice to write the conversion algorithm from "Visual Query"
 to SPARQL in Rust is based on the following reasons.
 
 The algorithm should be:
-- reusable / separable,
+- reusable,
 - fast and
 - provable to be correct.
 
-## Installation
+The Rust compiler offers many features, that assist in achieving
+these goals.
 
-For a guide on WASM with Vite look [here](https://github.com/shadanan/vite-rust-wasm).
+## Installation/Requirements for Building
 
-### Prerequisites
-- Node.js
+The application consist of two parts:
+- The "Query by Graph" conversion algorithm, written in Rust, compiled as WASM
+- The Vue UI, built with Vite
+
+Therefore, we first need to build the Rust WASM (as a package) and then
+the Vue UI. For more info on a "WASM with Vite"-projects, look [here](https://github.com/shadanan/vite-rust-wasm).
+
+For building, you will need the following tools:
+- Node.js (node, npm)
 - Rust with Cargo
-
-install wasm-pack:
-```bash
-cargo install wasm-pack
-```
 
 ### Vite+Vue Frontend
 To install all dependencies, run the following command:
