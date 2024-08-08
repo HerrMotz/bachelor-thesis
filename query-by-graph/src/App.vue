@@ -10,6 +10,7 @@ import EntityType from "./lib/types/EntityType.ts";
 
 import EntitySelector from "./components/EntitySelector.vue";
 import Button from "./components/Button.vue";
+import ConnectionInterfaceType from "./lib/types/ConnectionInterfaceType.ts";
 
 interface Editor {
   setVueCallback: (callback: (context: any) => void) => void;
@@ -18,7 +19,7 @@ interface Editor {
   setSelectedIndividual: (property: EntityType) => void;
   undo: () => void;
   redo: () => void;
-  exportConnections: () => any; //[{ id: string, label: string, inputs:  }];
+  exportConnections: () => ConnectionInterfaceType[];
 }
 
 const editor = ref<Editor>();  // Define the type of editor as Promise<Editor> | null
@@ -48,6 +49,7 @@ const mockProperties = [
   {id: "P141", label: "Vater"},
   {id: "P31", label: "Property 31"},
   {id: "P279", label: "Property 279"},
+  {id: "P2", label: "Instanz von"},
 ];
 
 const mockIndividuals = [
@@ -55,6 +57,8 @@ const mockIndividuals = [
   {id: "Q21880", label: "Universität Jena"},
   {id: "Q5879", label: "Johann Wolfgang von Goethe"},
   {id: "Q123", label: "Individual 123"},
+  {id: "Q5", label: "Natürliche Person"},
+  {id: "Q6", label: "Juristische Person"}
 ]
 </script>
 
@@ -63,6 +67,11 @@ const mockIndividuals = [
     <div class="place-items-center bg-white px-6 pb-24 pt-12 sm:pb-2 sm:pt-12 lg:px-8"
          style="">
       <div class="text-3xl text-center mb-10 font-bold">Query by Graph</div>
+      <p class="text-center font-medium text-gray-500 text-sm mb-6" style="min-width: 250px !important; padding: 0 30% 0 30%;">
+        This programm allows you to build a SPARQL query using visual elements.
+        Press RMB on the canvas to create a new individual and LMB on an individual's socket to create a connection.
+        You can delete an individual by pressing RMB on it.
+      </p>
       <div class="flex w-full bg-amber-100 rounded-2xl" style="">
         <div class="w-4/5 bg-amber-50">
           <h2 class="text-xl font-semibold bg-amber-100 rounded-tl-2xl p-4">
@@ -190,7 +199,7 @@ const mockIndividuals = [
     </div>
     <div>
       <!-- Footer -->
-      <div class="text-center text-gray-600 text-sm">
+      <div class="text-center text-gray-600 text-sm mb-2">
         <p>
           <a class="underline" href="https://github.com/HerrMotz/bachelor-thesis/">Repository</a> &middot;
           Made with ❤️ by <a class="underline" href="https://www.daniel-motz.de">Daniel Motz</a>
