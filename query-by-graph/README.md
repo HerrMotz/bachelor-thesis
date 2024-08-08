@@ -109,6 +109,13 @@ against a SPARQL endpoint.
 - [x] Multiple outputs/inputs
 - [ ] Export/Import
 
+
+- [ ] Prefixing 
+- [ ] also for multiple datbases
+
+
+- [ ] Explain what is being done in the UI
+
 ## Might-Do
 - [ ] Fix, that disconnecting a connection relabels it with the currently selected property
 - [ ] Should I allow duplicate individuals?

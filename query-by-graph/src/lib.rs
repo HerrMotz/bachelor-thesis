@@ -5,6 +5,8 @@ use serde_json::from_str;
 use serde::Deserialize;
 use crate::utils::set_panic_hook;
 
+const INDENTATION_COUNT:usize = 4;
+
 #[wasm_bindgen]
 extern "C" {
     fn alert(s: &str);
@@ -18,16 +20,16 @@ pub fn greet(name: &str) -> String {
 }
 
 #[derive(Deserialize)]
-struct Property {
+struct Entity {
     pub id: String,
     pub label: String,
 }
 
 #[derive(Deserialize)]
 struct Connection {
-    pub property: Property,
-    pub source: String,
-    pub target: String,
+    pub property: Entity,
+    pub source: Entity,
+    pub target: Entity,
 }
 
 // wasm method, to get a string containing a JSON, which converts it to Connection
@@ -47,9 +49,10 @@ fn graph_to_query(connections: Vec<Connection>) -> String {
 
     for connection in connections {
         sparql.push_str(&format!(
-            "wd:{} wdt:{} wd:{} . // {} {}\n",
-            connection.source, connection.property.id, connection.target,
-            connection.property.id, connection.property.label
+            "{}wd:{} wdt:{} wd:{} . // {} -- {} -> {}\n",
+            " ".repeat(INDENTATION_COUNT),
+            connection.source.id, connection.property.id, connection.source.id,
+            connection.source.label, connection.property.label, connection.target.label
         ));
     }
 
