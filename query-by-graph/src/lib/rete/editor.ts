@@ -162,7 +162,9 @@ export async function createEditor(container: HTMLElement) {
 
     // LCNU: this ensures, that after entering text, the node label is updated
     if (lastChangedNode) {
-      area.update("node", lastChangedNode);
+      // TODO: Problem is, that I cannot export the connections on each browser event. It uses too much
+      //  resources. There has to be away to intelligently update only when necessary.
+      await area.update("node", lastChangedNode);
       lastChangedNode = "";
     }
 
@@ -223,7 +225,6 @@ export async function createEditor(container: HTMLElement) {
           node.addControl(
               "name",
               new SparqlVariableInputControl({
-                title: "Variable Name",
                 initial: selectedIndividual?.id.slice(1),
                 change(value) {
                   node.setEntity({
