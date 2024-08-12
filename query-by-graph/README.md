@@ -88,15 +88,16 @@ against a SPARQL endpoint.
 
 ### Feature List
 
-| Feature                                                         | Description                                                                | Implemented |
-|-----------------------------------------------------------------|----------------------------------------------------------------------------|-------------|
-| Tracing connectivity between points in the visual query builder | https://jsplumbtoolkit.com/demonstrations/paths                            | No          |
-| Building SPARQL SELECT queries                                  | with arbitrary properties                                                  | No          |
-| Running SPARQL queries                                          | against a SPARQL endpoint                                                  | No          |
-| Displaying the results of the SPARQL query                      | in a table                                                                 | No          |
-| Saving and loading queries                                      | to and from the local storage                                              | No          |
-| Exporting the query                                             | as a SPARQL query text                                                     | No          |
-| Checking that a query makes sense                               | Maybe checking with LLMs, whether a property makes sense for an individual | No          |
+| Feature                                                     | Description                                                                                                      | Implemented |
+|-------------------------------------------------------------|------------------------------------------------------------------------------------------------------------------|-------------|
+| Building SPARQL SELECT queries                              | with arbitrary properties                                                                                        | Yes         |
+| Adding Label Service statements                             | e.g. SERVICE wikibase:label { bd:serviceParam wikibase:language "[AUTO_LANGUAGE],en". }                          | No          |
+| Running SPARQL queries                                      | against a SPARQL endpoint                                                                                        | No          |
+| Displaying the results of the SPARQL query                  | in a table                                                                                                       | No          |
+| Exporting/Saving and Importing/Loading queries              | making the box below the visual builder editable, rebuild visual query from the entered contents                 | No          |
+| Running queries in the background and return COUNT(results) | https://blog.factgrid.de/wp-content/uploads/2022/04/Mitglieder-der-Illuminaten-und-Regionsverteilung-768x411.png | No          |
+| Translate SPARQL Query to natural language                  | [like here](https://blog.factgrid.de/wp-content/uploads/2022/04/Ausbildung-der-Vater-der-Jena-Studenten.png)     | No          |
+| Qualifiers                                                  | [like here](https://blog.factgrid.de/wp-content/uploads/2022/04/Jena-Studium-von-bis-768x443.png)                | No          |
 
 ### Graph Legend
 
@@ -113,17 +114,17 @@ against a SPARQL endpoint.
 - [x] Directed properties/edges
 - [ ] Think of a way to recommend available properties to the user
 - [ ] Build this property recommending tool
-- [ ] Build a SPARQL select query
+- [x] Build a SPARQL select query
 - [x] SPARQL syntax highlighter
 - [x] Multiple outputs/inputs
 - [ ] Export/Import
 
 
 - [ ] Prefixing
-- [ ] also for multiple datbases
+- [ ] also for multiple databases
 
 
-- [ ] Explain what is being done in the UI
+- [ ] Explain the UI with hints
 
 ## Might-Do
 
