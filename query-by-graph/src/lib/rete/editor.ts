@@ -134,6 +134,8 @@ export async function createEditor(container: HTMLElement) {
         console.log(data.payload);
         return CustomNode;
       },
+      // TODO use custom input control with data validation
+      //  e.g. no spaces, no special characters, etc.
       // control(data) {
       //   console.log("Control payload")
       //   console.log(data.payload);
