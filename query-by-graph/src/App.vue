@@ -71,13 +71,13 @@ const mockIndividuals = [
          style="">
       <div class="text-3xl text-center mb-10 font-bold">Query by Graph</div>
       <p class="text-center font-medium text-gray-500 text-sm mb-6" style="min-width: 250px !important; padding: 0 30% 0 30%;">
-        This programm allows you to build a SPARQL query using visual elements.
+        This program allows you to build a SPARQL query using visual elements.
         Press RMB on the canvas to create a new individual and LMB on an individual's socket to create a connection.
         You can delete an individual by pressing RMB on it.
       </p>
       <div class="flex w-full bg-amber-100 rounded-2xl" style="">
-        <div class="w-4/5 bg-amber-50">
-          <h2 class="text-xl font-semibold bg-amber-100 rounded-tl-2xl p-4">
+        <div class="w-4/5 bg-amber-50 rounded-tl-2xl">
+          <h2 class="text-xl font-semibold bg-amber-100 p-4">
             <!-- This has the same propeties as the toolbox heading -->
             Visual Query Builder
             <span class="text-sm ml-2 font-medium">
@@ -86,8 +86,8 @@ const mockIndividuals = [
           </h2>
           <div ref="rete" class="h-full"></div>
         </div>
-        <div v-if="editor" class="w-1/5 overflow-auto" style="max-height: 60vh;">
-          <h2 class="text-xl font-semibold bg-amber-200 rounded-tr-2xl p-4">
+        <div v-if="editor" class="w-1/5 overflow-auto rounded-tr-2xl" style="max-height: 60vh;">
+          <h2 class="text-xl font-semibold bg-amber-200 p-4">
             Toolbox
             <span class="text-sm ml-2 font-medium">
               Perform actions on the graph
