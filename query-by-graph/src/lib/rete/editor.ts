@@ -17,6 +17,7 @@ import CustomInputControl from "../../components/CustomInputControl.vue";
 import {removeNodeWithConnections} from "./utils.ts";
 import EntityType from "../types/EntityType.ts";
 import ConnectionInterfaceType from "../types/ConnectionInterfaceType.ts";
+import CustomNode from "../../components/CustomNode.vue";
 
 // Each connection holds additional data, which is defined here
 class Connection extends ClassicPreset.Connection<
@@ -55,15 +56,6 @@ declare type InputControlOptions<N> = {
   change?: (value: N) => void;
 };
 
-class VariableNode extends ClassicPreset.Node<
-    Record<string, ClassicPreset.Socket>,
-    Record<string, ClassicPreset.Socket>,
-    Record<
-        string,
-        | SparqlVariableInputControl
-    >
-> {}
-
 class SparqlVariableInputControl extends ClassicPreset.InputControl<"text", string> {
   constructor(public options: InputControlOptions<string>) {
     super("text", options);
@@ -73,6 +65,8 @@ class SparqlVariableInputControl extends ClassicPreset.InputControl<"text", stri
 
 type Schemes = GetSchemes<Node, Connection>;
 type AreaExtra = VueArea2D<Schemes>;
+
+let lastChangedNode = "";
 
 export async function createEditor(container: HTMLElement) {
   const socket = new ClassicPreset.Socket("socket");
@@ -135,11 +129,18 @@ export async function createEditor(container: HTMLElement) {
 
   render.addPreset(Presets.classic.setup({
     customize: {
-      control(data) {
-        if (data.payload instanceof SparqlVariableInputControl) {
-          return CustomInputControl;
-        }
+      node(data) {
+        console.log("Node payload")
+        console.log(data.payload);
+        return CustomNode;
       },
+      // control(data) {
+      //   console.log("Control payload")
+      //   console.log(data.payload);
+      //   if (data.payload instanceof SparqlVariableInputControl) {
+      //     return CustomInputControl;
+      //   }
+      // },
       connection() {
         return SelectableConnectionBind;
       }
@@ -156,6 +157,13 @@ export async function createEditor(container: HTMLElement) {
   connection.addPreset(ConnectionPresets.classic.setup());
 
   area.addPipe(async (context) => {
+
+    // LCNU: this ensures, that after entering text, the node label is updated
+    if (lastChangedNode) {
+      area.update("node", lastChangedNode);
+      lastChangedNode = "";
+    }
+
     if (context.type === "contextmenu") {
       const source = context.data.context;
       const event = context.data.event;
@@ -186,7 +194,7 @@ export async function createEditor(container: HTMLElement) {
           } else {
             selectedIndividual.id = "?" + (highestId + 1);
           }
-          displayLabel = "?" // only show "?" in the editor view
+          displayLabel = selectedIndividual.id;
           isVariableNode = true;
 
         } else {
@@ -213,14 +221,16 @@ export async function createEditor(container: HTMLElement) {
           node.addControl(
               "name",
               new SparqlVariableInputControl({
+                title: "Variable Name",
                 initial: selectedIndividual?.id.slice(1),
                 change(value) {
                   node.setEntity({
                     id: "?" + value,
                     label: "Variable"
                   })
-                  node.label = "?" + value; // this updates the node label, but never shows the change to the user.
-                  // area.update("node", node.id);
+                  node.label = "?" + value;
+                  // GOTO LCNU for more info on the next line
+                  lastChangedNode = node.id;
                 },
               })
           );
