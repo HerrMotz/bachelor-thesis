@@ -13,6 +13,7 @@ import {
 import {VuePlugin, Presets, VueArea2D} from "rete-vue-plugin";
 import {h} from "vue";
 import CustomConnection from "../../components/CustomConnection.vue";
+import CustomInputControl from "../../components/CustomInputControl.vue";
 import {removeNodeWithConnections} from "./utils.ts";
 import EntityType from "../types/EntityType.ts";
 import ConnectionInterfaceType from "../types/ConnectionInterfaceType.ts";
@@ -31,10 +32,34 @@ class Connection extends ClassicPreset.Connection<
 class Node extends ClassicPreset.Node {
   entity: EntityType;
 
-  constructor(public label: string, public entty: EntityType) {
+  constructor(public label: string, public e: EntityType) {
     super(label);
-    this.entity = entty;
+    this.entity = e;
   }
+
+  setEntity(entity: EntityType) {
+    this.entity = entity;
+  }
+
+  getEntity() {
+    return this.entity;
+  }
+}
+
+declare type InputControlOptions<N> = {
+  /** Whether the control is readonly. Default is `false` */
+  readonly?: boolean;
+  /** Initial value of the control */
+  initial?: N;
+  /** Callback function that is called when the control value changes */
+  change?: (value: N) => void;
+};
+
+class SparqlVariableInputControl extends ClassicPreset.InputControl<"text", string> {
+  constructor(public options: InputControlOptions<string>) {
+    super("text", options);
+  }
+
 }
 
 type Schemes = GetSchemes<Node, Connection>;
@@ -101,6 +126,11 @@ export async function createEditor(container: HTMLElement) {
 
   render.addPreset(Presets.classic.setup({
     customize: {
+      control(data) {
+        if (data.payload instanceof SparqlVariableInputControl) {
+          return CustomInputControl;
+        }
+      },
       connection() {
         return SelectableConnectionBind;
       }
@@ -123,31 +153,37 @@ export async function createEditor(container: HTMLElement) {
       event.preventDefault();
       event.stopPropagation();
 
-      if (source === "root") {
+      if (source === "root") { // add a new node
         console.log("Add node")
 
-        let editorLabel: string; // this is the label the node will get in the visual editor
+        let displayLabel: string; // this is the label the node will get in the visual editor
+        let isVariableNode = false;
 
         // check if it is a variable individual
         // if so, find the highest variable id, increment it by one and assign
         // it to the "to be created"-node
         if (selectedIndividual?.id.startsWith("?")) {
+          // this means it is a variable
           const highestId = editor.getNodes()
-            .filter(n => n.label.startsWith("?"))
+            .filter(n => n.getEntity().id.startsWith("?"))
+            .map(n => parseInt(n.getEntity().id.slice(1)))
+            .filter(n => !isNaN(n))
             .sort()
             .reverse()[0];
 
-          // hacky way to make the node instantiation in line 159 use the correct id
+          // hacky way to make the node instantiation in line (+19) use the correct label, id
           if (!highestId) {
             selectedIndividual.id = "?1";
           } else {
-            selectedIndividual.id = "?" + (parseInt(highestId.label.slice(1)) + 1);
+            selectedIndividual.id = "?" + (highestId + 1);
           }
-          editorLabel = selectedIndividual.id
+          displayLabel = "?" // only show "?" in the editor view
+          isVariableNode = true;
 
         } else {
-          editorLabel = (selectedIndividual?.id || "No ID") + ", " + (selectedIndividual?.label || "No Label")
-          const exists = editor.getNodes().find(n => n.label === editorLabel);
+          displayLabel = (selectedIndividual?.id || "No ID") + ", " + (selectedIndividual?.label || "No Label")
+          const exists = editor.getNodes().find(n => n.label === displayLabel);
+
           if (exists) {
             console.log("Node already exists", exists.id);
             alert("This individual already exists. Please reuse the existing individual.");
@@ -155,20 +191,43 @@ export async function createEditor(container: HTMLElement) {
           }
         }
 
-        const node = new Node(editorLabel, {
+        // at this point selectedIndividual.{id,label} contain the correct information
+        // but a variable node should have a label with only "?" and the
+        // input control should hold the text after the "?"
+
+        const node = new Node(displayLabel, {
           id: selectedIndividual?.id || "No ID",
           label: selectedIndividual?.label || "No Label"
         });
+
+        if (isVariableNode) {
+          node.addControl(
+              "name",
+              new SparqlVariableInputControl({
+                initial: selectedIndividual?.id.slice(1),
+                change(value) {
+                  node.setEntity({
+                    id: "?" + value,
+                    label: "Variable"
+                  })
+                  node.label = "?" + value; // this updates the node label, but never shows the change to the user.
+                  // area.update("node", node.id);
+                },
+              })
+          );
+        }
 
         console.log("Node", node.entity);
 
         node.addInput("i0", new ClassicPreset.Input(socket, "", true));
         node.addOutput("o0", new ClassicPreset.Output(socket, "", true));
+
         await editor.addNode(node);
         area.area.setPointerFrom(event);
 
         await area.translate(node.id, area.area.pointer);
-      } else if (source instanceof ClassicPreset.Node) {
+
+      } else if (source instanceof ClassicPreset.Node) { // remove existing ndoe
         console.log("Remove node", source.id);
         for (const c of editor
           .getConnections()
