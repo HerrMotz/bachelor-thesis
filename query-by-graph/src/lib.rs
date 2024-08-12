@@ -45,6 +45,10 @@ pub fn graph_to_query_wasm(json: &str) -> String {
 }
 
 fn graph_to_query(connections: Vec<Connection>) -> String {
+    if connections.len() == 0 {
+        return String::new();
+    }
+
     // Collect sources and targets whose id starts with a question mark
     let mut filtered_sources = HashSet::new();
     let mut filtered_targets = HashSet::new();
