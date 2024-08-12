@@ -5,7 +5,7 @@
     <g>
       <!-- This positions the label -->
       <rect :x="centerX" :y="centerY" :width="rectLength" height="40" fill="white" stroke="black"></rect>
-      <text :x="centerX+12" :y="centerY+25" ref="textElement" class="font-mono">{{boxText}}</text>
+      <text :x="centerX+12" :y="centerY+25" ref="textElement" fill="black" class="font-mono">{{boxText}}</text>
     </g>
   </svg>
 </template>
