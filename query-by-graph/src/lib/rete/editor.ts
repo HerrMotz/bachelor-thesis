@@ -77,7 +77,6 @@ export async function createEditor(container: HTMLElement) {
     return h(CustomConnection, {
       ...props, onClick: () => {
         console.log("Selected connection", id)
-        console.log("accumulate", accumulating.active())
         selector.add(
           {
             id,
@@ -145,7 +144,6 @@ export async function createEditor(container: HTMLElement) {
             selectedIndividual.id = "?" + (parseInt(highestId.label.slice(1)) + 1);
           }
           editorLabel = selectedIndividual.id
-          console.log("HERE", selectedIndividual.id);
 
         } else {
           editorLabel = (selectedIndividual?.id || "No ID") + ", " + (selectedIndividual?.label || "No Label")
@@ -157,7 +155,6 @@ export async function createEditor(container: HTMLElement) {
           }
         }
 
-        console.log("HERE 2", selectedIndividual?.id, selectedIndividual?.label);
         const node = new Node(editorLabel, {
           id: selectedIndividual?.id || "No ID",
           label: selectedIndividual?.label || "No Label"
