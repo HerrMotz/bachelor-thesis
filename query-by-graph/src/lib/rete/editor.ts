@@ -55,6 +55,15 @@ declare type InputControlOptions<N> = {
   change?: (value: N) => void;
 };
 
+class VariableNode extends ClassicPreset.Node<
+    Record<string, ClassicPreset.Socket>,
+    Record<string, ClassicPreset.Socket>,
+    Record<
+        string,
+        | SparqlVariableInputControl
+    >
+> {}
+
 class SparqlVariableInputControl extends ClassicPreset.InputControl<"text", string> {
   constructor(public options: InputControlOptions<string>) {
     super("text", options);
@@ -227,7 +236,7 @@ export async function createEditor(container: HTMLElement) {
 
         await area.translate(node.id, area.area.pointer);
 
-      } else if (source instanceof ClassicPreset.Node) { // remove existing ndoe
+      } else if (source instanceof ClassicPreset.Node) { // remove existing node
         console.log("Remove node", source.id);
         for (const c of editor
           .getConnections()
