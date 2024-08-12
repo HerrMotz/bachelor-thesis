@@ -84,7 +84,7 @@ const mockIndividuals = [
               Each Box is a SPARQL-Individual and each Connection between them is a SPARQL-Property
             </span>
           </h2>
-          <div ref="rete" style="height: calc(100% - 3.75rem);"></div>
+          <div ref="rete" class="h-full"></div>
         </div>
         <div v-if="editor" class="w-1/5 overflow-auto" style="max-height: 60vh;">
           <h2 class="text-xl font-semibold bg-amber-200 rounded-tr-2xl p-4">
