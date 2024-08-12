@@ -49,14 +49,14 @@ fn graph_to_query(connections: Vec<Connection>) -> String {
     let mut filtered_sources = HashSet::new();
     let mut filtered_targets = HashSet::new();
 
-    let mut where_clause:String;
+    let mut where_clause = String::new(); // Properly initialize the where_clause
 
     for connection in connections {
         if connection.source.id.starts_with('?') {
-            filtered_sources.insert(&connection.source.id);
+            filtered_sources.insert(connection.source.id.clone());
         }
         if connection.target.id.starts_with('?') {
-            filtered_targets.insert(&connection.target.id);
+            filtered_targets.insert(connection.target.id.clone());
         }
 
         where_clause.push_str(&format!(
@@ -69,10 +69,11 @@ fn graph_to_query(connections: Vec<Connection>) -> String {
 
     filtered_sources.extend(filtered_targets);
 
-    let concatenated_string = filtered_sources.iter().join(", ");
+    let concatenated_string = filtered_sources.iter().cloned().collect::<Vec<_>>().join(", ");
 
     format!(
         "PREFIX : <http://example.org/>\nSELECT {} WHERE {{\n{}\n}}",
         concatenated_string, where_clause
     )
 }
+
