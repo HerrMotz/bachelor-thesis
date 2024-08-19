@@ -110,6 +110,7 @@ against a SPARQL endpoint.
 - [x] Inject custom data into the custom connection component
 - [x] Make the connections selectable and deletable
 - [x] Adding and deleting individuals
+- [x] Variable Properties
 - [x] Adding variable individuals
 - [x] Directed properties/edges
 - [ ] Think of a way to recommend available properties to the user
@@ -118,7 +119,6 @@ against a SPARQL endpoint.
 - [x] SPARQL syntax highlighter
 - [x] Multiple outputs/inputs
 - [ ] Export/Import
-- [ ] Variable Properties
 
 
 - [ ] Prefixing
