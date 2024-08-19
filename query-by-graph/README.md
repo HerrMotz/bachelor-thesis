@@ -113,6 +113,7 @@ against a SPARQL endpoint.
 - [x] Variable Properties
 - [x] Adding variable individuals
 - [x] Directed properties/edges
+- [ ] Connect constant strings using properties (e.g. given name = "Goethe")
 - [ ] Think of a way to recommend available properties to the user
 - [ ] Build this property recommending tool
 - [x] Build a SPARQL select query
