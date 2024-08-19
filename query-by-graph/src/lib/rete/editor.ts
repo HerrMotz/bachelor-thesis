@@ -13,7 +13,6 @@ import {
 import {VuePlugin, Presets, VueArea2D} from "rete-vue-plugin";
 import {h} from "vue";
 import CustomConnection from "../../components/CustomConnection.vue";
-import CustomInputControl from "../../components/CustomInputControl.vue";
 import {removeNodeWithConnections} from "./utils.ts";
 import EntityType from "../types/EntityType.ts";
 import ConnectionInterfaceType from "../types/ConnectionInterfaceType.ts";
@@ -88,15 +87,38 @@ export async function createEditor(container: HTMLElement) {
   let selectedProperty: EntityType | null = null;
   let selectedIndividual: EntityType | null = null;
 
+  function getHighestVariableId() {
+    const highestNodeId = editor.getNodes()
+      .filter(n => n.getEntity().id.startsWith("?"))
+      .map(n => parseInt(n.getEntity().id.slice(1)))
+      .filter(n => !isNaN(n))
+      .sort()
+      .reverse()[0];
+
+    const highestPropId = editor.getConnections()
+      .filter(c => c.property!.id.startsWith("?"))
+      .map(c => parseInt(c.property!.id.slice(1)))
+      .filter(c => !isNaN(c))
+      .sort()
+      .reverse()[0];
+
+    return Math.max(highestNodeId || 0, highestPropId || 0);
+  }
+
   function SelectableConnectionBind(props: { data: Schemes["Connection"] }) {
     const id = props.data.id;
 
-    // TODO keep the existing properties
-    //  this is a "might do" feature
     props.data.property = {
       id: selectedProperty?.id || "No ID",
       label: selectedProperty?.label || "No Label",
     };
+
+    if (selectedIndividual?.id.startsWith("?")) {
+      const highestId = getHighestVariableId();
+
+      props.data.property.id = highestId ? "?" + (highestId + 1) : "?1";
+    }
+
 
     const label = "connection";
 
@@ -184,13 +206,7 @@ export async function createEditor(container: HTMLElement) {
         // if so, find the highest variable id, increment it by one and assign
         // it to the "to be created"-node
         if (selectedIndividual?.id.startsWith("?")) {
-          // this means it is a variable
-          const highestId = editor.getNodes()
-            .filter(n => n.getEntity().id.startsWith("?"))
-            .map(n => parseInt(n.getEntity().id.slice(1)))
-            .filter(n => !isNaN(n))
-            .sort()
-            .reverse()[0];
+          const highestId = getHighestVariableId();
 
           // hacky way to make the node instantiation in line (+19) use the correct label, id
           if (!highestId) {

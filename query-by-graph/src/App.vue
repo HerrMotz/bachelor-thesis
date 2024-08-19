@@ -48,6 +48,7 @@ const copyToClipboard = () => {
 
 // mock property numbers array like P160, P141, etc.
 const mockProperties = [
+  {id: "?", label: "Variable Property"},
   {id: "P160", label: "Ausbildende Institution"},
   {id: "P141", label: "Vater"},
   {id: "P31", label: "Property 31"},
