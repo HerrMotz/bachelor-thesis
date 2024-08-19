@@ -118,6 +118,7 @@ against a SPARQL endpoint.
 - [x] SPARQL syntax highlighter
 - [x] Multiple outputs/inputs
 - [ ] Export/Import
+- [ ] Variable Properties
 
 
 - [ ] Prefixing

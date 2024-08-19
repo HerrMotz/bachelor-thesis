@@ -45,39 +45,31 @@ pub fn graph_to_query_wasm(json: &str) -> String {
 }
 
 fn graph_to_query(connections: Vec<Connection>) -> String {
-    if connections.len() == 0 {
-        return String::new();
-    }
 
-    // Collect sources and targets whose id starts with a question mark
-    let mut filtered_sources = HashSet::new();
-    let mut filtered_targets = HashSet::new();
+    let projection_list = connections.iter()
+        .flat_map(|connection| {
+            vec![&connection.source, &connection.target, &connection.property]
+        })
+        .filter(|entity| entity.id.starts_with('?'))
+        .map(|entity| entity.id.clone())
+        .collect::<HashSet<_>>()
+        .into_iter()
+        .collect::<Vec<_>>()
+        .join(", ");
 
-    let mut where_clause = String::new(); // Properly initialize the where_clause
-
-    for connection in connections {
-        if connection.source.id.starts_with('?') {
-            filtered_sources.insert(connection.source.id.clone());
-        }
-        if connection.target.id.starts_with('?') {
-            filtered_targets.insert(connection.target.id.clone());
-        }
-
-        where_clause.push_str(&format!(
-            "{}wd:{} wdt:{} wd:{} . # {} -- {} -> {}\n",
-            " ".repeat(INDENTATION_COUNT),
-            connection.source.id, connection.property.id, connection.target.id,
-            connection.source.label, connection.property.label, connection.target.label
-        ));
-    }
-
-    filtered_sources.extend(filtered_targets);
-
-    let concatenated_string = filtered_sources.iter().cloned().collect::<Vec<_>>().join(", ");
+    let where_clause: String = connections.iter()
+        .map(|connection| {
+            format!(
+                "{}wd:{} wdt:{} wd:{} . # {} -- {} -> {}\n",
+                " ".repeat(INDENTATION_COUNT),
+                connection.source.id, connection.property.id, connection.target.id,
+                connection.source.label, connection.property.label, connection.target.label
+            )
+        })
+        .collect();
 
     format!(
         "PREFIX : <http://example.org/>\nSELECT {} WHERE {{\n{}\n}}",
-        concatenated_string, where_clause
+        projection_list, where_clause
     )
 }
-
