@@ -9,6 +9,8 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@headlessui/vue": "^1.7.22",
+    "axios": "^1.7.4",
     "highlight.js": "^11.10.0",
     "rete": "^2.0.3",
     "rete-area-plugin": "^2.0.4",
