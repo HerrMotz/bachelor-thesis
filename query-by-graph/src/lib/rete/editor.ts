@@ -237,24 +237,6 @@ export async function createEditor(container: HTMLElement) {
           label: selectedIndividual?.label || "No Label"
         });
 
-        if (isVariableNode) {
-          node.addControl(
-              "name",
-              new SparqlVariableInputControl({
-                initial: selectedIndividual?.id.slice(1),
-                change(value) {
-                  node.setEntity({
-                    id: "?" + value,
-                    label: "Variable"
-                  })
-                  node.label = "?" + value;
-                  // GOTO LCNU for more info on the next line
-                  lastChangedNode = node.id;
-                },
-              })
-          );
-        }
-
         console.log("Node", node.entity);
 
         node.addInput("i0", new ClassicPreset.Input(socket, "", true));
