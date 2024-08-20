@@ -177,7 +177,7 @@ const mockIndividuals = [
           <!-- This has the same propeties as the toolbox heading -->
           Generated SPARQL Query
           <span class="text-sm ml-2 font-medium">
-              This contains the generated SPARQL code from above. It is updated with every change above.
+              This contains the generated SPARQL code. It is updated with every change in the editor.
           </span>
         </h2>
         <div class="bg-amber-50 flex w-full flex-row">
