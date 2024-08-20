@@ -1,8 +1,9 @@
 <script setup lang="ts">
-import {queryWikidata, WikiDataEntity, WikiDataApiResponse} from "../lib/wikidata/dataService.ts";
+import {queryWikidata, WikiDataEntity, WikiDataApiResponse} from "../lib/wikidata/queryDataService.ts";
 
 const props = defineProps({
-  language: {type: String, required: true}
+  language: {type: String, required: true},
+  type: {type: String, required: true}, // will be passed to the wikidata query, can be e.g. "item" or "property"
 });
 
 // my local data type contains an ID and a label
@@ -36,8 +37,12 @@ const selectedEntity = ref(variableEntity);
 emit("selectedEntity", variableEntity);
 
 function queryHelper(query: string) {
-  queryWikidata({ language: props.language, uselang: props.language, search: query })
-      .then((data: WikiDataApiResponse) => {
+  queryWikidata({
+    language: props.language,
+    uselang: props.language,
+    type: props.type,
+    search: query
+  }).then((data: WikiDataApiResponse) => {
     queriedEntities.value = data.search.map((entity: WikiDataEntity) => {
       return { id: entity.id, label: entity.display.label.value, description: entity.display.description.value }
     }).concat([variableEntity]);
@@ -47,6 +52,7 @@ function queryHelper(query: string) {
 }
 
 function eventEmitEntityHelper(entity: { id: string, label: string, description: string}) {
+  console.log("Emit event");
   selectedEntity.value = entity;
   emit('selectedEntity', entity);
 }

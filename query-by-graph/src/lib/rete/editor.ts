@@ -113,7 +113,7 @@ export async function createEditor(container: HTMLElement) {
       label: selectedProperty?.label || "No Label",
     };
 
-    if (selectedIndividual?.id.startsWith("?")) {
+    if (selectedProperty?.id.startsWith("?")) {
       const highestId = getHighestVariableId();
 
       props.data.property.id = highestId ? "?" + (highestId + 1) : "?1";
@@ -313,7 +313,7 @@ export async function createEditor(container: HTMLElement) {
       selectedProperty = property
     },
     setSelectedIndividual: (individual: EntityType) => {
-      selectedIndividual = individual
+      selectedIndividual = individual;
     },
     undo: () => history.undo(),
     redo: () => history.redo(),

@@ -45,22 +45,23 @@ pub fn graph_to_query_wasm(json: &str) -> String {
 }
 
 fn graph_to_query(connections: Vec<Connection>) -> String {
+    let projection_set = connections.iter()
+                                 .flat_map(|connection| {
+                                     vec![&connection.source, &connection.target, &connection.property]
+                                 })
+                                 .filter(|entity| entity.id.starts_with('?'))
+                                 .map(|entity| entity.id.clone())
+                                 .collect::<HashSet<_>>();
 
-    let projection_list = connections.iter()
-        .flat_map(|connection| {
-            vec![&connection.source, &connection.target, &connection.property]
-        })
-        .filter(|entity| entity.id.starts_with('?'))
-        .map(|entity| entity.id.clone())
-        .collect::<HashSet<_>>()
-        .into_iter()
+    let projection_list = if projection_set.len() == 0 { String::from("*") } else {
+        projection_set.into_iter()
         .collect::<Vec<_>>()
-        .join(", ");
+        .join(", ")};
 
     let where_clause: String = connections.iter()
         .map(|connection| {
             format!(
-                "{}wd:{} wdt:{} wd:{} . # {} -- {} -> {}\n",
+                "{}wd:{} wdt:{} wd:{} . # {} -- [{}] -> {}\n",
                 " ".repeat(INDENTATION_COUNT),
                 connection.source.id, connection.property.id, connection.target.id,
                 connection.source.label, connection.property.label, connection.target.label
