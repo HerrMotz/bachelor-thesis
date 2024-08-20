@@ -62,7 +62,7 @@ function eventEmitEntityHelper(entity: { id: string, label: string, description:
   <div>
     <h4 class=""><slot></slot></h4>
     <Combobox as="div" :model-value="selectedEntity" @update:modelValue="($event) => eventEmitEntityHelper($event)">
-      <ComboboxLabel class="block text-sm font-medium leading-6 text-gray-900">Assigned to</ComboboxLabel>
+      <ComboboxLabel class="block text-sm font-medium leading-6 text-gray-900"></ComboboxLabel>
       <div class="relative mt-2">
         <ComboboxInput class="w-full rounded-md border-0 bg-white py-1.5 pl-3 pr-12 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6" @change="queryHelper($event.target.value)" @blur="queryHelper('')" :display-value="(entity) => entity?.label" />
         <ComboboxButton class="absolute inset-y-0 right-0 flex items-center rounded-r-md px-2 focus:outline-none">
