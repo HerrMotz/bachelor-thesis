@@ -122,8 +122,9 @@ const mockIndividuals = [
 
             <div class="flex-col flex gap-2">
               <h4 class="font-semibold">Create Individual</h4>
-              <EntitySelector language="en" :entities="mockIndividuals" @selected-entity="(prop: EntityType) => { // why the hell is this necessary in TypeScript with Vue3 D':
+              <EntitySelector language="en" type="item" :entities="mockIndividuals" @selected-entity="(prop: EntityType) => { // why the hell is this necessary in TypeScript with Vue3 D':
                 if (editor) {
+                  console.log('Parent Container');
                   editor.setSelectedIndividual(prop);
                 }
               }" class="bg-amber-300 rounded-2xl p-2">
@@ -138,7 +139,7 @@ const mockIndividuals = [
 
             <div class="flex-col flex gap-2">
               <h4 class="font-semibold">Create connection</h4>
-              <EntitySelector language="en" :entities="mockProperties" @selected-entity="(prop: EntityType) => { // why the hell is this necessary in TypeScript with Vue3 D':
+              <EntitySelector language="en" type="property" :entities="mockProperties" @selected-entity="(prop: EntityType) => { // why the hell is this necessary in TypeScript with Vue3 D':
                 if (editor) {
                   editor.setSelectedProperty(prop);
                 }

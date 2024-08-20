@@ -40,7 +40,7 @@ function queryWikidata({
                          search = '',
                          language = 'en',
                          uselang = 'en',
-                         type = 'property',
+                         type = '',
                          format = 'json',
                          formatversion = 2,
                          errorformat = 'plaintext',
@@ -68,10 +68,10 @@ function queryWikidata({
 
   return axios.get(url, { params })
     .then(response => {
-      console.log(response.data);
       return response.data;
     })
     .catch(error => {
+      alert('Error while querying the WikiData API: ' + error);
       console.error('Error:', error);
     });
 }
