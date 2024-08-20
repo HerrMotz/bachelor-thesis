@@ -31,11 +31,15 @@ export default defineComponent({
   },
   computed: {
     boxText() {
-      return this.data.property.id + " - " + this.data.property.label;
+      return (this.data.property.label === "" || this.data.property.id.startsWith("?"))
+          ? this.data.property.id
+          : this.data.property.id + " - " + this.data.property.label;
     },
     rectLength() {
       if (!this.isMounted) {
         return 0;
+      } else if (this.boxText.length < 10) {
+        return this.$refs.textElement?.getBBox().width*2.3;
       } else {
         return this.$refs.textElement?.getBBox().width*1.1;
       }
