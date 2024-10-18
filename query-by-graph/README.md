@@ -121,6 +121,8 @@ against a SPARQL endpoint.
 - [x] Multiple outputs/inputs
 - [ ] Export/Import
 
+- [ ] Allow naming variables
+- [ ] Fix text box sizes
 
 - [ ] Prefixing
 - [ ] also for multiple databases
