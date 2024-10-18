@@ -119,7 +119,8 @@ against a SPARQL endpoint.
 - [x] Build a SPARQL select query
 - [x] SPARQL syntax highlighter
 - [x] Multiple outputs/inputs
-- [ ] Export/Import
+- [ ] Translate SPARQL to Graph
+- [ ] Make the text input editable
 - [ ] Visualise query results in a graph
 
 - [ ] Allow naming variables
