@@ -120,6 +120,7 @@ against a SPARQL endpoint.
 - [x] SPARQL syntax highlighter
 - [x] Multiple outputs/inputs
 - [ ] Export/Import
+- [ ] Visualise query results in a graph
 
 - [ ] Allow naming variables
 - [ ] Fix text box sizes
