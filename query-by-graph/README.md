@@ -123,6 +123,7 @@ against a SPARQL endpoint.
 
 - [ ] Allow naming variables
 - [ ] Fix text box sizes
+- [ ] Make heading more pointy
 
 - [ ] Prefixing
 - [ ] also for multiple databases
