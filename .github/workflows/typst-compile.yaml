@@ -12,12 +12,13 @@ jobs:
     steps:
     - name: Checkout Repository
       uses: actions/checkout@v4
-    - name: Compile Typst Files
-      uses: ammar-ahmed22/compile-typst-action@v1
+    - name: Insall Typst Compiler
+      uses: baptiste0928/cargo-install@v3
       with:
-        source_paths: './publication/main.typ'
-        output_paths: './publication/quebyg.pdf'
-        #fonts_path: 'path/to/fonts'
+        crate: typst
+        version: '^0.12' # You can specify any semver range
+    - name: Compile Typst
+      run: typst compile ./publication/main.typ ./publication/bt-query-by-graph.pdf
     - name: Upload Artifacts
       uses: actions/upload-artifact@v3
       with:
