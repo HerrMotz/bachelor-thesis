@@ -1,0 +1,32 @@
+name: Compile, Upload and Release Typst Documents
+on:
+  workflow_dispatch:
+  push:
+    tags:
+    - '**'
+permissions:
+  contents: write
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout Repository
+      uses: actions/checkout@v4
+    - name: Compile Typst Files
+      uses: ammar-ahmed22/compile-typst-action@v1
+      with:
+        source_paths: './publication/main.typ'
+        output_paths: './publication/quebyg.pdf'
+        #fonts_path: 'path/to/fonts'
+    - name: Upload Artifacts
+      uses: actions/upload-artifact@v3
+      with:
+        name: PDF
+        path: '**/*.pdf'
+    - name: Release on tag
+      uses: softprops/action-gh-release@v1
+      if: github.ref_type = 'tag'
+      with:
+        name: "${{ github.ref_name }}"
+        files: |
+          ./publication/quebyg.pdf
