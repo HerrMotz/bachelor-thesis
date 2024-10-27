@@ -1,0 +1,284 @@
+Vargas2019_RDF_Explorer:
+  type: article
+  title: "RDF Explorer: A Visual SPARQL Query Builder"
+  author:
+  - Vargas, Hernán
+  - Buil-Aranda, Carlos
+  - Hogan, Aidan
+  - López, Claudia
+  date: 2019
+  editor:
+  - Ghidini, Chiara
+  - Hartig, Olaf
+  - Maleshkova, Maria
+  - Svátek, Vojtěch
+  - Cruz, Isabel
+  - Hogan, Aidan
+  - Song, Jie
+  - Lefrançois, Maxime
+  - Gandon, Fabien
+  page-range: 647–663
+  serial-number:
+    isbn: 978-3-030-30793-6
+  abstract: Despite the growing popularity of knowledge graphs for managing diverse data at large scale, users who wish to pose expressive queries against such graphs are often expected to know (i) how to formulate queries in a language such as SPARQL, and (ii) how entities of interest are described in the graph. In this paper we propose a language that relaxes these expectations; the language's operators are based on an interactive graph-based exploration that allows non-expert users to simultaneously navigate and query knowledge graphs; we compare the expressivity of this language with SPARQL. We then discuss an implementation of this language that we call RDF Explorer and discuss various desirable properties it has, such as avoiding interactions that lead to empty results. Through a user study over the Wikidata knowledge-graph, we show that users successfully complete more tasks with RDF Explorer than with the existing Wikidata Query Helper, while a usability questionnaire demonstrates that users generally prefer our tool and self-report lower levels of frustration and mental effort.
+  parent:
+    type: proceedings
+    title: The Semantic Web – ISWC 2019
+    publisher: Springer International Publishing
+    location: Cham
+
+    
+KnowledgeGraphExplorationForLaypeople:
+  type: article
+  title: 'Knowledge Graph Exploration: A Usability Evaluation of Query Builders for Laypeople'
+  author:
+  - Kuric, Emil
+  - Fernández, Javier D.
+  - Drozd, Olha
+  date: 2019
+  editor:
+  - Acosta, Maribel
+  - Cudré-Mauroux, Philippe
+  - Maleshkova, Maria
+  - Pellegrini, Tassilo
+  - Sack, Harald
+  - Sure-Vetter, York
+  page-range: 326–342
+  serial-number:
+    isbn: 978-3-030-33220-4
+  abstract: SPARQL enables users to access and browse knowledge graphs in a precise way. However, using SPARQL requires knowledge that many casual users lack. To counter this, specific tools have been created that enable more casual users to browse and query results. This paper evaluates and compares the most prominent techniques, QueryVOWL, SPARKLIS and the Wikidata Query Service (WQS), through a usability evaluation, using a mixed-method evaluation based on usability metrics and heuristics, containing both quantitative and qualitative data. The findings show that while WQS achieved the best results, usability problems were encountered in all tools. Key aspects for usability, extracted from the evaluation, serve as important contributions for future query builders.
+  parent:
+    type: proceedings
+    title: Semantic Systems. The Power of AI and Knowledge Graphs
+    publisher: Springer International Publishing
+    location: Cham
+ConceptualNavigationInLargeKnowledgeGraphs:
+  type: chapter
+  title: Conceptual Navigation in Large Knowledge Graphs
+  author: Ferré, Sébastien
+  date: 2022
+  editor:
+  - Missaoui, Rokia
+  - Kwuida, Léonard
+  - Abdessalem, Talel
+  page-range: 17–45
+  url: https://doi.org/10.1007/978-3-030-93278-7_2
+  serial-number:
+    doi: 10.1007/978-3-030-93278-7_2
+    isbn: 978-3-030-93278-7
+  abstract: A growing part of Big Data is made of knowledge graphs. Major knowledge graphs such as Wikidata, DBpedia or the Google Knowledge Graph count millions of entities and billions of semantic links. A major challenge is to enable their exploration and querying by end-users. The SPARQL query language is powerful but provides no support for exploration by end-users. Question answering is user-friendly but is limited in expressivity and reliability. Navigation in concept lattices supports exploration but is limited in expressivity and scalability. In this paper, we introduce a new exploration and querying paradigm, Abstract Conceptual Navigation (ACN), that merges querying and navigation in order to reconcile expressivity, usability, and scalability. ACN is founded on Formal Concept Analysis (FCA) by defining the navigation space as a concept lattice. We then instantiate the ACN paradigm to knowledge graphs (Graph-ACN) by relying on Graph-FCA, an extension of FCA to knowledge graphs. We continue by detailing how Graph-ACN can be efficiently implemented on top of SPARQL endpoints, and how its expressivity can be increased in a modular way. Finally, we present a concrete implementation available online, Sparklis, and a few application cases on large knowledge graphs.
+  parent:
+    type: book
+    title: Complex Data Analytics with Formal Concept Analysis
+    publisher: Springer International Publishing
+    location: Cham
+
+    
+KGVisual:
+  type: article
+  title: 'KG-Visual: A Tool for Visualizing RDF Knowledge Graphs'
+  author:
+  - Ghosh, Devanshika
+  - Rajabi, Enayat
+  date: 2022
+  editor:
+  - Garoufallou, Emmanouel
+  - Ovalle-Perandones, María-Antonia
+  - Vlachidis, Andreas
+  page-range: 126–136
+  serial-number:
+    isbn: 978-3-030-98876-0
+  abstract: RDF Knowledge graphs are semantic networks to infer information from data based on RDF triples using SPARQL queries. Querying RDF Knowledge graphs using visualization allows different views of the graph and provides more insights. A new visualization tool, KG-Visual is developed in this paper using Python dashboard, JavaScript and RDF libraries. This tool tackles the limitations of existing tools by providing a customizable and reliable visualization for RDF knowledge graphs. In addition to the essential functionalities such as search, drag and drop nodes, zoom-in and zoom-out over a knowledge graph, the tool holds the capability to run SPARQL queries and visualize the results on the knowledge graph, which makes this open-source tool a potential candidate amongst most RDF visualization tools.
+  parent:
+    type: proceedings
+    title: Metadata and Semantic Research
+    publisher: Springer International Publishing
+    location: Cham
+
+    
+Sparnatural:
+  type: article
+  title: 'Sparnatural: A Visual Knowledge Graph Exploration Tool'
+  author: Francart, Thomas
+  date: 2023
+  editor:
+  - Pesquita, Catia
+  - Skaf-Molli, Hala
+  - Efthymiou, Vasilis
+  - Kirrane, Sabrina
+  - Ngonga, Axel
+  - Collarana, Diego
+  - Cerqueira, Renato
+  - Alam, Mehwish
+  - Trojahn, Cassia
+  - Hertling, Sven
+  page-range: 11–15
+  serial-number:
+    isbn: 978-3-031-43458-7
+  abstract: Knowledge Graphs are often relying on conceptual models with a high level of abstraction, making them hard to understand for nonexpert users, and are often hidden behind search forms, losing the flexibility to interact with the graph as a graph. In order to leverage knowledge graphs there is a need to propose end-user-oriented interactions demonstrating how they can allow to discover a knowledge domain. Sparnatural was designed and developed as a visual, configurable, easily deployable, open-source, client-side SPARQL query builder, allowing users to query any RDF knowledge graph. We describe here how Sparnatural works, how it can be configured, and we show how it was deployed in two demonstrators for the Archives Nationales de France and Biblioth{è}que Nationale de France. We show how Sparnatural has made it possible to give access to nonexpert users, with little effort, to these two large graphs. Workshops conducted with end-users showed they were enthusiastic about the possibility offered. They also revealed that this novel search paradigm is surprising and could benefit from user onboarding. The configuration of Sparnatural is key in providing efficient access to the graph and can be done through the specification of a search-oriented ontology.
+  parent:
+    type: proceedings
+    title: 'The Semantic Web: ESWC 2023 Satellite Events'
+    publisher: Springer Nature Switzerland
+    location: Cham
+
+    
+CompetencyQuestionsInOntologyEngineeringSurvey:
+  type: article
+  title: 'Use of Competency Questions in Ontology Engineering: A Survey'
+  author:
+  - Monfardini, Glaice Kelly Q.
+  - Salamon, Jordana S.
+  - Barcellos, Monalessa P.
+  date: 2023
+  editor:
+  - Almeida, João Paulo A.
+  - Borbinha, José
+  - Guizzardi, Giancarlo
+  - Link, Sebastian
+  - Zdravkovic, Jelena
+  page-range: 45–64
+  serial-number:
+    isbn: 978-3-031-47262-6
+  abstract: The interest in the ontology subject has grown in recent decades. Ontologies can be used to assign semantics to information items and solve interoperability and knowledge-related problems. Many methods have been proposed to improve the ontology engineering process. The use of competence questions (CQs) is suggested by several of them as a means to define the ontology requirements and help identify the necessary concepts, properties, and relations. CQs are questions that the ontology should be able to answer. Thus, they provide a mechanism to verify if the ontology is in accordance with the established requirements and properly represents the desired knowledge. Despite the important role of CQs, there is a lack of deeper investigation to provide evidence about their use. Therefore, aiming to investigate how CQs have been used in ontology engineering practice, we performed a survey with 63 ontology engineers. The results indicate that CQs have helped mainly to define the ontology scope and evaluate the ontology conceptualization. However, ontology engineers still face difficulties when writing, using, and managing CQs. Although there is a range of methods and tools that support ontology development, guidance regarding CQs is still limited. This paper presents our study and discusses its main findings.
+  parent:
+    type: proceedings
+    title: Conceptual Modeling
+    publisher: Springer Nature Switzerland
+    location: Cham
+
+    
+NLGraphsInteractiveQueryingofSemanticData:
+  type: article
+  title: 'NL-Graphs: A Hybrid Approach toward Interactively Querying Semantic Data'
+  author:
+  - Elbedweihy, Khadija
+  - Mazumdar, Suvodeep
+  - Wrigley, Stuart N.
+  - Ciravegna, Fabio
+  date: 2014
+  editor:
+  - Presutti, Valentina
+  - d'Amato, Claudia
+  - Gandon, Fabien
+  - d'Aquin, Mathieu
+  - Staab, Steffen
+  - Tordai, Anna
+  page-range: 565–579
+  serial-number:
+    isbn: 978-3-319-07443-6
+  abstract: A variety of query approaches have been proposed by the semantic web community to explore and query semantic data. Each was developed for a specific task and employed its own interaction mechanism; each query mechanism has its own set of advantages and drawbacks. Most semantic web search systems employ only one approach, thus being unable to exploit the benefits of alternative approaches. Motivated by a usability and interactivity perspective, we propose to combine two query approaches (graph-based and natural language) as a hybrid query approach. In this paper, we present NL-Graphs which aims to exploit the strengths of both approaches, while ameliorating their weaknesses. NL-Graphs was conceptualised and developed from observations, and lessons learned, in several evaluations with expert and casual users. The results of evaluating our approach with expert and casual users on a large semantic dataset are very encouraging; both types of users were highly satisfied and could effortlessly use the hybrid approach to formulate and answer queries. Indeed, success rates showed they were able to successfully answer all the evaluation questions.
+  parent:
+    type: proceedings
+    title: 'The Semantic Web: Trends and Challenges'
+    publisher: Springer International Publishing
+    location: Cham
+
+    
+SPARQLVis:
+  type: article
+  title: 'SPARQLVis: An Interactive Visualization Tool for Knowledge Graphs'
+  author:
+  - Yang, Chaozhou
+  - Wang, Xin
+  - Xu, Qiang
+  - Li, Weixi
+  date: 2018
+  editor:
+  - Cai, Yi
+  - Ishikawa, Yoshiharu
+  - Xu, Jianliang
+  page-range: 471–474
+  serial-number:
+    isbn: 978-3-319-96890-2
+  abstract: With the rapid development of knowledge graphs, an increasingly large volume of RDF graph data has been published on the Web. However, those data cannot be well consumed because most users have no background knowledge about SPARQL, a structural query language for RDF database. To increase the availability of knowledge graphs, we developed an interactive visualization tool for multiple SPARQL endpoints. We as well introduced advanced features like pattern matching and property path query to enhance its functionality.
+  parent:
+    type: proceedings
+    title: Web and Big Data
+    publisher: Springer International Publishing
+    location: Cham
+
+    
+Lacy2005_OWL:
+  type: book
+  title: 'OWL: Representing Information Using the Web Ontology Language'
+  author: Lacy, Lee W.
+  date: 2005
+  publisher: Trafford Publishing
+  location: Victoria, BC
+  url: https://suche.thulb.uni-jena.de/Record/09157515X?sid=49056915
+  serial-number:
+    isbn: 1-4120-3448-5
+
+    
+Dengel2012_Semantic_Technologies:
+  type: book
+  title: 'Semantische Technologien: Grundlagen - Konzepte - Anwendungen'
+  author: Dengel, Andreas
+  date: 2012
+  editor: Dengel, Andreas
+  publisher: Spektrum, Akad. Verl
+  location: Heidelberg
+
+  
+Sack2009_OWL_und_OWL_Semantik:
+  type: misc
+  title: OWL und OWL-Semantik
+  author: Sack, Harald
+  date: 2009
+  url: https://doi.org/10.5446/11275
+  note: Semantic Web WS 2009/10
+Stock2008_Wissensrepräsentation:
+  type: book
+  title: 'Wissensrepräsentation: Informationen Auswerten und Bereitstellen'
+  author:
+  - Stock, Mechtild
+  - Stock, Wolfgang G.
+  date: 2008
+  publisher: Oldenbourg Verlag
+  location: München
+  url: https://doi.org/10.1524/9783486844900
+
+  
+Arakawa2023_SugarBindRDFOntology:
+  type: article
+  title: Development of an integrated and inferenceable RDF database of glycan, pathogen and disease resources
+  author:
+  - Arakawa, Koichi
+  - Ono, Tamiko
+  - Aoki-Kinoshita, Kiyoko F.
+  - Yamamoto, Yasunori
+  date: 2023
+  page-range: 582
+  url: https://doi.org/10.1038/s41597-023-02442-2
+  serial-number:
+    doi: 10.1038/s41597-023-02442-2
+  parent:
+    type: periodical
+    title: Scientific Data
+    volume: 10
+
+    
+vanDam2015_RDF2Graph:
+  type: article
+  title: 'RDF2Graph: a tool to recover, understand and validate the ontology of an RDF resource'
+  author:
+  - name: Dam
+    given-name: Jesse CJ
+    prefix: van
+  - Koehorst, Jasper J
+  - Schaap, Peter J
+  - name: Santos
+    given-name: Vitor AP
+    prefix: Martins dos
+  - Suarez-Diez, Maria
+  date: 2015
+  page-range: 39
+  serial-number:
+    doi: 10.1186/s13326-015-0038-9
+  parent:
+    type: periodical
+    title: Journal of Biomedical Semantics
+    publisher: BioMed Central
+    issue: 1
+    volume: 6
