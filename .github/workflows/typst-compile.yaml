@@ -15,7 +15,7 @@ jobs:
     - name: Insall Typst Compiler
       uses: baptiste0928/cargo-install@v3
       with:
-        crate: typst
+        crate: typst-cli
         version: '^0.12' # You can specify any semver range
     - name: Compile Typst
       run: typst compile ./publication/main.typ ./publication/bt-query-by-graph.pdf
