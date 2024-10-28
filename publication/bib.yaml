@@ -282,3 +282,10 @@ vanDam2015_RDF2Graph:
     publisher: BioMed Central
     issue: 1
     volume: 6
+
+wikibooks_sparql_qualifiers:
+  type: misc
+  title: '{SPARQL/WIKIDATA Qualifiers, References and Ranks}'
+  author: Wikibooks contributors
+  date: 2024
+  url: https://en.wikibooks.org/wiki/SPARQL/WIKIDATA_Qualifiers,_References_and_Ranks
