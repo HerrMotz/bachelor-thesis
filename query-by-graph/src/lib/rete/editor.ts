@@ -55,12 +55,12 @@ declare type InputControlOptions<N> = {
   change?: (value: N) => void;
 };
 
-class SparqlVariableInputControl extends ClassicPreset.InputControl<"text", string> {
-  constructor(public options: InputControlOptions<string>) {
-    super("text", options);
-  }
-
-}
+// class SparqlVariableInputControl extends ClassicPreset.InputControl<"text", string> {
+//   constructor(public options: InputControlOptions<string>) {
+//     super("text", options);
+//   }
+//
+// }
 
 type Schemes = GetSchemes<Node, Connection>;
 type AreaExtra = VueArea2D<Schemes>;
@@ -200,7 +200,7 @@ export async function createEditor(container: HTMLElement) {
         console.log("Add node")
 
         let displayLabel: string; // this is the label the node will get in the visual editor
-        let isVariableNode = false;
+        // let isVariableNode = false;
 
         // check if it is a variable individual
         // if so, find the highest variable id, increment it by one and assign
@@ -215,7 +215,7 @@ export async function createEditor(container: HTMLElement) {
             selectedIndividual.id = "?" + (highestId + 1);
           }
           displayLabel = selectedIndividual.id;
-          isVariableNode = true;
+          // isVariableNode = true;
 
         } else {
           displayLabel = (selectedIndividual?.id || "No ID") + ", " + (selectedIndividual?.label || "No Label")

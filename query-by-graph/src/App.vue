@@ -21,7 +21,7 @@ interface Editor {
   undo: () => void;
   redo: () => void;
   exportConnections: () => ConnectionInterfaceType[];
-}
+} 
 
 const editor = ref<Editor>();  // Define the type of editor as Promise<Editor> | null
 const rete = ref();
