@@ -84,8 +84,24 @@ export async function createEditor(container: HTMLElement) {
 
   history.addPreset(HistoryPresets.classic.setup());
 
-  let selectedProperty: EntityType | null = null;
-  let selectedIndividual: EntityType | null = null;
+  let selectedProperty: EntityType = {
+    id: "?1",
+    label: "Variable",
+    description: "",
+    prefix: {
+      uri: "",
+      abbreviation: "",
+    },
+  };
+  let selectedIndividual: EntityType = {
+    id: "?1",
+    label: "Variable",
+    description: "",
+    prefix: {
+      uri: "",
+      abbreviation: "",
+    },
+  };
 
   function getHighestVariableId() {
     const highestNodeId = editor.getNodes()
@@ -108,10 +124,7 @@ export async function createEditor(container: HTMLElement) {
   function SelectableConnectionBind(props: { data: Schemes["Connection"] }) {
     const id = props.data.id;
 
-    props.data.property = {
-      id: selectedProperty?.id || "No ID",
-      label: selectedProperty?.label || "No Label",
-    };
+    props.data.property = selectedProperty;
 
     if (selectedProperty?.id.startsWith("?")) {
       const highestId = getHighestVariableId();
@@ -232,10 +245,7 @@ export async function createEditor(container: HTMLElement) {
         // but a variable node should have a label with only "?" and the
         // input control should hold the text after the "?"
 
-        const node = new Node(displayLabel, {
-          id: selectedIndividual?.id || "No ID",
-          label: selectedIndividual?.label || "No Label"
-        });
+        const node = new Node(displayLabel, selectedIndividual);
 
         console.log("Node", node.entity);
 
@@ -305,7 +315,14 @@ export async function createEditor(container: HTMLElement) {
         const source = editor.getNode(connection.source);
         const target = editor.getNode(connection.target);
         return {
-          property: connection.property || {id: "No ID", label: "No prop"},
+          property: connection.property || {
+            id: "",
+            label: "",
+            description: "",
+            prefix: {
+              uri: "",
+              abbreviation: "",
+            }},
           source: source.entity,
           target: target.entity
         };

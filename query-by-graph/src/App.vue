@@ -45,25 +45,6 @@ onMounted(async () => {
 const copyToClipboard = () => {
   navigator.clipboard.writeText(code.value);
 }
-
-// mock property numbers array like P160, P141, etc.
-const mockProperties = [
-  {id: "?", label: "Variable Property"},
-  {id: "P160", label: "Ausbildende Institution"},
-  {id: "P141", label: "Vater"},
-  {id: "P31", label: "Property 31"},
-  {id: "P279", label: "Property 279"},
-  {id: "P2", label: "Instanz von"},
-];
-
-const mockIndividuals = [
-  {id: "?", label: "Variable Individual"},
-  {id: "Q21880", label: "Universität Jena"},
-  {id: "Q5879", label: "Johann Wolfgang von Goethe"},
-  {id: "Q123", label: "Individual 123"},
-  {id: "Q5", label: "Natürliche Person"},
-  {id: "Q6", label: "Juristische Person"}
-]
 </script>
 
 <template>
@@ -122,9 +103,8 @@ const mockIndividuals = [
 
             <div class="flex-col flex gap-2">
               <h4 class="font-semibold">Create Individual</h4>
-              <EntitySelector language="en" type="item" :entities="mockIndividuals" @selected-entity="(prop: EntityType) => { // why the hell is this necessary in TypeScript with Vue3 D':
+              <EntitySelector language="en" type="item" @selected-entity="(prop: EntityType) => {
                 if (editor) {
-                  console.log('Parent Container');
                   editor.setSelectedIndividual(prop);
                 }
               }" class="bg-amber-300 rounded-2xl p-2">
@@ -139,7 +119,7 @@ const mockIndividuals = [
 
             <div class="flex-col flex gap-2">
               <h4 class="font-semibold">Create connection</h4>
-              <EntitySelector language="en" type="property" :entities="mockProperties" @selected-entity="(prop: EntityType) => { // why the hell is this necessary in TypeScript with Vue3 D':
+              <EntitySelector language="en" type="property" @selected-entity="(prop: EntityType) => { 
                 if (editor) {
                   editor.setSelectedProperty(prop);
                 }
