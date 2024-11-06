@@ -4,8 +4,8 @@
   "version": "0.1.0",
   "type": "module",
   "scripts": {
-    "dev": "vite",
-    "build": "vue-tsc -b && vite build",
+    "dev": "wasm-pack build && vite",
+    "build": "wasm-pack build && vue-tsc -b && vite build",
     "preview": "vite preview"
   },
   "dependencies": {

@@ -15,11 +15,6 @@ extern "C" {
     fn log(s: &str);
 }
 
-#[wasm_bindgen]
-pub fn greet(name: &str) -> String {
-    format!("Hello dear, {}!", name)
-}
-
 #[derive(Deserialize)]
 struct Entity {
     pub id: String,
@@ -61,7 +56,7 @@ fn graph_to_query(connections: Vec<Connection>) -> String {
     let where_clause: String = connections.iter()
         .map(|connection| {
             format!(
-                "{}wd:{} wdt:{} wd:{} . # {} -- [{}] -> {}\n",
+                "{} {} {} {} . # {} -- [{}] -> {}\n",
                 " ".repeat(INDENTATION_COUNT),
                 connection.source.id, connection.property.id, connection.target.id,
                 connection.source.label, connection.property.label, connection.target.label
@@ -70,7 +65,7 @@ fn graph_to_query(connections: Vec<Connection>) -> String {
         .collect();
 
     format!(
-        "PREFIX : <http://example.org/>\nSELECT {} WHERE {{\n{}\n}}",
+        "SELECT {} WHERE {{\n{}\n}}",
         projection_list, where_clause
     )
 }
