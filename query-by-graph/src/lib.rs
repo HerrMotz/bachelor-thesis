@@ -8,17 +8,18 @@ use crate::utils::set_panic_hook;
 
 const INDENTATION_COUNT:usize = 4;
 
-#[wasm_bindgen]
-extern "C" {
-    fn alert(s: &str);
-    #[wasm_bindgen(js_namespace = console)]
-    fn log(s: &str);
-}
-
 #[derive(Deserialize)]
 struct Entity {
     pub id: String,
     pub label: String,
+    pub description: String,
+    pub prefix: Prefix
+}
+
+#[derive(Deserialize)]
+struct Prefix {
+    uri: String,
+    abbreviation: String
 }
 
 #[derive(Deserialize)]
@@ -51,18 +52,46 @@ fn graph_to_query(connections: Vec<Connection>) -> String {
     let projection_list = if projection_set.len() == 0 { String::from("*") } else {
         projection_set.into_iter()
         .collect::<Vec<_>>()
-        .join(", ")};
+        .join("  ")};
+
 
     let where_clause: String = connections.iter()
         .map(|connection| {
+            let source_uri = if connection.source.prefix.uri.is_empty() {
+                connection.source.id.clone() // Clone the String to avoid moving it
+            } else {
+                format!("<{}>", connection.source.prefix.uri)
+            };
+
+            let property_uri = if connection.property.prefix.uri.is_empty() {
+                connection.property.id.clone() // Clone the String to avoid moving it
+            } else {
+                format!("<{}>", connection.property.prefix.uri)
+            };
+
+            let target_uri = if connection.target.prefix.uri.is_empty() {
+                connection.target.id.clone() // Clone the String to avoid moving it
+            } else {
+                format!("<{}>", connection.target.prefix.uri)
+            };
+
             format!(
                 "{} {} {} {} . # {} -- [{}] -> {}\n",
                 " ".repeat(INDENTATION_COUNT),
-                connection.source.id, connection.property.id, connection.target.id,
-                connection.source.label, connection.property.label, connection.target.label
+                source_uri,
+                property_uri,
+                target_uri,
+                connection.source.label,
+                connection.property.label,
+                connection.target.label
             )
         })
         .collect();
+
+
+
+
+
 
     format!(
         "SELECT {} WHERE {{\n{}\n}}",
