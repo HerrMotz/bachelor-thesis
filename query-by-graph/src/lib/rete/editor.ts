@@ -79,6 +79,8 @@ export async function createEditor(container: HTMLElement) {
     const history = new HistoryPlugin<Schemes>();
 
     let vueCallback: (context: any) => void;
+    let highestIdCount = 0;
+    let increaseVariablePropCounter = false;
 
     HistoryExtensions.keyboard(history);
 
@@ -103,33 +105,16 @@ export async function createEditor(container: HTMLElement) {
         },
     };
 
-    function getHighestVariableId() {
-        const highestNodeId = editor.getNodes()
-            .filter(n => n.getEntity().id.startsWith("?"))
-            .map(n => parseInt(n.getEntity().id.slice(1)))
-            .filter(n => !isNaN(n))
-            .sort()
-            .reverse()[0];
-
-        const highestPropId = editor.getConnections()
-            .filter(c => c.property!.id.startsWith("?"))
-            .map(c => parseInt(c.property!.id.slice(1)))
-            .filter(c => !isNaN(c))
-            .sort()
-            .reverse()[0];
-
-        return Math.max(highestNodeId || 0, highestPropId || 0);
-    }
-
     function SelectableConnectionBind(props: { data: Schemes["Connection"] }) {
         const id = props.data.id;
 
         props.data.property = selectedProperty;
-
-        if (selectedProperty?.id.startsWith("?")) {
-            const highestId = getHighestVariableId();
-
-            props.data.property.id = highestId ? "?" + (highestId + 1) : "?1";
+        if (increaseVariablePropCounter) {
+            increaseVariablePropCounter = false;
+            if (selectedProperty?.id.startsWith("?")) {
+                highestIdCount += 1;
+                props.data.property.id = "?" + highestIdCount;
+            }
         }
 
 
@@ -204,12 +189,20 @@ export async function createEditor(container: HTMLElement) {
             lastChangedNode = "";
         }
 
+        // this is a workaround to hinder the counter from increasing at every
+        // draw method of the editor
+        if (context.type === "connectioncreated") {
+            increaseVariablePropCounter = true;
+        }
+
+        // This matches a Right Mouse button Click
         if (context.type === "contextmenu") {
             const source = context.data.context;
             const event = context.data.event;
             event.preventDefault();
             event.stopPropagation();
 
+            // This methods allows to add a new node with the Right Mouse Button click
             if (source === "root") { // add a new node
                 console.log("Add node")
 
@@ -220,14 +213,9 @@ export async function createEditor(container: HTMLElement) {
                 // if so, find the highest variable id, increment it by one and assign
                 // it to the "to be created"-node
                 if (selectedIndividual?.id.startsWith("?")) {
-                    const highestId = getHighestVariableId();
-
+                    highestIdCount += 1;
                     // hacky way to make the node instantiation in line (+19) use the correct label, id
-                    if (!highestId) {
-                        selectedIndividual.id = "?1";
-                    } else {
-                        selectedIndividual.id = "?" + (highestId + 1);
-                    }
+                    selectedIndividual.id = "?" + highestIdCount;
                     displayLabel = selectedIndividual.id;
                     // isVariableNode = true;
 

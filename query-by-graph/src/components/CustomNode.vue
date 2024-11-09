@@ -1,6 +1,9 @@
 <template>
   <div class="node" :class="{ selected: data.selected }" :style="nodeStyles()" data-testid="node">
     <div class="title" data-testid="title">{{ data.label }}</div>
+    <EntitySelector type="individual" language="en"
+                    @selected-entity="(e) => data.label = e.id"
+    />
     <!-- Outputs-->
     <div class="output" v-for="[key, output] in outputs()" :key="key + seed" :data-testid="'output-' + key">
       <div class="output-title" data-testid="output-title">{{ output.label }}</div>
@@ -28,6 +31,7 @@
 <script lang="js">
 import { defineComponent } from 'vue'
 import { Ref } from 'rete-vue-plugin'
+import EntitySelector from "./EntitySelector.vue";
 
 function sortByIndex(entries) {
   entries.sort((a, b) => {
@@ -59,6 +63,7 @@ export default defineComponent({
     }
   },
   components: {
+    EntitySelector,
     Ref
   }
 })
