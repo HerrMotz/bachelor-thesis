@@ -169,7 +169,7 @@ const copyToClipboard = () => {
     </div>
     <div>
       <!-- Footer -->
-      <div class="text-center text-gray-600 text-sm mb-2">
+      <div class="text-center text-gray-600 text-sm mt-10 pb-12">
         <p>
           <a class="underline" href="https://github.com/HerrMotz/bachelor-thesis/">Repository</a> &middot;
           Made with ❤️ by <a class="underline" href="https://www.daniel-motz.de">Daniel Motz</a>
