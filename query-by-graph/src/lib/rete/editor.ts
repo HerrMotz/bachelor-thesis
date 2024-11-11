@@ -12,11 +12,12 @@ import {
 } from "rete-history-plugin";
 import {VuePlugin, Presets, VueArea2D} from "rete-vue-plugin";
 import {h} from "vue";
-import CustomConnection from "../../components/CustomConnection.vue";
+import CustomConnection from "../../components/PropertyConnection.vue";
 import {removeNodeWithConnections} from "./utils.ts";
 import EntityType from "../types/EntityType.ts";
 import ConnectionInterfaceType from "../types/ConnectionInterfaceType.ts";
-import CustomNode from "../../components/CustomNode.vue";
+import CustomNode from "../../components/EntityNode.vue";
+import CustomInputControl from "../../components/EntitySelectorInputControl.vue";
 
 // Each connection holds additional data, which is defined here
 class Connection extends ClassicPreset.Connection<
@@ -55,12 +56,12 @@ declare type InputControlOptions<N> = {
     change?: (value: N) => void;
 };
 
-// class SparqlVariableInputControl extends ClassicPreset.InputControl<"text", string> {
-//   constructor(public options: InputControlOptions<string>) {
-//     super("text", options);
-//   }
-//
-// }
+class EntitySelectorInputControl extends ClassicPreset.InputControl<"text", string> {
+  constructor(public options: InputControlOptions<EntityType>) {
+    super("text", options);
+  }
+
+}
 
 type Schemes = GetSchemes<Node, Connection>;
 type AreaExtra = VueArea2D<Schemes>;
@@ -117,6 +118,9 @@ export async function createEditor(container: HTMLElement) {
             }
         }
 
+        // TODO write a function that goes through all variables
+        //  and makes it a continuous list
+        // e.g. ?1, ?5, ?6 -> ?1, ?2, ?3
 
         const label = "connection";
 
@@ -150,20 +154,20 @@ export async function createEditor(container: HTMLElement) {
 
     render.addPreset(Presets.classic.setup({
         customize: {
+            // TODO use custom input control with data validation
+            //  e.g. no spaces, no special characters, etc.
+            control(data) {
+                console.log("Control payload")
+                console.log(data.payload);
+                if (data.payload instanceof EntitySelectorInputControl) {
+                    return CustomInputControl;
+                }
+            },
             node(data) {
                 console.log("Node payload")
                 console.log(data.payload);
                 return CustomNode;
             },
-            // TODO use custom input control with data validation
-            //  e.g. no spaces, no special characters, etc.
-            // control(data) {
-            //   console.log("Control payload")
-            //   console.log(data.payload);
-            //   if (data.payload instanceof SparqlVariableInputControl) {
-            //     return CustomInputControl;
-            //   }
-            // },
             connection() {
                 return SelectableConnectionBind;
             }
@@ -238,6 +242,18 @@ export async function createEditor(container: HTMLElement) {
 
                 console.log("Node", node.entity);
 
+                node.addControl(
+                    "entityInput",
+                    new EntitySelectorInputControl({
+                        initial: {id: "", label: "", prefix: {uri: "", abbreviation: ""}, description: ""},
+                        change(value) {
+                            console.log("Update is called")
+                            console.log(value)
+                            node.entity = value;
+                            area.update("node", node.id);
+                        }
+                    })
+                );
                 node.addInput("i0", new ClassicPreset.Input(socket, "", true));
                 node.addOutput("o0", new ClassicPreset.Output(socket, "", true));
 

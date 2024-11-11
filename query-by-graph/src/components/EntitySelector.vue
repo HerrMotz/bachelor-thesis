@@ -72,7 +72,7 @@ function queryHelper(query: string) {
       }
     }).concat([variableEntity]);
   }).catch(reason => {
-    console.error(reason);
+    console.log(reason);
   });
 }
 
