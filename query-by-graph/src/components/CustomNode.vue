@@ -1,7 +1,7 @@
 <template>
   <div class="node" :class="{ selected: data.selected }" :style="nodeStyles()" data-testid="node">
     <div class="title" data-testid="title">{{ data.label }}</div>
-    <EntitySelector type="individual" language="en"
+    <EntitySelector type="item" language="en"
                     @selected-entity="(e) => data.label = e.id"
     />
     <!-- Outputs-->

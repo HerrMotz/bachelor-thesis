@@ -68,8 +68,6 @@ function queryWikidata({
 
   return axios.get(url, { params })
     .then(response => {
-      console.log("Wikidata Response");
-      console.log(response.data);
       return response.data;
     })
     .catch(error => {
