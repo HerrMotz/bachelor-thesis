@@ -28,7 +28,17 @@ import {
 } from '@headlessui/vue'
 import EntityType from "../lib/types/EntityType.ts";
 
-const variableEntity = { // EntityType
+const noEntity = {
+  id: '',
+  label: '',
+  description: '',
+  prefix: {
+    uri: "",
+    abbreviation: "",
+  }
+};
+
+const variableEntity:EntityType = { // EntityType
   id: '?',
   label: 'Variable',
   description: 'Variable Entity',
@@ -39,11 +49,11 @@ const variableEntity = { // EntityType
 };
 
 const queriedEntities = ref([
-  variableEntity,
+  noEntity,
+  variableEntity
 ]);
 
-const selectedEntity = ref(variableEntity);
-emit("selectedEntity", variableEntity);
+const selectedEntity = ref(noEntity);
 
 function displayValue(entity: unknown): string {
   if (typeof entity === 'object' && entity !== null && 'label' in entity) {
@@ -70,14 +80,25 @@ function queryHelper(query: string) {
           abbreviation: "wd",
         }
       }
-    }).concat([variableEntity]);
+    }).concat([
+      {
+        id: query,
+        label: "Variable",
+        description: "Variable Entity",
+        prefix: {
+          uri: "",
+          abbreviation: "",
+        },
+      }
+    ]);
   }).catch(reason => {
     console.log(reason);
   });
 }
 
 function eventEmitEntityHelper(entity: EntityType) {
-  console.log("Emit event");
+  console.log("Entity Selector emits event");
+  console.log(entity)
   selectedEntity.value = entity;
   emit('selectedEntity', entity);
 }
@@ -94,7 +115,6 @@ function eventEmitEntityHelper(entity: EntityType) {
         <ComboboxInput
             class="w-full rounded-md border-0 bg-white py-1.5 pl-3 pr-12 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
             @change="queryHelper($event.target.value)"
-            @blur="queryHelper('')"
             :display-value="displayValue"
         />
         <ComboboxButton class="absolute inset-y-0 right-0 flex items-center rounded-r-md px-2 focus:outline-none">
