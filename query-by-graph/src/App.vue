@@ -28,15 +28,35 @@ const rete = ref();
 
 const code = ref("");
 
+// DEBUG
+let lol = 10000
+
+const triggerEvents = [
+    "connectioncreated",
+    "connectionremoved",
+    "nodecreated",
+    "rendered"
+]
+
 onMounted(async () => {
   if (rete.value) {
     editor.value = await createEditor(rete.value);
     editor.value?.setVueCallback((context) => { // add pipe to parent scope
-      if (context.type === "connectioncreated" || context.type === "connectionremoved") {
+      // DEBUG
+      if (lol > 0) {
+        // DEBUG
+        console.log("context type in app.vue")
+        console.log(context.type)
+        lol--;
+      }
+      if (triggerEvents.includes(context.type)) {
         setTimeout(() => {
           const connections = editor.value!.exportConnections()
+          // DEBUG
+          console.log("The connections in App.vue")
+          console.log(connections)
           code.value = graph_to_query_wasm(JSON.stringify(connections));
-        }, 0);
+        }, 10);
       }
     });
   }
