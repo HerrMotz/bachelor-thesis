@@ -172,17 +172,19 @@ const copyToClipboard = () => {
           </div>
         </div>
       </div>
-      <div class="mt-10">
-        <h2 class="text-xl font-semibold bg-amber-100 rounded-t-2xl p-4">
+      <div class="mt-10 w-full">
+        <div class="bg-amber-100 rounded-t-2xl p-4">
           <!-- This has the same propeties as the toolbox heading -->
-          Generated SPARQL Query
-          <span class="text-sm ml-2 font-medium">
-              This contains the generated SPARQL code. It is updated with every change in the editor.
+          <h2 class="font-semibold text-xl flex justify-between">
+            <span>Generated SPARQL Query</span>
+            <ClipboardButton @click="copyToClipboard();" />
+          </h2>
+          <span class="text-sm font-medium block">
+                This contains the generated SPARQL code. It is updated with every change in the editor.
           </span>
-        </h2>
+        </div>
         <div class="bg-amber-50 flex w-full flex-row">
-          <highlightjs class="min-h-20 grow bg-amber-50" language="sparql" :code="code"/>
-          <ClipboardButton class="inline-flex mt-4 mr-4" @click="copyToClipboard();" />
+          <highlightjs class="min-h-20 w-full bg-amber-50" language="sparql" :code="code"/>
         </div>
       </div>
 
