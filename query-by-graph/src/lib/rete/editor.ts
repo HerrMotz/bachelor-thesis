@@ -18,6 +18,7 @@ import EntityType from "../types/EntityType.ts";
 import ConnectionInterfaceType from "../types/ConnectionInterfaceType.ts";
 import EntityNodeComponent from "../../components/EntityNode.vue";
 import CustomInputControl from "../../components/EntitySelectorInputControl.vue";
+import {noEntity} from "./constants.ts";
 
 // Each connection holds additional data, which is defined here
 class Connection extends ClassicPreset.Connection<
@@ -65,8 +66,6 @@ class EntitySelectorInputControl extends ClassicPreset.InputControl<"text", Enti
 
 type Schemes = GetSchemes<EntityNodeClass, Connection>;
 type AreaExtra = VueArea2D<Schemes>;
-
-let lastChangedNode = "";
 
 export async function createEditor(container: HTMLElement) {
     const socket = new ClassicPreset.Socket("socket");
@@ -187,15 +186,6 @@ export async function createEditor(container: HTMLElement) {
     connection.addPreset(ConnectionPresets.classic.setup());
 
     area.addPipe(async (context) => {
-
-        // LCNU: this ensures, that after entering text, the node label is updated
-        if (lastChangedNode) {
-            // TODO: Problem is, that I cannot export the connections on each browser event. It uses too much
-            //  resources. There has to be away to intelligently update only when necessary.
-            await area.update("node", lastChangedNode);
-            lastChangedNode = "";
-        }
-
         // this is a workaround to hinder the counter from increasing at every
         // draw method of the editor
         if (context.type === "connectioncreated") {
@@ -261,6 +251,10 @@ export async function createEditor(container: HTMLElement) {
                             node.setEntity(value)
                             console.log("node value after update")
                             console.log(node.getEntity())
+
+                            editor.getConnections().forEach((c) => {
+                                area.update("connection", c.id)
+                            })
 
                             console.log("update node in area")
                             area.update("node", node.id)
@@ -332,18 +326,12 @@ export async function createEditor(container: HTMLElement) {
         destroy: () => area.destroy(),
         exportConnections: (): ConnectionInterfaceType[] => {
             return editor.getConnections().map(connection => {
-                const source = editor.getNode(connection.source);
-                const target = editor.getNode(connection.target);
+                area.update("connection", connection.id);
+                const c = editor.getConnection(connection.id)
+                const source = editor.getNode(c.source);
+                const target = editor.getNode(c.target);
                 return {
-                    property: connection.property || {
-                        id: "",
-                        label: "",
-                        description: "",
-                        prefix: {
-                            uri: "",
-                            abbreviation: "",
-                        }
-                    },
+                    property: c.property || noEntity,
                     source: source.entity,
                     target: target.entity
                 };
