@@ -62,7 +62,7 @@ function queryHelper(query: string) {
         }
       }
     }).concat([
-        variableEntityConstructor(query)
+        variableEntityConstructor(query.startsWith('?') ? query.slice(1) : query)
     ]);
   }).catch(reason => {
     console.log(reason);
