@@ -1,10 +1,47 @@
 <script setup lang="ts">
-import { onMounted, ref} from 'vue';
+import {onMounted, ref, shallowRef} from 'vue';
 import {createEditor} from "./lib/rete/editor.ts";
 
 import {graph_to_query_wasm} from "../pkg";
 
-import 'highlight.js/lib/common';
+import {VueMonacoEditor} from '@guolao/vue-monaco-editor'
+import * as monaco from "monaco-editor"
+
+monaco.editor.defineTheme('custom-theme', {
+  base: 'vs', // Use 'vs-light' as the base theme
+  inherit: false, // Inherit other colors and styles from 'vs-light'
+  rules: [], // Leave empty to inherit syntax highlighting from 'vs-light'
+  colors: {
+    "editor.background": "#ffffff00", // Fully transparent background
+    "editor.foreground": "#BDAE9D",
+    "editor.selectionBackground": "#e9ffc3",
+    "editor.lineHighlightBackground": "#3A312C",
+    "editorCursor.foreground": "#889AFF",
+    "editorWhitespace.foreground": "#BFBFBF",
+    "editorIndentGuide.background": "#5e81ce52",
+    "editor.selectionHighlightBorder": "#122d42",
+    'editor.inactiveSelectionBackground': '#ff000066',
+    'editor.selectionHighlight': '#00ff0066',
+  }
+});
+
+const codeEditorRef = shallowRef();
+const handleMount = (codeEditor: any) => {
+  codeEditorRef.value = codeEditor;
+
+  // Set the theme explicitly on mount
+  monaco.editor.setTheme('custom-theme');
+};
+
+const MONACO_EDITOR_OPTIONS = {
+  automaticLayout: true,
+  formatOnType: true,
+  formatOnPaste: true,
+}
+// your action
+function formatCode() {
+  codeEditorRef.value?.getAction('editor.action.formatDocument').run()
+}
 
 import EntityType from "./lib/types/EntityType.ts";
 
@@ -21,7 +58,7 @@ interface Editor {
   undo: () => void;
   redo: () => void;
   exportConnections: () => ConnectionInterfaceType[];
-} 
+}
 
 const editor = ref<Editor>();  // Define the type of editor as Promise<Editor> | null
 const rete = ref();
@@ -32,10 +69,10 @@ const code = ref("");
 let lol = 10000
 
 const triggerEvents = [
-    "connectioncreated",
-    "connectionremoved",
-    "nodecreated",
-    "rendered"
+  "connectioncreated",
+  "connectionremoved",
+  "nodecreated",
+  "rendered"
 ]
 
 onMounted(async () => {
@@ -56,6 +93,7 @@ onMounted(async () => {
           console.log("The connections in App.vue")
           console.log(connections)
           code.value = graph_to_query_wasm(JSON.stringify(connections));
+          formatCode();
         }, 10);
       }
     });
@@ -69,15 +107,14 @@ const copyToClipboard = () => {
 
 <template>
   <div>
-    <div class="place-items-center bg-white px-6 pb-24 pt-12 sm:pb-2 sm:pt-12 lg:px-8"
-         style="">
-      <div class="text-3xl text-center mb-10 font-bold">Query by Graph</div>
-      <p class="text-center font-medium text-gray-500 text-sm mb-6" style="min-width: 250px !important; padding: 0 30% 0 30%;">
+    <div class="place-items-center bg-white px-6 pb-24 pt-12 sm:pb-2 sm:pt-12 lg:px-8">
+      <div class="text-5xl text-center mb-4 font-serif font-bold italic">Query by Graph</div>
+      <p class="text-center font-medium text-gray-500 text-sm mb-6 w-[550px] mx-auto">
         This program allows you to build a SPARQL query using visual elements.
         Press RMB on the canvas to create a new individual and LMB on an individual's socket to create a connection.
         You can delete an individual by pressing RMB on it.
       </p>
-      <div class="flex w-full bg-amber-100 rounded-2xl" style="">
+      <div class="flex w-full bg-amber-100 rounded-2xl max-h-[60vh]">
         <div class="w-4/5 bg-amber-50 rounded-tl-2xl">
           <h2 class="text-xl font-semibold bg-amber-100 p-4">
             <!-- This has the same propeties as the toolbox heading -->
@@ -88,7 +125,7 @@ const copyToClipboard = () => {
           </h2>
           <div ref="rete" class="h-full"></div>
         </div>
-        <div v-if="editor" class="w-1/5 overflow-auto rounded-tr-2xl" style="max-height: 60vh;">
+        <div v-if="editor" class="w-1/5 overflow-auto rounded-tr-2xl">
           <h2 class="text-xl font-semibold bg-amber-200 p-4">
             Toolbox
             <span class="text-sm ml-2 font-medium">
@@ -177,14 +214,21 @@ const copyToClipboard = () => {
           <!-- This has the same propeties as the toolbox heading -->
           <h2 class="font-semibold text-xl flex justify-between">
             <span>Generated SPARQL Query</span>
-            <ClipboardButton @click="copyToClipboard();" />
+            <ClipboardButton @click="copyToClipboard();"/>
           </h2>
           <span class="text-sm font-medium block">
                 This contains the generated SPARQL code. It is updated with every change in the editor.
           </span>
         </div>
         <div class="bg-amber-50 flex w-full flex-row">
-          <highlightjs class="min-h-20 w-full bg-amber-50" language="sparql" :code="code"/>
+          <vue-monaco-editor
+              v-model:value="code"
+              class="min-h-[30vh] bg-amber-50"
+              theme="custom-theme"
+              language="sparql"
+              :options="MONACO_EDITOR_OPTIONS"
+              @mount="handleMount"
+          />
         </div>
       </div>
 
