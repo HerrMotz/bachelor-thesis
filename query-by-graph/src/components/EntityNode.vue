@@ -1,18 +1,21 @@
 <template>
-  <div class="node" :class="{ selected: data.selected }" :style="nodeStyles()" data-testid="node">
-    <div class="title" data-testid="title">{{ data.label }}</div>
+  <div class="node" :class="{ selected: data.selected }" :style="nodeStyles" data-testid="node">
+    <div class="p-2">
+      <h1 class="text-3xl text-white font-bold" data-testid="title">{{ data.entity.label }} </h1>
+      <h2 class="text-2xl text-gray-100 font-bold font-mono">{{data.entity.id}}</h2>
+    </div>
     <!-- Outputs-->
-    <div class="output" v-for="[key, output] in outputs()" :key="key + seed" :data-testid="'output-' + key">
+    <div class="output" v-for="[key, output] in outputs" :key="key + seed" :data-testid="'output-' + key">
       <div class="output-title" data-testid="output-title">{{ output.label }}</div>
       <Ref class="output-socket" :emit="emit"
            :data="{ type: 'socket', side: 'output', key: key, nodeId: data.id, payload: output.socket }"
            data-testid="output-socket" />
     </div>
     <!-- Controls-->
-    <Ref class="control" v-for="[key, control] in controls()" :key="key + seed" :emit="emit"
+    <Ref class="control" v-for="[key, control] in controls" :key="key + seed" :emit="emit"
          :data="{ type: 'control', payload: control }" :data-testid="'control-' + key" />
     <!-- Inputs-->
-    <div class="input" v-for="[key, input] in inputs()" :key="key + seed" :data-testid="'input-' + key">
+    <div class="input" v-for="[key, input] in inputs" :key="key + seed" :data-testid="'input-' + key">
       <Ref class="input-socket" :emit="emit"
            :data="{ type: 'socket', side: 'input', key: key, nodeId: data.id, payload: input.socket }"
            data-testid="input-socket" />
@@ -24,10 +27,10 @@
   </div>
 </template>
 
-
 <script lang="js">
-import { defineComponent } from 'vue'
+import { defineComponent, computed } from 'vue'
 import { Ref } from 'rete-vue-plugin'
+import EntitySelector from "./EntitySelector.vue";
 
 function sortByIndex(entries) {
   entries.sort((a, b) => {
@@ -40,33 +43,43 @@ function sortByIndex(entries) {
 }
 
 export default defineComponent({
-  props: ['data', 'emit', 'seed'],
-  methods: {
-    nodeStyles() {
-      return {
-        width: Number.isFinite(this.data.width) ? `${this.data.width}px` : '',
-        height: Number.isFinite(this.data.height) ? `${this.data.height}px` : ''
-      }
-    },
-    inputs() {
-      return sortByIndex(Object.entries(this.data.inputs))
-    },
-    controls() {
-      return sortByIndex(Object.entries(this.data.controls))
-    },
-    outputs() {
-      return sortByIndex(Object.entries(this.data.outputs))
-    }
+  props: {
+    data: Object,
+    emit: Function,
+    seed: String
+  },
+  setup(props) {
+    const nodeStyles = computed(() => ({
+      width: Number.isFinite(props.data.width) ? `${props.data.width}px` : '',
+      height: Number.isFinite(props.data.height) ? `${props.data.height}px` : ''
+    }));
+
+    const inputs = computed(() => sortByIndex(Object.entries(props.data.inputs)));
+    const controls = computed(() => sortByIndex(Object.entries(props.data.controls)));
+    const outputs = computed(() => sortByIndex(Object.entries(props.data.outputs)));
+
+    const updateLabel = (e) => {
+      props.data.label = e.id;
+    };
+
+    return {
+      nodeStyles,
+      inputs,
+      controls,
+      outputs,
+      updateLabel
+    };
   },
   components: {
+    EntitySelector,
     Ref
   }
-})
+});
 </script>
 
 <style lang="scss" scoped>
 @use "sass:math";
-$node-width: 200px;
+$node-width: 300px;
 $socket-margin: 6px;
 $socket-size: 16px;
 

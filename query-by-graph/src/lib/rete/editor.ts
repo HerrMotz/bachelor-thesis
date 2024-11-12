@@ -12,11 +12,12 @@ import {
 } from "rete-history-plugin";
 import {VuePlugin, Presets, VueArea2D} from "rete-vue-plugin";
 import {h} from "vue";
-import CustomConnection from "../../components/CustomConnection.vue";
+import CustomConnection from "../../components/PropertyConnection.vue";
 import {removeNodeWithConnections} from "./utils.ts";
 import EntityType from "../types/EntityType.ts";
 import ConnectionInterfaceType from "../types/ConnectionInterfaceType.ts";
-import CustomNode from "../../components/CustomNode.vue";
+import EntityNodeComponent from "../../components/EntityNode.vue";
+import CustomInputControl from "../../components/EntitySelectorInputControl.vue";
 
 // Each connection holds additional data, which is defined here
 class Connection extends ClassicPreset.Connection<
@@ -29,7 +30,7 @@ class Connection extends ClassicPreset.Connection<
 
 // Each node has to have "entity" metadata.
 // This is ensured here.
-class Node extends ClassicPreset.Node {
+class EntityNodeClass extends ClassicPreset.Node {
     entity: EntityType;
 
     constructor(public label: string, public e: EntityType) {
@@ -55,14 +56,14 @@ declare type InputControlOptions<N> = {
     change?: (value: N) => void;
 };
 
-// class SparqlVariableInputControl extends ClassicPreset.InputControl<"text", string> {
-//   constructor(public options: InputControlOptions<string>) {
-//     super("text", options);
-//   }
-//
-// }
+class EntitySelectorInputControl extends ClassicPreset.InputControl<"text", EntityType> {
+  constructor(public options: InputControlOptions<EntityType>) {
+    super("text", options);
+  }
 
-type Schemes = GetSchemes<Node, Connection>;
+}
+
+type Schemes = GetSchemes<EntityNodeClass, Connection>;
 type AreaExtra = VueArea2D<Schemes>;
 
 let lastChangedNode = "";
@@ -79,6 +80,8 @@ export async function createEditor(container: HTMLElement) {
     const history = new HistoryPlugin<Schemes>();
 
     let vueCallback: (context: any) => void;
+    let highestIdCount = 0;
+    let increaseVariablePropCounter = false;
 
     HistoryExtensions.keyboard(history);
 
@@ -103,35 +106,21 @@ export async function createEditor(container: HTMLElement) {
         },
     };
 
-    function getHighestVariableId() {
-        const highestNodeId = editor.getNodes()
-            .filter(n => n.getEntity().id.startsWith("?"))
-            .map(n => parseInt(n.getEntity().id.slice(1)))
-            .filter(n => !isNaN(n))
-            .sort()
-            .reverse()[0];
-
-        const highestPropId = editor.getConnections()
-            .filter(c => c.property!.id.startsWith("?"))
-            .map(c => parseInt(c.property!.id.slice(1)))
-            .filter(c => !isNaN(c))
-            .sort()
-            .reverse()[0];
-
-        return Math.max(highestNodeId || 0, highestPropId || 0);
-    }
-
     function SelectableConnectionBind(props: { data: Schemes["Connection"] }) {
         const id = props.data.id;
 
         props.data.property = selectedProperty;
-
-        if (selectedProperty?.id.startsWith("?")) {
-            const highestId = getHighestVariableId();
-
-            props.data.property.id = highestId ? "?" + (highestId + 1) : "?1";
+        if (increaseVariablePropCounter) {
+            increaseVariablePropCounter = false;
+            if (selectedProperty?.id.startsWith("?")) {
+                highestIdCount += 1;
+                props.data.property.id = "?" + highestIdCount;
+            }
         }
 
+        // TODO write a function that goes through all variables
+        //  and makes it a continuous list
+        // e.g. ?1, ?5, ?6 -> ?1, ?2, ?3
 
         const label = "connection";
 
@@ -139,7 +128,8 @@ export async function createEditor(container: HTMLElement) {
         // and connect it to our editor events
         return h(CustomConnection, {
             ...props, onClick: () => {
-                console.log("Selected connection", id)
+                // DEBUG
+                // console.log("Selected connection", id)
                 selector.add(
                     {
                         id,
@@ -165,20 +155,22 @@ export async function createEditor(container: HTMLElement) {
 
     render.addPreset(Presets.classic.setup({
         customize: {
-            node(data) {
-                console.log("Node payload")
-                console.log(data.payload);
-                return CustomNode;
-            },
             // TODO use custom input control with data validation
             //  e.g. no spaces, no special characters, etc.
-            // control(data) {
-            //   console.log("Control payload")
-            //   console.log(data.payload);
-            //   if (data.payload instanceof SparqlVariableInputControl) {
-            //     return CustomInputControl;
-            //   }
-            // },
+            control(data) {
+                // DEBUG
+                // console.log("Control payload")
+                // console.log(data.payload);
+                if (data.payload instanceof EntitySelectorInputControl) {
+                    return CustomInputControl;
+                }
+            },
+            node(_) {
+                // DEBUG
+                // console.log("Node payload")
+                // console.log(data.payload);
+                return EntityNodeComponent;
+            },
             connection() {
                 return SelectableConnectionBind;
             }
@@ -204,14 +196,23 @@ export async function createEditor(container: HTMLElement) {
             lastChangedNode = "";
         }
 
+        // this is a workaround to hinder the counter from increasing at every
+        // draw method of the editor
+        if (context.type === "connectioncreated") {
+            increaseVariablePropCounter = true;
+        }
+
+        // This matches a Right Mouse button Click
         if (context.type === "contextmenu") {
             const source = context.data.context;
             const event = context.data.event;
             event.preventDefault();
             event.stopPropagation();
 
+            // This methods allows to add a new node with the Right Mouse Button click
             if (source === "root") { // add a new node
-                console.log("Add node")
+                // DEBUG
+                // console.log("Add node")
 
                 let displayLabel: string; // this is the label the node will get in the visual editor
                 // let isVariableNode = false;
@@ -220,14 +221,9 @@ export async function createEditor(container: HTMLElement) {
                 // if so, find the highest variable id, increment it by one and assign
                 // it to the "to be created"-node
                 if (selectedIndividual?.id.startsWith("?")) {
-                    const highestId = getHighestVariableId();
-
+                    highestIdCount += 1;
                     // hacky way to make the node instantiation in line (+19) use the correct label, id
-                    if (!highestId) {
-                        selectedIndividual.id = "?1";
-                    } else {
-                        selectedIndividual.id = "?" + (highestId + 1);
-                    }
+                    selectedIndividual.id = "?" + highestIdCount;
                     displayLabel = selectedIndividual.id;
                     // isVariableNode = true;
 
@@ -236,7 +232,8 @@ export async function createEditor(container: HTMLElement) {
                     const exists = editor.getNodes().find(n => n.label === displayLabel);
 
                     if (exists) {
-                        console.log("Node already exists", exists.id);
+                        // DEBUG
+                        // console.log("Node already exists", exists.id);
                         alert("This individual already exists. Please reuse the existing individual.");
                         return context;
                     }
@@ -246,10 +243,30 @@ export async function createEditor(container: HTMLElement) {
                 // but a variable node should have a label with only "?" and the
                 // input control should hold the text after the "?"
 
-                const node = new Node(displayLabel, selectedIndividual);
+                const node = new EntityNodeClass(displayLabel, selectedIndividual);
 
-                console.log("Node", node.entity);
+                // DEBUG
+                // console.log("Node", node.entity);
 
+                node.addControl(
+                    "entityInput",
+                    new EntitySelectorInputControl({
+                        initial: {id: "", label: "", prefix: {uri: "", abbreviation: ""}, description: ""},
+                        change(value) {
+                            // DEBUG
+                            console.log("Entity Input called change")
+                            console.log(value)
+                            console.log("node entity value")
+                            console.log(node.getEntity())
+                            node.setEntity(value)
+                            console.log("node value after update")
+                            console.log(node.getEntity())
+
+                            console.log("update node in area")
+                            area.update("node", node.id)
+                        }
+                    })
+                );
                 node.addInput("i0", new ClassicPreset.Input(socket, "", true));
                 node.addOutput("o0", new ClassicPreset.Output(socket, "", true));
 
@@ -259,7 +276,8 @@ export async function createEditor(container: HTMLElement) {
                 await area.translate(node.id, area.area.pointer);
 
             } else if (source instanceof ClassicPreset.Node) { // remove existing node
-                console.log("Remove node", source.id);
+                // DEBUG
+                // console.log("Remove node", source.id);
                 for (const c of editor
                     .getConnections()
                     .filter((c) => c.source === source.id || c.target === source.id)) {
@@ -290,7 +308,8 @@ export async function createEditor(container: HTMLElement) {
         },
         addPipe: (pipe: any) => editor.addPipe(pipe),
         removeSelectedConnections: async () => {
-            console.log("Remove selected connections")
+            // DEBUG
+            // console.log("Remove selected connections")
             for (const item of [...editor.getConnections()]) {
                 if (item.selected) {
                     await editor.removeConnection(item.id);
