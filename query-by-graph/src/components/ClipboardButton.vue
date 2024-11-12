@@ -13,10 +13,12 @@ const setCheckedForSomeSeconds = () => {
 </script>
 
 <template>
-  <button @click="setCheckedForSomeSeconds" class="flex h-9 w-24 rounded hover:bg-gray-200 items-center justify-center">
-    <span class="text-xs font-medium text-gray-500 mr-1">Copy</span>
-    <ClipboardDocumentCheckIcon v-if="checked" class="h-5 w-5 text-green-700" />
-    <ClipboardDocumentIcon v-else class="h-5 w-5 text-gray-500"/>
+  <button @click="setCheckedForSomeSeconds"
+          :class="{ 'flex h-9 w-24 rounded bg-amber-300 hover:bg-gray-200 items-center justify-center': true,
+                    'text-green-700 underline': checked}">
+    <span class="text-xs mr-1">Copy</span>
+    <ClipboardDocumentCheckIcon v-if="checked" class="h-5 w-5" />
+    <ClipboardDocumentIcon v-else class="h-5 w-5"/>
   </button>
 </template>
 

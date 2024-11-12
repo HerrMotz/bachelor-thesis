@@ -327,13 +327,8 @@ export async function createEditor(container: HTMLElement) {
         exportConnections: (): ConnectionInterfaceType[] => {
             return editor.getConnections().map(connection => {
                 const c = editor.getConnection(connection.id)
-                console.log("Get Node")
-                console.log(editor.getNode(c.source))
-                console.log("End get node")
                 const source = editor.getNode(c.source);
                 const target = editor.getNode(c.target);
-                console.log("constants in editor.ts")
-                console.log(source, target)
                 return {
                     property: c.property || noEntity,
                     source: source.entity,
