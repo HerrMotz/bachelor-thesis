@@ -27,26 +27,7 @@ import {
   ComboboxOptions,
 } from '@headlessui/vue'
 import EntityType from "../lib/types/EntityType.ts";
-
-const noEntity = {
-  id: '',
-  label: '',
-  description: '',
-  prefix: {
-    uri: "",
-    abbreviation: "",
-  }
-};
-
-const variableEntity:EntityType = { // EntityType
-  id: '?',
-  label: 'Variable',
-  description: 'Variable Entity',
-  prefix: {
-    uri: "",
-    abbreviation: "",
-  },
-};
+import {noEntity, variableEntity, variableEntityConstructor} from "../lib/rete/constants.ts";
 
 const queriedEntities = ref([
   noEntity,
@@ -81,15 +62,7 @@ function queryHelper(query: string) {
         }
       }
     }).concat([
-      {
-        id: query,
-        label: "Variable",
-        description: "Variable Entity",
-        prefix: {
-          uri: "",
-          abbreviation: "",
-        },
-      }
+        variableEntityConstructor(query)
     ]);
   }).catch(reason => {
     console.log(reason);
