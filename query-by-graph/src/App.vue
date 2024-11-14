@@ -209,7 +209,7 @@ const copyToClipboard = () => {
           </div>
         </div>
       </div>
-      <div class="mt-10 w-full">
+      <div class="mt-10 w-full rounded-t-2xl border-2 border-black">
         <div class="bg-amber-100 rounded-t-2xl p-4">
           <!-- This has the same propeties as the toolbox heading -->
           <h2 class="font-semibold text-xl flex justify-between">
