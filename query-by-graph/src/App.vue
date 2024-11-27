@@ -114,8 +114,16 @@ const copyToClipboard = () => {
         Press RMB on the canvas to create a new individual and LMB on an individual's socket to create a connection.
         You can delete an individual by pressing RMB on it.
       </p>
-      <div class="flex w-full bg-amber-100 rounded-2xl max-h-[60vh]">
-        <div class="w-4/5 bg-amber-50 rounded-tl-2xl">
+      <div class="flex w-full bg-amber-100 rounded-2xl max-h-[50vh]">
+        <div class="w-1/5 bg-amber-50 rounded-tl-2xl">
+          <h2 class="text-xl font-semibold bg-amber-100 p-4">
+            Metainfo<br>
+            <span class="text-sm font-medium">
+            Shows info
+          </span>
+          </h2>
+        </div>
+        <div class="w-3/5 bg-amber-50 rounded-tl-2xl">
           <h2 class="text-xl font-semibold bg-amber-100 p-4">
             <!-- This has the same propeties as the toolbox heading -->
             Visual Query Builder

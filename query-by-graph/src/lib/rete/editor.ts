@@ -185,6 +185,9 @@ export async function createEditor(container: HTMLElement) {
 
     connection.addPreset(ConnectionPresets.classic.setup());
 
+
+    // this is called when something in the editor happens.
+    // you can get a list of event keywords here: https://rete.readthedocs.io/en/latest/Events/
     area.addPipe(async (context) => {
         // this is a workaround to hinder the counter from increasing at every
         // draw method of the editor
