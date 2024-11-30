@@ -65,6 +65,8 @@ const rete = ref();
 
 const code = ref("");
 
+const selectedNode = ref<{ id: string } | null>(null);
+
 // DEBUG
 let lol = 10000
 
@@ -96,6 +98,10 @@ onMounted(async () => {
           formatCode();
         }, 10);
       }
+
+      if(context.type === 'nodeselected'){
+        selectedNode.value = context.data;
+      }
     });
   }
 });
@@ -122,6 +128,15 @@ const copyToClipboard = () => {
             Shows info
           </span>
           </h2>
+          <!-- Metainfowindow content -->
+        <div class="p-4">
+          <p v-if="selectedNode">
+            Selected Node ID: {{ selectedNode.id }}
+          </p>
+          <p v-else>
+            No node selected.
+          </p>
+        </div>
         </div>
         <div class="w-3/5 bg-amber-50 rounded-tl-2xl">
           <h2 class="text-xl font-semibold bg-amber-100 p-4">
