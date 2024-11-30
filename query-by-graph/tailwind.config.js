@@ -1,4 +1,7 @@
+// require ist in ESModul nicht erlaubt, deshalb Import
 /** @type {import('tailwindcss').Config} */
+import forms from '@tailwindcss/forms';
+
 export default {
   content: [
     "./index.html",
@@ -8,6 +11,6 @@ export default {
     extend: {},
   },
   plugins: [
-      require("@tailwindcss/forms")
+    forms, // Statt require() direkt als Import
   ],
-}
+};

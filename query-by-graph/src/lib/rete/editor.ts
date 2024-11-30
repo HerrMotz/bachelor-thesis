@@ -284,6 +284,18 @@ export async function createEditor(container: HTMLElement) {
             }
         }
 
+        if(context.type === 'nodepicked') {
+            const node = context.data as ClassicPreset.Node;
+            console.log(`Node clicked: ${node.id}`);
+
+            if(vueCallback){
+                vueCallback({
+                    type: 'nodeselected',
+                    data: node,
+                });
+            }
+        }
+
         if (vueCallback !== undefined) {
             vueCallback(context);
         }

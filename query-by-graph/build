@@ -1,4 +1,4 @@
 #!/bin/sh
 
 wasm-pack build
-npm run build
+npm run dev
