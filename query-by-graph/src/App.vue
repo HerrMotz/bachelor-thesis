@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import {onMounted, ref, shallowRef} from 'vue';
 import {createEditor} from "./lib/rete/editor.ts";
+import { ClassicPreset, NodeEditor } from 'rete';
 
 import {graph_to_query_wasm} from "../pkg";
 
@@ -49,6 +50,7 @@ import EntitySelector from "./components/EntitySelector.vue";
 import Button from "./components/Button.vue";
 import ConnectionInterfaceType from "./lib/types/ConnectionInterfaceType.ts";
 import ClipboardButton from "./components/ClipboardButton.vue";
+import WikiDataService from './lib/wikidata/WikiDataService.ts';
 
 interface Editor {
   setVueCallback: (callback: (context: any) => void) => void;
@@ -58,15 +60,17 @@ interface Editor {
   undo: () => void;
   redo: () => void;
   exportConnections: () => ConnectionInterfaceType[];
+  getNode: (nodeId: string) => ClassicPreset.Node | undefined;
 }
 
-const editor = ref<Editor>();  // Define the type of editor as Promise<Editor> | null
+const editor = ref<Editor | null>();  // Define the type of editor as Promise<Editor> | null
 const rete = ref();
 
 const code = ref("");
 
-const selectedNode = ref<{ id: string } | null>(null);
+const selectedNode = ref<{ id: any; label: any; entityId: any; metadata: any } | null>(null);
 
+// for listening to the EntitySelector
 // DEBUG
 let lol = 10000
 
@@ -99,8 +103,32 @@ onMounted(async () => {
         }, 10);
       }
 
+      // Fill the metainfo window with the selected node's data
       if(context.type === 'nodeselected'){
-        selectedNode.value = context.data;
+        const nodeId = context.data.id;
+        const node = editor.value?.getNode(nodeId);
+
+        if (node) {
+          const entityId = (node as any).entity.id; // Q number
+          const label = (node as any).entity.label; // Label from Wikidata
+
+          // everything but metadata is for debugging, can be removed later
+          selectedNode.value = {
+            id: nodeId,
+            label: label,
+            entityId: entityId,
+            metadata: null,
+          };
+
+          // extract relevant Metadata from wikidata
+          const wds = new WikiDataService();
+          wds.getItemMetaInfo(entityId).then((metadata) =>{
+            selectedNode.value!.metadata = metadata;
+          });
+
+          // DEBUG
+          console.log('Selected Entity ID:', entityId);
+        }
       }
     });
   }
@@ -129,14 +157,47 @@ const copyToClipboard = () => {
           </span>
           </h2>
           <!-- Metainfowindow content -->
-        <div class="p-4">
-          <p v-if="selectedNode">
-            Selected Node ID: {{ selectedNode.id }}
-          </p>
-          <p v-else>
+          <div class="p-4 overflow-auto max-h-[40vh]">
+          <!-- Display when a node is selected -->
+          <div v-if="selectedNode">
+            <div v-if="selectedNode.metadata">
+              <!-- Labels Section -->
+              <h3 class="text-lg font-bold mb-2">Labels:</h3>
+              <ul class="list-disc pl-6 mb-4">
+                <li v-for="(label, lang) in selectedNode.metadata.labels" :key="lang">
+                  <span class="font-medium">{{ label.value }} </span>
+                </li>
+              </ul>
+
+              <!-- Descriptions Section -->
+              <h3 class="text-lg font-bold mb-2">Descriptions:</h3>
+              <ul class="list-disc pl-6 mb-4">
+                <li v-for="(description, lang) in selectedNode.metadata.descriptions" :key="lang">
+                  <span class="font-medium">{{ description.value }}</span>
+                </li>
+              </ul>
+
+              <!-- Claims Section -->
+              <h3 class="text-lg font-bold mb-2">Claims:</h3>
+              <div class="space-y-4">
+                <div v-for="(claims, property) in selectedNode.metadata.claims" :key="property" class="border-t pt-2">
+                  <h4 class="text-md font-semibold mb-1">{{ property }}</h4>
+                  <ul class="list-disc pl-6">
+                    <li v-for="claim in claims" :key="claim.id">
+                      {{ claim.mainsnak.datavalue?.value || 'No value available' }}
+                    </li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Fallback when no node is selected -->
+          <p v-else class="text-gray-500">
             No node selected.
           </p>
         </div>
+
         </div>
         <div class="w-3/5 bg-amber-50 rounded-tl-2xl">
           <h2 class="text-xl font-semibold bg-amber-100 p-4">
