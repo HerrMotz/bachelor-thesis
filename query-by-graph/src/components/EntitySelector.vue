@@ -109,7 +109,11 @@ function eventEmitEntityHelper(entity: EntityType) {
                 {{ entity.label }}
               </span>
               </div>
-
+              <div class="flex">
+                <span :class="['ml-2 truncate text-gray-500', active ? 'text-indigo-200' : 'text-gray-500']">
+                  {{ entity.description }}
+                </span>
+              </div>
               <span v-if="selected"
                     :class="['absolute inset-y-0 right-0 flex items-center pr-4', active ? 'text-white' : 'text-indigo-600']">
               <CheckIcon class="h-5 w-5" aria-hidden="true"/>
