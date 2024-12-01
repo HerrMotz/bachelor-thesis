@@ -37,9 +37,11 @@ class EntityNodeClass extends ClassicPreset.Node {
     constructor(public label: string, public e: EntityType) {
         super(label);
         this.entity = e;
+        console.log('EntityNodeClass constructor', this.entity);
     }
 
     setEntity(entity: EntityType) {
+        console.log('setter called');
         this.entity = entity;
     }
 
@@ -351,5 +353,6 @@ export async function createEditor(container: HTMLElement) {
                 };
             })
         },
+        getNode: (id: string) => editor.getNode(id)
     };
 }

@@ -7,6 +7,9 @@ class WikiDataService {
   constructor() {
     this.api = axios.create({
       baseURL: 'https://www.wikidata.org/w/api.php',
+      params: {
+        origin: '*',
+      },
     });
   }
 
@@ -27,6 +30,7 @@ class WikiDataService {
           ids: itemId,
           format: 'json',
           props: 'labels|descriptions|claims',
+          origin: '*', // Required for CORS
         },
       });
 
@@ -34,7 +38,6 @@ class WikiDataService {
       if (!entity) {
         throw new Error(`Item with ID ${itemId} not found`);
       }
-
       const filteredLabels = Object.fromEntries(
         Object.entries(entity.labels).filter(([lang]) => languages.includes(lang))
       );
@@ -42,10 +45,46 @@ class WikiDataService {
         Object.entries(entity.descriptions).filter(([lang]) => languages.includes(lang))
       );
 
+      // Fetch the labels for all properties in the claims
+      const propertyIds = Object.keys(entity.claims); // P-Numbers
+      const propertyLabels = await this.getLabels(propertyIds, languages[0]); // Corresponding labels
+
+      // Fetch the labels for all items in the claims
+      const itemIds = new Set<string>();
+      for(const claimsArray of Object.values(entity.claims)){ // Loop through all claims for each P-Number
+        for(const claim of claimsArray){ // Loop through contents of each claim
+          const mainsnak = claim.mainsnak;
+          if(mainsnak.datatype === 'wikibase-item' && mainsnak.datavalue){ // if mainsnak is wikibase-item its value is a Q/P-Number
+            const itemId = mainsnak.datavalue.value.id;
+            itemIds.add(itemId);
+          }
+        }
+      }
+
+      // extract labels for all items (like done above for properties)
+      const itemLabels = await this.getLabels(Array.from(itemIds), languages[0]);
+
+      // Returns moidified claim object with labels instead of Q/P-Numbers
+      const claimsWithLabels = Object.fromEntries(
+        Object.entries(entity.claims).map(([property, claims]) => [
+          propertyLabels[property] || property, // looks up the label for the property and replaces the P-Number with it
+          claims.map(claim => {
+            const mainsnak = claim.mainsnak;
+            if (mainsnak.datatype === 'wikibase-item' && mainsnak.datavalue) {
+              const itemId = mainsnak.datavalue.value.id;
+              const label = itemLabels[itemId] || itemId; // looks up the label for the item and replaces the Q-Number with it
+              mainsnak.datavalue.value = label;
+            }
+            return claim;
+          }),
+        ])
+      );
+
       return {
         ...entity,
         labels: filteredLabels,
         descriptions: filteredDescriptions,
+        claims: claimsWithLabels,
       };
     } catch (error) {
       console.error(`Failed to fetch data for item ${itemId}:`, error);
@@ -118,6 +157,147 @@ class WikiDataService {
       };
     }
   }
+  
+  /**
+   * Fetches the labels for a list of property IDs from the WikiData API.
+   * 
+   * @param propertyIds - An array of property IDs (e.g., ["P123", "P456"]).
+   * @param language - The language code for the labels (default is 'en').
+   * @returns A promise that resolves to an object mapping property IDs to their labels.
+   * 
+   * This function makes an API call to the WikiData API to fetch the labels for the given property IDs.
+   * It returns an object where the keys are the property IDs and the values are the corresponding labels
+   * in the specified language. If a label is not available in the specified language, the property ID itself
+   * is used as the label.
+   */
+  async getLabels(
+    propertyIds: string[], 
+    language: string = 'en'
+  ): Promise<{[key: string]: string}> {
+    console.log('test');
+    try {
+      // For handling API limit
+      const chunks = chunkArray(propertyIds, 50);
+      const labels: { [key: string]: string } = {}; // Map of P/Q-Numbers to labels
+
+      for (const chunk of chunks) {
+        const response = await this.api.get<WikiDataResponse>('', {
+          params: {
+            action: 'wbgetentities',
+            ids: chunk.join('|'),
+            format: 'json',
+            props: 'labels',
+            languages: language,
+            origin: '*',
+          },
+        });
+
+        // DEBUG
+        console.log('API response', response.data);
+
+        // Fill the labels object with the fetched data
+        if (response.data.entities) {
+          for (const [id, entity] of Object.entries(response.data.entities)) {
+            if (entity && entity.labels && entity.labels[language]) {
+              labels[id] = entity.labels[language].value;
+            } else {
+              labels[id] = id;
+            }
+            console.log('converting property id to label:', id, labels[id]);
+          }
+        } else {
+          console.error('No entities found in response:', response.data);
+        }
+      }
+  
+      return labels;
+    } catch (error) {
+      console.error('Failed to fetch property labels:', error);
+      return {};
+    }
+  }
+}
+
+// Only 50 entities can be fetched at a time, so we need to split the array appart
+function chunkArray<T>(array: T[], chunkSize: number): T[][] {
+  const chunks: T[][] = [];
+  for (let i = 0; i < array.length; i += chunkSize) {
+    chunks.push(array.slice(i, i + chunkSize));
+  }
+  return chunks;
 }
 
 export default WikiDataService;
+
+// Example API Response
+/**
+ * {
+  "entities": {
+    "Q42": {
+      "type": "item",
+      "id": "Q42",
+      "labels": {
+        "en": {
+          "language": "en",
+          "value": "Douglas Adams"
+        },
+        // Other languages...
+      },
+      "descriptions": {
+        "en": {
+          "language": "en",
+          "value": "English writer and humorist"
+        },
+        // Other languages...
+      },
+      "claims": {
+        "P31": [
+          {
+            "mainsnak": {
+              "snaktype": "value",
+              "property": "P31",
+              "datatype": "wikibase-item",
+              "datavalue": {
+                "value": {
+                  "entity-type": "item",
+                  "numeric-id": 5,
+                  "id": "Q5"
+                },
+                "type": "wikibase-entityid"
+              }
+            },
+            "type": "statement",
+            "id": "Q42$D3A1F9C7-4F78-4F8D-9C07-8F36FAD6F0C9",
+            "rank": "normal"
+          }
+          // More statements...
+        ],
+        "P19": [
+          {
+            "mainsnak": {
+              "snaktype": "value",
+              "property": "P19",
+              "datatype": "wikibase-item",
+              "datavalue": {
+                "value": {
+                  "entity-type": "item",
+                  "numeric-id": 1794,
+                  "id": "Q1794"
+                },
+                "type": "wikibase-entityid"
+              }
+            },
+            "type": "statement",
+            "id": "Q42$A1B2C3D4-E5F6-7890-1234-56789ABCDEF0",
+            "rank": "normal"
+          }
+          // More statements...
+        ]
+        // More properties...
+      },
+      // Other entity data...
+    }
+  },
+  "success": 1
+}
+ */

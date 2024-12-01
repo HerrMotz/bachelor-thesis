@@ -59,6 +59,8 @@ export default defineComponent({
     const outputs = computed(() => sortByIndex(Object.entries(props.data.outputs)));
 
     const updateLabel = (e) => {
+      //console.log('Updating label');
+      //console.log('Updating label from: ' , props.data.label, ' to: ', e.id);
       props.data.label = e.id;
     };
 
