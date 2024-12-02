@@ -1,17 +1,26 @@
 import axios, {AxiosInstance} from "axios";
 import {WikiDataEntityDetails, WikiDataResponse, WikiDataSearchApiResponse} from "./types.ts";
+import { selectedDataSource, factgridProxy } from "../../store.ts";
 
 class WikiDataService {
   private api: AxiosInstance;
 
   constructor() {
+    const baseURL = selectedDataSource.value === 'https://www.wikidata.org/w/api.php'
+      ? selectedDataSource.value
+      : factgridProxy;
+
+    console.log(`Initializing WikiDataService with baseURL: ${baseURL}`);
+
     this.api = axios.create({
-      baseURL: 'https://www.wikidata.org/w/api.php',
+      baseURL,
       params: {
         origin: '*',
       },
     });
   }
+
+  
 
   /**
    * Fetch metadata about a WikiData item by its ID.
@@ -34,6 +43,8 @@ class WikiDataService {
         },
       });
 
+      console.log('Api response', response);
+
       const entity = response.data.entities[itemId];
       if (!entity) {
         throw new Error(`Item with ID ${itemId} not found`);
@@ -44,6 +55,16 @@ class WikiDataService {
       const filteredDescriptions = Object.fromEntries(
         Object.entries(entity.descriptions).filter(([lang]) => languages.includes(lang))
       );
+
+      // Construction of images
+      let imageUrl = null;
+
+      if(entity.claims && entity.claims.P18){
+        const imageClaim = entity.claims.P18[0];
+        const imageValue = imageClaim.mainsnak.datavalue.value;
+
+        imageUrl = this.getCommonsImageUrl(imageValue);
+      }
 
       // Fetch the labels for all properties in the claims
       const propertyIds = Object.keys(entity.claims); // P-Numbers
@@ -85,11 +106,18 @@ class WikiDataService {
         labels: filteredLabels,
         descriptions: filteredDescriptions,
         claims: claimsWithLabels,
+        image: imageUrl,
       };
     } catch (error) {
       console.error(`Failed to fetch data for item ${itemId}:`, error);
       return null;
     }
+  }
+
+  private getCommonsImageUrl(filename: string): string {
+    const commonsUrl = 'https://commons.wikimedia.org/wiki/Special:FilePath/';
+    const encodedFilename = encodeURIComponent(filename);
+    return `${commonsUrl}${encodedFilename}`;
   }
 
   /**
@@ -146,6 +174,7 @@ class WikiDataService {
 
     try {
       const response = await this.api.get<WikiDataSearchApiResponse>('', { params });
+      //console.log("Api response for query: ", response.data);
       return response.data;
     } catch (error) {
       console.error('Error while querying the WikiData API:', error);
@@ -193,7 +222,7 @@ class WikiDataService {
         });
 
         // DEBUG
-        console.log('API response', response.data);
+        //console.log('API response', response.data);
 
         // Fill the labels object with the fetched data
         if (response.data.entities) {

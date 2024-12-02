@@ -51,6 +51,7 @@ import Button from "./components/Button.vue";
 import ConnectionInterfaceType from "./lib/types/ConnectionInterfaceType.ts";
 import ClipboardButton from "./components/ClipboardButton.vue";
 import WikiDataService from './lib/wikidata/WikiDataService.ts';
+import { selectedDataSource } from './store.ts';
 
 interface Editor {
   setVueCallback: (callback: (context: any) => void) => void;
@@ -69,6 +70,7 @@ const rete = ref();
 const code = ref("");
 
 const selectedNode = ref<{ id: any; label: any; entityId: any; metadata: any } | null>(null);
+
 
 // for listening to the EntitySelector
 // DEBUG
@@ -137,6 +139,16 @@ onMounted(async () => {
 const copyToClipboard = () => {
   navigator.clipboard.writeText(code.value);
 }
+
+const setDataSource = (source: string) => {
+  if (source === 'wikidata') {
+    selectedDataSource.value = 'https://www.wikidata.org/w/api.php';
+  } else if (source === 'factgrid') {
+    selectedDataSource.value = 'https://database.factgrid.de/api.php';
+  }
+  console.log(`selectedDataSource updated to: ${selectedDataSource.value}`);
+};
+
 </script>
 
 <template>
@@ -152,9 +164,6 @@ const copyToClipboard = () => {
         <div class="w-1/5 bg-amber-50 rounded-tl-2xl">
           <h2 class="text-xl font-semibold bg-amber-100 p-4">
             Metainfo<br>
-            <span class="text-sm font-medium">
-            Shows info
-          </span>
           </h2>
           <!-- Metainfowindow content -->
           <div class="p-4 overflow-auto max-h-[40vh]">
@@ -176,6 +185,9 @@ const copyToClipboard = () => {
                   <span class="font-medium">{{ description.value }}</span>
                 </li>
               </ul>
+
+             <img v-if="selectedNode.metadata.image" :src="selectedNode.metadata.image" alt="Entity Image" />
+
 
               <!-- Claims Section -->
               <h3 class="text-lg font-bold mb-2">Claims:</h3>
@@ -242,9 +254,10 @@ const copyToClipboard = () => {
               </div>
             </div>
 
+
             <div class="flex-col flex gap-2">
               <h4 class="font-semibold">Create Individual</h4>
-              <EntitySelector language="en" type="item" @selected-entity="(prop: EntityType) => {
+              <EntitySelector  language="en" type="item" @selected-entity="(prop: EntityType) => {
                 if (editor) {
                   editor.setSelectedIndividual(prop);
                 }
@@ -260,7 +273,7 @@ const copyToClipboard = () => {
 
             <div class="flex-col flex gap-2">
               <h4 class="font-semibold">Create connection</h4>
-              <EntitySelector language="en" type="property" @selected-entity="(prop: EntityType) => { 
+              <EntitySelector  language="en" type="property" @selected-entity="(prop: EntityType) => { 
                 if (editor) {
                   editor.setSelectedProperty(prop);
                 }
@@ -273,6 +286,11 @@ const copyToClipboard = () => {
                 an output connector (right side) and then an input connector (left side) of an
                 individual.
               </p>
+            </div>
+            <!-- Data Source Selector -->
+            <div>
+              <button @click="setDataSource('wikidata')">Use Wikidata</button>
+              <button @click="setDataSource('factgrid')">Use FactGrid</button>
             </div>
             <div class="flex-col flex gap-2">
               <h4 class="font-semibold">Delete selected connections</h4>

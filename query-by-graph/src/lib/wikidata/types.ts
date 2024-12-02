@@ -48,6 +48,7 @@ export interface WikiDataEntityDetails {
   labels: { [language: string]: WikiDataLabel };
   descriptions: { [language: string]: WikiDataDescription };
   claims: { [key: string]: any[] };
+  image?: string | null;
 }
 
 export interface WikiDataResponse {
