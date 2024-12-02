@@ -52,7 +52,7 @@ fn graph_to_query(connections: Vec<Connection>) -> String {
     let projection_list = if projection_set.len() == 0 { String::from("*") } else {
         projection_set.into_iter()
         .collect::<Vec<_>>()
-        .join(" ")};
+        .join("  ")};
 
 
     let where_clause: String = connections.iter()
@@ -87,6 +87,11 @@ fn graph_to_query(connections: Vec<Connection>) -> String {
             )
         })
         .collect();
+
+
+
+
+
 
     format!(
         "SELECT {} WHERE {{\n{}\n}}",

@@ -1,6 +1,5 @@
 <script setup lang="ts">
-import WikiDataService from "../lib/wikidata/WikiDataService.ts";
-import {WikiDataEntity, WikiDataSearchApiResponse} from "../lib/wikidata/types.ts";
+import {queryWikidata, WikiDataEntity, WikiDataApiResponse} from "../lib/wikidata/queryDataService.ts";
 
 const props = defineProps({
   language: {type: String, required: true},
@@ -46,13 +45,12 @@ function displayValue(entity: unknown): string {
 }
 
 function queryHelper(query: string) {
-  const wds = new WikiDataService()
-  wds.queryWikidata({
+  queryWikidata({
     language: props.language,
     uselang: props.language,
     type: props.type,
     search: query
-  }).then((data: WikiDataSearchApiResponse) => {
+  }).then((data: WikiDataApiResponse) => {
     queriedEntities.value = data.search.map((entity: WikiDataEntity) => {
       return { // EntityType
         id: entity.id,
