@@ -1,6 +1,6 @@
 import axios, {AxiosInstance} from "axios";
 import {WikiDataEntityDetails, WikiDataResponse, WikiDataSearchApiResponse} from "./types.ts";
-import { selectedDataSource, factgridProxy } from "../../store.ts";
+import { selectedDataSource } from "../../store.ts";
 
 class WikiDataService {
   private api: AxiosInstance;
@@ -8,7 +8,7 @@ class WikiDataService {
   constructor() {
     const baseURL = selectedDataSource.value === 'https://www.wikidata.org/w/api.php'
       ? selectedDataSource.value
-      : factgridProxy;
+      : 'https://database.factgrid.de/api.php';
 
     console.log(`Initializing WikiDataService with baseURL: ${baseURL}`);
 
@@ -174,7 +174,7 @@ class WikiDataService {
 
     try {
       const response = await this.api.get<WikiDataSearchApiResponse>('', { params });
-      //console.log("Api response for query: ", response.data);
+      console.log("Api response for query: ", response.data);
       return response.data;
     } catch (error) {
       console.error('Error while querying the WikiData API:', error);
