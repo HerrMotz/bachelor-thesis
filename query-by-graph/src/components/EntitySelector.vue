@@ -46,7 +46,8 @@ function displayValue(entity: unknown): string {
 }
 
 function queryHelper(query: string) {
-  const wds = new WikiDataService()
+  console.log(`queryHelper called with query: "${query}"`);
+  const wds = new WikiDataService();
   wds.queryWikidata({
     language: props.language,
     uselang: props.language,
