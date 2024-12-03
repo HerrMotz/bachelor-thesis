@@ -256,22 +256,6 @@ const setDataSource = (source: string) => {
 
 
             <div class="flex-col flex gap-2">
-              <h4 class="font-semibold">Create Individual</h4>
-              <EntitySelector  language="en" type="item" @selected-entity="(prop: EntityType) => {
-                if (editor) {
-                  editor.setSelectedIndividual(prop);
-                }
-              }" class="bg-amber-300 rounded-2xl p-2">
-                Individual Selector
-              </EntitySelector>
-              <p class="text-gray-600 text-sm hover:text-gray-900 transition-all">
-                <em>Hint:</em>
-                Select an individual below. Then, <b>right-click</b> on the canvas to create a new individual. You can
-                <b>delete it</b> by also right-clicking on it.
-              </p>
-            </div>
-
-            <div class="flex-col flex gap-2">
               <h4 class="font-semibold">Create connection</h4>
               <EntitySelector  language="en" type="property" @selected-entity="(prop: EntityType) => { 
                 if (editor) {
