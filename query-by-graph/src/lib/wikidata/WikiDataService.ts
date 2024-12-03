@@ -8,7 +8,7 @@ class WikiDataService {
   constructor() {
     const baseURL = selectedDataSource.value === 'https://www.wikidata.org/w/api.php'
       ? selectedDataSource.value
-      : 'https://database.factgrid.de/api.php';
+      : 'https://database.factgrid.de/w/api.php';
 
     console.log(`Initializing WikiDataService with baseURL: ${baseURL}`);
 
@@ -96,6 +96,9 @@ class WikiDataService {
               const label = itemLabels[itemId] || itemId; // looks up the label for the item and replaces the Q-Number with it
               mainsnak.datavalue.value = label;
             }
+            else if (mainsnak.datatype === 'time' && mainsnak.datavalue){
+              mainsnak.datavalue.value = this.formatWikidataDate(mainsnak.datavalue.value);
+            }
             return claim;
           }),
         ])
@@ -114,10 +117,50 @@ class WikiDataService {
     }
   }
 
+  // Format images correctly
   private getCommonsImageUrl(filename: string): string {
     const commonsUrl = 'https://commons.wikimedia.org/wiki/Special:FilePath/';
     const encodedFilename = encodeURIComponent(filename);
     return `${commonsUrl}${encodedFilename}`;
+  }
+
+  //Format dates correctly
+  private formatWikidataDate(dateValue: { time: string; precision: number }): string {
+    // ExampleDate: { time: "+1965-01-01T00:00:00Z", timezone: 0, ... }
+    const time = dateValue.time;
+    const precision = dateValue.precision;
+
+    let dateStr = time.startsWith('+') ? time.substring(1) : time;
+
+    // Extract date components for toLocaleStringDate method
+    const year = dateStr.substring(0, 4);
+    const month = dateStr.substring(5, 7);
+    const day = dateStr.substring(8, 10);
+
+    let formattedDate = '';
+    const options: Intl.DateTimeFormatOptions = {};
+
+    if (precision === 9) {
+      formattedDate = year;
+    } 
+    else if (precision === 10) {
+      options.year = 'numeric';
+      options.month = 'long';
+      const date = new Date(`${year}-${month}-01`);
+      formattedDate = date.toLocaleDateString('en', options);
+    } 
+    else if (precision >= 11) {
+      options.year = 'numeric';
+      options.month = 'long';
+      options.day = 'numeric';
+      const date = new Date(`${year}-${month}-${day}`);
+      formattedDate = date.toLocaleDateString('en', options);
+    } 
+    else {
+      formattedDate = year;
+    }
+
+    return formattedDate;
   }
 
   /**
