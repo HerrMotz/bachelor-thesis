@@ -16,7 +16,7 @@ struct Entity {
     pub prefix: Prefix
 }
 
-#[derive(Deserialize)]
+#[derive(Deserialize, Clone, Eq, Hash, PartialEq)]
 struct Prefix {
     uri: String,
     abbreviation: String
@@ -54,25 +54,40 @@ fn graph_to_query(connections: Vec<Connection>) -> String {
         .collect::<Vec<_>>()
         .join(" ")};
 
+    let prefix_set = connections.iter()
+        .flat_map(|connection| {
+            vec![&connection.source, &connection.target, &connection.property]
+        })
+        .filter(|entity| !entity.prefix.uri.is_empty())
+        .map(|entity| entity.prefix.clone())
+        .collect::<HashSet<_>>();
+
+    let prefix_list = if prefix_set.len() == 0 { String::from("") } else {
+        prefix_set.into_iter()
+        // PREFIX wd: <http://www.wikidata.org/entity/>
+        .map(|prefix| format!("PREFIX {}: <{}>", prefix.abbreviation, prefix.uri))
+        .collect::<Vec<_>>()
+        .join("\n")
+    };
 
     let where_clause: String = connections.iter()
         .map(|connection| {
             let source_uri = if connection.source.prefix.uri.is_empty() {
                 connection.source.id.clone() // Clone the String to avoid moving it
             } else {
-                format!("<{}>", connection.source.prefix.uri)
+                format!("{}:{}", connection.source.prefix.abbreviation, connection.source.id)
             };
 
             let property_uri = if connection.property.prefix.uri.is_empty() {
                 connection.property.id.clone() // Clone the String to avoid moving it
             } else {
-                format!("<{}>", connection.property.prefix.uri)
+                format!("{}:{}", connection.property.prefix.abbreviation, connection.property.id)
             };
 
             let target_uri = if connection.target.prefix.uri.is_empty() {
                 connection.target.id.clone() // Clone the String to avoid moving it
             } else {
-                format!("<{}>", connection.target.prefix.uri)
+                format!("{}:{}", connection.target.prefix.uri, connection.target.id)
             };
 
             format!(
@@ -89,7 +104,7 @@ fn graph_to_query(connections: Vec<Connection>) -> String {
         .collect();
 
     format!(
-        "SELECT {} WHERE {{\n{}\n}}",
-        projection_list, where_clause
+        "{}\nSELECT {} WHERE {{\n{}}}",
+        prefix_list, projection_list, where_clause
     )
 }
