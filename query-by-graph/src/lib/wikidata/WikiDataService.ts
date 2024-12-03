@@ -8,7 +8,7 @@ class WikiDataService {
   constructor() {
     const baseURL = selectedDataSource.value === 'https://www.wikidata.org/w/api.php'
       ? selectedDataSource.value
-      : 'https://database.factgrid.de/api.php';
+      : 'https://database.factgrid.de/w/api.php';
 
     console.log(`Initializing WikiDataService with baseURL: ${baseURL}`);
 
