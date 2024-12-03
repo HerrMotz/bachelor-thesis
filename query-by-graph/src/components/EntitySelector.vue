@@ -1,11 +1,14 @@
 <script setup lang="ts">
 import WikiDataService from "../lib/wikidata/WikiDataService.ts";
 import {WikiDataEntity, WikiDataSearchApiResponse} from "../lib/wikidata/types.ts";
+import {computed} from 'vue';
 
 const props = defineProps({
   language: {type: String, required: true},
   type: {type: String, required: true}, // will be passed to the wikidata query, can be e.g. "item" or "property"
 });
+
+const language = computed(() => selectedDataSource.value.preferredLanguages[0]);
 
 // my local data type contains an ID and a label
 // where the ID is the P or Q number
@@ -50,8 +53,8 @@ function queryHelper(query: string) {
   console.log(`queryHelper called with query: "${query}"`);
   const wds = new WikiDataService();
   wds.queryWikidata({
-    language: props.language,
-    uselang: props.language,
+    language: language.value,
+    uselang: language.value,
     type: props.type,
     search: query
   }).then((data: WikiDataSearchApiResponse) => {
