@@ -142,6 +142,8 @@ class WikiDataService {
     let formattedDate = '';
     const options: Intl.DateTimeFormatOptions = {};
 
+    const language = selectedDataSource.value.preferredLanguages[0] || 'en';
+
     if (precision === 9) {
       formattedDate = year;
     } 
@@ -149,14 +151,14 @@ class WikiDataService {
       options.year = 'numeric';
       options.month = 'long';
       const date = new Date(`${year}-${month}-01`);
-      formattedDate = date.toLocaleDateString('en', options);
+      formattedDate = date.toLocaleDateString(language, options);
     } 
     else if (precision >= 11) {
       options.year = 'numeric';
       options.month = 'long';
       options.day = 'numeric';
       const date = new Date(`${year}-${month}-${day}`);
-      formattedDate = date.toLocaleDateString('en', options);
+      formattedDate = date.toLocaleDateString(language, options);
     } 
     else {
       formattedDate = year;

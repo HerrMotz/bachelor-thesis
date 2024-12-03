@@ -51,8 +51,8 @@ import Button from "./components/Button.vue";
 import ConnectionInterfaceType from "./lib/types/ConnectionInterfaceType.ts";
 import ClipboardButton from "./components/ClipboardButton.vue";
 import WikiDataService from './lib/wikidata/WikiDataService.ts';
-import { selectedDataSource } from './store.ts';
-import {factGridDataSource, wikiDataDataSource} from "./lib/constants";
+import { selectedDataSource, dataSources } from './store.ts';
+
 
 interface Editor {
   setVueCallback: (callback: (context: any) => void) => void;
@@ -141,13 +141,11 @@ const copyToClipboard = () => {
   navigator.clipboard.writeText(code.value);
 }
 
-const setDataSource = (source: string) => {
-  if (source === 'wikidata') {
-    selectedDataSource.value = wikiDataDataSource;
-  } else if (source === 'factgrid') {
-    selectedDataSource.value = factGridDataSource;
+const setDataSource = (source: keyof typeof dataSources) => {
+  if (dataSources[source]) {
+    selectedDataSource.value = dataSources[source];
+    console.log('selectedDataSource updated to:', selectedDataSource.value);
   }
-  console.log(`selectedDataSource updated to: ${selectedDataSource.value}`);
 };
 
 </script>
