@@ -87,7 +87,7 @@ fn graph_to_query(connections: Vec<Connection>) -> String {
             let target_uri = if connection.target.prefix.uri.is_empty() {
                 connection.target.id.clone() // Clone the String to avoid moving it
             } else {
-                format!("{}:{}", connection.target.prefix.uri, connection.target.id)
+                format!("{}:{}", connection.target.prefix.abbreviation, connection.target.id)
             };
 
             format!(
