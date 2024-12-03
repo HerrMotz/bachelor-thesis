@@ -52,6 +52,7 @@ import ConnectionInterfaceType from "./lib/types/ConnectionInterfaceType.ts";
 import ClipboardButton from "./components/ClipboardButton.vue";
 import WikiDataService from './lib/wikidata/WikiDataService.ts';
 import { selectedDataSource } from './store.ts';
+import {factGridDataSource, wikiDataDataSource} from "./lib/constants";
 
 interface Editor {
   setVueCallback: (callback: (context: any) => void) => void;
@@ -90,8 +91,8 @@ onMounted(async () => {
       // DEBUG
       if (lol > 0) {
         // DEBUG
-        console.log("context type in app.vue")
-        console.log(context.type)
+        // console.log("context type in app.vue")
+        // console.log(context.type)
         lol--;
       }
       if (triggerEvents.includes(context.type)) {
@@ -142,9 +143,9 @@ const copyToClipboard = () => {
 
 const setDataSource = (source: string) => {
   if (source === 'wikidata') {
-    selectedDataSource.value = 'https://www.wikidata.org/w/api.php';
+    selectedDataSource.value = wikiDataDataSource;
   } else if (source === 'factgrid') {
-    selectedDataSource.value = 'https://database.factgrid.de/api.php';
+    selectedDataSource.value = factGridDataSource;
   }
   console.log(`selectedDataSource updated to: ${selectedDataSource.value}`);
 };

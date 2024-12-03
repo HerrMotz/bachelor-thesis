@@ -4,11 +4,11 @@ import { selectedDataSource } from "../../store.ts";
 
 class WikiDataService {
   private api: AxiosInstance;
+  private readonly languages: string[];
 
   constructor() {
-    const baseURL = selectedDataSource.value === 'https://www.wikidata.org/w/api.php'
-      ? selectedDataSource.value
-      : 'https://database.factgrid.de/w/api.php';
+    const baseURL = selectedDataSource.value.url;
+    this.languages = selectedDataSource.value.preferredLanguages;
 
     console.log(`Initializing WikiDataService with baseURL: ${baseURL}`);
 
@@ -20,7 +20,7 @@ class WikiDataService {
     });
   }
 
-  
+
 
   /**
    * Fetch metadata about a WikiData item by its ID.
@@ -30,8 +30,10 @@ class WikiDataService {
    */
   async getItemMetaInfo(
     itemId: string,
-    languages: string[] = ['en']
   ): Promise<WikiDataEntityDetails | null> {
+
+    const languages = this.languages;
+
     try {
       const response = await this.api.get<WikiDataResponse>('', {
         params: {

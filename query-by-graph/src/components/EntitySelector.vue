@@ -29,6 +29,7 @@ import {
 } from '@headlessui/vue'
 import EntityType from "../lib/types/EntityType.ts";
 import {noEntity, variableEntity, variableEntityConstructor} from "../lib/rete/constants.ts";
+import {selectedDataSource} from "../store.ts";
 
 const queriedEntities = ref([
   noEntity,
@@ -55,13 +56,17 @@ function queryHelper(query: string) {
     search: query
   }).then((data: WikiDataSearchApiResponse) => {
     queriedEntities.value = data.search.map((entity: WikiDataEntity) => {
+      const prefix = props.type === 'item'
+          ? selectedDataSource.value.entityPrefix
+          : selectedDataSource.value.propertyPrefix
+
       return { // EntityType
         id: entity.id,
         label: entity.display.label.value,
         description: entity.display.description.value,
         prefix: {
-          uri: entity.concepturi,
-          abbreviation: "wd",
+          uri: prefix.url,
+          abbreviation: prefix.abbreviation,
         }
       }
     }).concat([
