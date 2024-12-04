@@ -1,6 +1,5 @@
 <template>
   <div class="node" :class="{ selected: data.selected }" :style="nodeStyles" data-testid="node">
-    {{data.entity}}
     <div class="p-2">
       <h1 class="text-3xl text-white font-bold" data-testid="title">{{ data.entity.label }} </h1>
       <h2 class="text-2xl text-gray-100 font-bold font-mono">{{data.entity.prefix.abbreviation}}{{ data.entity.prefix.abbreviation && ':'}}{{data.entity.id}}</h2>

@@ -98,8 +98,8 @@ onMounted(async () => {
         setTimeout(() => {
           const connections = editor.value!.exportConnections()
           // DEBUG
-          console.log("The connections in App.vue")
-          console.log(connections)
+          // console.log("The connections in App.vue")
+          // console.log(connections)
           code.value = graph_to_query_wasm(JSON.stringify(connections));
           formatCode();
         }, 10);

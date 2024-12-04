@@ -18,7 +18,7 @@ import EntityType from "../types/EntityType.ts";
 import ConnectionInterfaceType from "../types/ConnectionInterfaceType.ts";
 import EntityNodeComponent from "../../components/EntityNode.vue";
 import CustomInputControl from "../../components/EntitySelectorInputControl.vue";
-import {noEntity,variableEntity,variableEntityConstructor} from "./constants.ts";
+import {noEntity,variableEntityConstructor} from "./constants.ts";
 import {noDataSource} from "../constants";
 
 // Each connection holds additional data, which is defined here
@@ -93,6 +93,11 @@ export async function createEditor(container: HTMLElement) {
         const id = props.data.id;
 
         const label = "connection";
+        if (increaseVariablePropCounter) {
+            increaseVariablePropCounter = false;
+            highestIdCount++;
+        }
+        props.data.property = variableEntityConstructor(highestIdCount.toString())
 
         // Initialize the custom connection with the custom props
         // and connect it to our editor events
@@ -161,6 +166,7 @@ export async function createEditor(container: HTMLElement) {
         // this is a workaround to hinder the counter from increasing at every
         // draw method of the editor
         if (context.type === "connectioncreated") {
+            increaseVariablePropCounter = true;
         }
 
         // This matches a Right Mouse button Click
@@ -174,6 +180,8 @@ export async function createEditor(container: HTMLElement) {
             if (source === "root") { // add a new node
                 // DEBUG
                 console.log("Add variable node")
+
+                highestIdCount++;
 
                 const newEntity = variableEntityConstructor(
                     highestIdCount.toString()
@@ -272,12 +280,6 @@ export async function createEditor(container: HTMLElement) {
                     await removeNodeWithConnections(editor, item.id);
                 }
             }
-        },
-        setSelectedProperty: (property: EntityType) => {
-            selectedProperty = property
-        },
-        setSelectedIndividual: (individual: EntityType) => {
-            selectedIndividual = individual;
         },
         undo: () => history.undo(),
         redo: () => history.redo(),

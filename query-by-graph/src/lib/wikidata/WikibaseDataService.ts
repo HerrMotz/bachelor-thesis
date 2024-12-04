@@ -1,6 +1,5 @@
 import axios, {AxiosInstance} from "axios";
 import {WikiDataEntityDetails, WikiDataResponse, WikiDataSearchApiResponse} from "./types.ts";
-import { selectedDataSource } from "../../store.ts";
 import WikibaseDataSource from "../types/WikibaseDataSource.ts";
 
 class WikibaseDataService {
