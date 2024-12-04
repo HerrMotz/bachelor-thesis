@@ -17,13 +17,15 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
 
-      # Step 2: Set up Rust
+      # Step 2: Set up Rust and wasm-pack
       - name: Install Rust stable
         uses: actions-rs/toolchain@v1
         with:
             toolchain: stable
             override: true
-            components: wasm-pack
+
+      - name: Install wasm-pack
+        run: cargo install wasm-pack
 
       # Step 3: Set up Node.js (You can specify the version you use)
       - name: Set up Node.js
