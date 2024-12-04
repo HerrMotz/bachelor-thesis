@@ -16,7 +16,7 @@
           @selected-entity="(prop) => {value = prop; $emit('changed', value)}"
       />
       <h3 v-if="value" class="font-bold font-mono w-32 -ml-16">
-        {{value.prefix.abbreviation}}:{{value.id}}
+        {{value.prefix.abbreviation}}{{ value.prefix.abbreviation && ':'}}{{value.id}}
       </h3>
     </div>
 
@@ -26,6 +26,7 @@
 <script>
 import {defineComponent} from 'vue'
 import EntitySelector from "./EntitySelector.vue";
+import {variableEntity} from "../lib/rete/constants.ts";
 
 // This connection component has the following features:
 // - it displays a label in the middle of the connection
@@ -40,11 +41,14 @@ export default defineComponent({
   data() {
     return {
       isMounted: false,
-      value: "",
+      value: variableEntity,
     }
   },
   mounted() {
     this.isMounted = true;
+    this.$emit("changed",
+      variableEntity
+    )
   },
   computed: {
     boxText() {
