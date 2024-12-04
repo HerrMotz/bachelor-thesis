@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import {onMounted, ref, shallowRef} from 'vue';
 import {createEditor} from "./lib/rete/editor.ts";
-import { ClassicPreset, NodeEditor } from 'rete';
+import { ClassicPreset } from 'rete';
 
 import {graph_to_query_wasm} from "../pkg";
 
