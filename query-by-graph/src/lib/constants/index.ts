@@ -1,6 +1,7 @@
 import WikibaseDataSource from "../types/WikibaseDataSource.ts";
 
 const wikiDataDataSource: WikibaseDataSource = {
+    name: "WikiData",
     url: "https://www.wikidata.org/w/api.php",
     preferredLanguages: ['en'],
     entityPrefix: {
@@ -14,6 +15,7 @@ const wikiDataDataSource: WikibaseDataSource = {
 }
 
 const factGridDataSource: WikibaseDataSource = {
+    name: "FactGrid",
     url: "https://database.factgrid.de/w/api.php",
     preferredLanguages: ['de'],
     entityPrefix: {

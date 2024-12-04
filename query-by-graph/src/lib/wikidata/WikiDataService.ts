@@ -1,14 +1,17 @@
 import axios, {AxiosInstance} from "axios";
 import {WikiDataEntityDetails, WikiDataResponse, WikiDataSearchApiResponse} from "./types.ts";
 import { selectedDataSource } from "../../store.ts";
+import WikibaseDataSource from "../types/WikibaseDataSource.ts";
 
 class WikiDataService {
   private api: AxiosInstance;
   private readonly languages: string[];
+  private dataSource: WikibaseDataSource;
 
-  constructor() {
-    const baseURL = selectedDataSource.value.url;
-    this.languages = selectedDataSource.value.preferredLanguages;
+  constructor(dataSource: WikibaseDataSource) {
+    const baseURL = dataSource.url;
+    this.languages = dataSource.preferredLanguages;
+    this.dataSource = dataSource;
 
     console.log(`Initializing WikiDataService with baseURL: ${baseURL}`);
 
@@ -142,7 +145,7 @@ class WikiDataService {
     let formattedDate = '';
     const options: Intl.DateTimeFormatOptions = {};
 
-    const language = selectedDataSource.value.preferredLanguages[0] || 'en';
+    const language = this.dataSource.preferredLanguages || 'en';
 
     if (precision === 9) {
       formattedDate = year;
