@@ -92,14 +92,13 @@ export async function createEditor(container: HTMLElement) {
     function SelectableConnectionBind(props: { data: Schemes["Connection"] }) {
         const id = props.data.id;
 
-        const label = "connection";
         if (increaseVariablePropCounter) {
             increaseVariablePropCounter = false;
             highestIdCount++;
-            props.data.property = variableEntityConstructor(highestIdCount.toString())
-        } else {
-            props.data.property = variableEntityConstructor((highestIdCount+1).toString())
         }
+        props.data.property = variableEntityConstructor(highestIdCount.toString())
+
+        const label = "connection";
 
         // Initialize the custom connection with the custom props
         // and connect it to our editor events
@@ -125,6 +124,7 @@ export async function createEditor(container: HTMLElement) {
             },
             onChanged: (value: EntityType) => {
                 props.data.property = value;
+                area.update("connection", id);
             }
         });
     }
