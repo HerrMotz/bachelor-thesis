@@ -12,7 +12,6 @@ const INDENTATION_COUNT:usize = 4;
 struct Entity {
     pub id: String,
     pub label: String,
-    pub description: String,
     pub prefix: Prefix
 }
 
@@ -93,12 +92,16 @@ fn graph_to_query(connections: Vec<Connection>) -> String {
                 format!("{}:{}", connection.target.prefix.abbreviation, connection.target.id)
             };
 
+
+            let indentation = " ".repeat(INDENTATION_COUNT);
+
             format!(
-                "{} {} {} {} . \n# {} -- [{}] -> {}\n",
-                " ".repeat(INDENTATION_COUNT),
+                "{} {} {} {} . \n{}# {} -- [{}] -> {}\n",
+                indentation,
                 source_uri,
                 property_uri,
                 target_uri,
+                indentation,
                 connection.source.label,
                 connection.property.label,
                 connection.target.label
