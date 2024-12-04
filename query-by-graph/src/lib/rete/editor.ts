@@ -18,7 +18,7 @@ import EntityType from "../types/EntityType.ts";
 import ConnectionInterfaceType from "../types/ConnectionInterfaceType.ts";
 import EntityNodeComponent from "../../components/EntityNode.vue";
 import CustomInputControl from "../../components/EntitySelectorInputControl.vue";
-import {noEntity} from "./constants.ts";
+import {noEntity,variableEntity,variableEntityConstructor} from "./constants.ts";
 import {noDataSource} from "../constants";
 
 // Each connection holds additional data, which is defined here
@@ -113,18 +113,14 @@ export async function createEditor(container: HTMLElement) {
     function SelectableConnectionBind(props: { data: Schemes["Connection"] }) {
         const id = props.data.id;
 
-        props.data.property = selectedProperty;
         if (increaseVariablePropCounter) {
             increaseVariablePropCounter = false;
             if (selectedProperty?.id.startsWith("?")) {
                 highestIdCount += 1;
+                props.data.property = variableEntity;
                 props.data.property.id = "?" + highestIdCount;
             }
         }
-
-        // TODO write a function that goes through all variables
-        //  and makes it a continuous list
-        // e.g. ?1, ?5, ?6 -> ?1, ?2, ?3
 
         const label = "connection";
 
@@ -149,6 +145,9 @@ export async function createEditor(container: HTMLElement) {
                 );
                 props.data.selected = true;
                 area.update("connection", id);
+            },
+            onChanged: (value: EntityType) => {
+                props.data.property = value;
             }
         });
     }
@@ -159,8 +158,6 @@ export async function createEditor(container: HTMLElement) {
 
     render.addPreset(Presets.classic.setup({
         customize: {
-            // TODO use custom input control with data validation
-            //  e.g. no spaces, no special characters, etc.
             control(data) {
                 // DEBUG
                 // console.log("Control payload")
@@ -204,41 +201,28 @@ export async function createEditor(container: HTMLElement) {
             event.preventDefault();
             event.stopPropagation();
 
-            // This methods allows to add a new node with the Right Mouse Button click
+            // This method allows to add a new node with the Right Mouse Button click
             if (source === "root") { // add a new node
                 // DEBUG
-                // console.log("Add node")
+                console.log("Add variable node")
 
-                let displayLabel: string; // this is the label the node will get in the visual editor
-                // let isVariableNode = false;
-
-                // check if it is a variable individual
                 // if so, find the highest variable id, increment it by one and assign
                 // it to the "to be created"-node
-                if (selectedIndividual?.id.startsWith("?")) {
-                    highestIdCount += 1;
-                    // hacky way to make the node instantiation in line (+19) use the correct label, id
-                    selectedIndividual.id = "?" + highestIdCount;
-                    displayLabel = selectedIndividual.id;
-                    // isVariableNode = true;
-
-                } else {
-                    displayLabel = (selectedIndividual?.id || "No ID") + ", " + (selectedIndividual?.label || "No Label")
-                    const exists = editor.getNodes().find(n => n.label === displayLabel);
-
-                    if (exists) {
-                        // DEBUG
-                        // console.log("Node already exists", exists.id);
-                        alert("This individual already exists. Please reuse the existing individual.");
-                        return context;
-                    }
-                }
+                highestIdCount += 1;
+                // hacky way to make the node instantiation in line (+19) use the correct label, id
+                // selectedIndividual.id = "?" + highestIdCount;
+                // displayLabel = selectedIndividual.id;
 
                 // at this point selectedIndividual.{id,label} contain the correct information
                 // but a variable node should have a label with only "?" and the
                 // input control should hold the text after the "?"
 
-                const node = new EntityNodeClass(displayLabel, selectedIndividual);
+                const newEntity = variableEntityConstructor(
+                    highestIdCount.toString()
+                )
+
+                const node = new EntityNodeClass(newEntity.label, selectedIndividual);
+                node.setEntity(newEntity)
 
                 // DEBUG
                 // console.log("Node", node.entity);
@@ -249,19 +233,19 @@ export async function createEditor(container: HTMLElement) {
                         initial: {id: "", label: "", prefix: {uri: "", abbreviation: ""}, description: "", dataSource: noDataSource},
                         change(value) {
                             // DEBUG
-                            console.log("Entity Input called change")
-                            console.log(value)
-                            console.log("node entity value")
-                            console.log(node.getEntity())
+                            // console.log("Entity Input called change")
+                            // console.log(value)
+                            // console.log("node entity value")
+                            // console.log(node.getEntity())
                             node.setEntity(value)
-                            console.log("node value after update")
-                            console.log(node.getEntity())
+                            // console.log("node value after update")
+                            // console.log(node.getEntity())
 
                             editor.getConnections().forEach((c) => {
                                 area.update("connection", c.id)
                             })
 
-                            console.log("update node in area")
+                            // console.log("update node in area")
                             area.update("node", node.id)
                         }
                     })
@@ -283,6 +267,18 @@ export async function createEditor(container: HTMLElement) {
                     await editor.removeConnection(c.id);
                 }
                 await editor.removeNode(source.id);
+            }
+        }
+
+        if(context.type === 'nodepicked') {
+            const node = context.data as ClassicPreset.Node;
+            console.log(`Node clicked: ${node.id}`);
+
+            if (vueCallback !== undefined){
+                vueCallback({
+                    type: 'nodeselected',
+                    data: node,
+                });
             }
         }
 

@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import {onMounted, ref, shallowRef} from 'vue';
 import {createEditor} from "./lib/rete/editor.ts";
-import { ClassicPreset, NodeEditor } from 'rete';
+import { ClassicPreset } from 'rete';
 
 import {graph_to_query_wasm} from "../pkg";
 
@@ -46,11 +46,10 @@ function formatCode() {
 
 import EntityType from "./lib/types/EntityType.ts";
 
-import EntitySelector from "./components/EntitySelector.vue";
 import Button from "./components/Button.vue";
 import ConnectionInterfaceType from "./lib/types/ConnectionInterfaceType.ts";
 import ClipboardButton from "./components/ClipboardButton.vue";
-import WikiDataService from './lib/wikidata/WikiDataService.ts';
+import WikibaseDataService from './lib/wikidata/WikibaseDataService.ts';
 import { selectedDataSource, dataSources } from './store.ts';
 
 
@@ -257,23 +256,6 @@ const setDataSource = (source: keyof typeof dataSources) => {
               </div>
             </div>
 
-
-            <div class="flex-col flex gap-2">
-              <h4 class="font-semibold">Create connection</h4>
-              <EntitySelector  language="en" type="property" @selected-entity="(prop: EntityType) => { 
-                if (editor) {
-                  editor.setSelectedProperty(prop);
-                }
-              }" class="bg-amber-300 rounded-2xl p-2">
-                Property Selector
-              </EntitySelector>
-              <p class="text-gray-600 text-sm hover:text-gray-900 transition-all">
-                <em>Hint:</em>
-                After selecting the appropriate property, add a new connection by clicking
-                an output connector (right side) and then an input connector (left side) of an
-                individual.
-              </p>
-            </div>
             <!-- Data Source Selector -->
             <div class="flex-col flex gap-2">
               <h4 class="font-semibold">Data Source</h4>
