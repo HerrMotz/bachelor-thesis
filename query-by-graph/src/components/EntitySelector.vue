@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import WikiDataService from "../lib/wikidata/WikiDataService.ts";
+import WikibaseDataService from "../lib/wikidata/WikibaseDataService.ts";
 import {WikiDataEntity, WikiDataSearchApiResponse} from "../lib/wikidata/types.ts";
 import {computed} from 'vue';
 
@@ -53,7 +53,7 @@ function displayValue(entity: unknown): string {
 
 function queryHelper(query: string) {
   console.log(`queryHelper called with query: "${query}"`);
-  const wds = new WikiDataService();
+  const wds = new WikibaseDataService();
   wds.queryWikidata({
     language: language.value,
     uselang: language.value,

@@ -147,9 +147,9 @@ export async function createEditor(container: HTMLElement) {
                 props.data.selected = true;
                 area.update("connection", id);
             },
-            onBlur: () => {
+            onChanged: (value: EntityType) => {
                 console.log("sprungmarke Prop changed in EDITOR.TS")
-                // props.data.property = value;
+                props.data.property = value;
             }
         });
     }
@@ -160,8 +160,6 @@ export async function createEditor(container: HTMLElement) {
 
     render.addPreset(Presets.classic.setup({
         customize: {
-            // TODO use custom input control with data validation
-            //  e.g. no spaces, no special characters, etc.
             control(data) {
                 // DEBUG
                 // console.log("Control payload")
