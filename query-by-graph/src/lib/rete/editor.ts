@@ -89,38 +89,8 @@ export async function createEditor(container: HTMLElement) {
 
     history.addPreset(HistoryPresets.classic.setup());
 
-    let selectedProperty: EntityType = {
-        id: "?1",
-        label: "Variable",
-        description: "",
-        prefix: {
-            uri: "",
-            abbreviation: "",
-        },
-        dataSource: noDataSource
-    };
-    let selectedIndividual: EntityType = {
-        id: "?1",
-        label: "Variable",
-        description: "",
-        prefix: {
-            uri: "",
-            abbreviation: "",
-        },
-        dataSource: noDataSource
-    };
-
     function SelectableConnectionBind(props: { data: Schemes["Connection"] }) {
         const id = props.data.id;
-
-        if (increaseVariablePropCounter) {
-            increaseVariablePropCounter = false;
-            if (selectedProperty?.id.startsWith("?")) {
-                highestIdCount += 1;
-                props.data.property = variableEntity;
-                props.data.property.id = "?" + highestIdCount;
-            }
-        }
 
         const label = "connection";
 
@@ -191,7 +161,6 @@ export async function createEditor(container: HTMLElement) {
         // this is a workaround to hinder the counter from increasing at every
         // draw method of the editor
         if (context.type === "connectioncreated") {
-            increaseVariablePropCounter = true;
         }
 
         // This matches a Right Mouse button Click
@@ -206,23 +175,11 @@ export async function createEditor(container: HTMLElement) {
                 // DEBUG
                 console.log("Add variable node")
 
-                // if so, find the highest variable id, increment it by one and assign
-                // it to the "to be created"-node
-                highestIdCount += 1;
-                // hacky way to make the node instantiation in line (+19) use the correct label, id
-                // selectedIndividual.id = "?" + highestIdCount;
-                // displayLabel = selectedIndividual.id;
-
-                // at this point selectedIndividual.{id,label} contain the correct information
-                // but a variable node should have a label with only "?" and the
-                // input control should hold the text after the "?"
-
                 const newEntity = variableEntityConstructor(
                     highestIdCount.toString()
                 )
 
-                const node = new EntityNodeClass(newEntity.label, selectedIndividual);
-                node.setEntity(newEntity)
+                const node = new EntityNodeClass(newEntity.label, newEntity);
 
                 // DEBUG
                 // console.log("Node", node.entity);
