@@ -23,6 +23,7 @@ jobs:
         with:
             toolchain: stable
             override: true
+            components: wasm-pack
 
       # Step 3: Set up Node.js (You can specify the version you use)
       - name: Set up Node.js
