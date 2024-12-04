@@ -13,7 +13,6 @@ import EntityNodeComponent from "../../components/EntityNode.vue";
 import CustomInputControl from "../../components/EntitySelectorInputControl.vue";
 import {noEntity, variableEntityConstructor} from "./constants.ts";
 import {noDataSource} from "../constants";
-import {deepCopy} from "../utils";
 
 // Each connection holds additional data, which is defined here
 class Connection extends ClassicPreset.Connection<
