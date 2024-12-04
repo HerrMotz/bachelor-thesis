@@ -6,6 +6,8 @@ import {computed} from 'vue';
 const props = defineProps({
   language: {type: String, required: true},
   type: {type: String, required: true}, // will be passed to the wikidata query, can be e.g. "item" or "property"
+  inputClasses: {type: String, required: false},
+  dropdownClasses: {type: String, required: false}
 });
 
 const language = computed(() => selectedDataSource.value.preferredLanguages[0]);
@@ -97,7 +99,10 @@ function eventEmitEntityHelper(entity: EntityType) {
       <ComboboxLabel class="block text-sm font-medium leading-6 text-gray-900"></ComboboxLabel>
       <div class="relative mt-2">
         <ComboboxInput
-            class="w-full rounded-md border-0 bg-white py-1.5 pl-3 pr-12 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+            :class="[
+                'rounded-md border-0 bg-white py-1.5 pl-3 pr-12 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6',
+                inputClasses ? inputClasses : 'w-full'
+            ]"
             @change="queryHelper($event.target.value)"
             :display-value="displayValue"
         />
@@ -106,7 +111,10 @@ function eventEmitEntityHelper(entity: EntityType) {
         </ComboboxButton>
 
         <ComboboxOptions v-if="queriedEntities.length > 0"
-                         class="absolute z-10 mt-1 max-h-60 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm">
+                         :class="[
+                             'absolute z-10 mt-1 max-h-60 overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm',
+                             dropdownClasses ? dropdownClasses : 'w-full'
+                             ]">
           <ComboboxOption v-for="entity in queriedEntities" :key="entity.id" :value="entity" as="template"
                           v-slot="{ active, selected }">
             <li :class="['relative cursor-default select-none py-2 pl-3 pr-9', active ? 'bg-indigo-600 text-white' : 'text-gray-900']">
