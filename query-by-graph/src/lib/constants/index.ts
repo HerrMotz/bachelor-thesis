@@ -28,4 +28,18 @@ const factGridDataSource: WikibaseDataSource = {
     }
 }
 
-export {wikiDataDataSource,factGridDataSource}
+const noDataSource: WikibaseDataSource = {
+    name: "",
+    url: "",
+    preferredLanguages: [],
+    propertyPrefix: {
+        url: "",
+        abbreviation: ""
+    },
+    entityPrefix: {
+        url: "",
+        abbreviation: ""
+    }
+}
+
+export {wikiDataDataSource,factGridDataSource,noDataSource}
