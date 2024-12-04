@@ -1,16 +1,9 @@
-import {NodeEditor, GetSchemes, ClassicPreset} from "rete";
-import {AreaPlugin, AreaExtensions, Area2D} from "rete-area-plugin";
-import {
-    ConnectionPlugin,
-    Presets as ConnectionPresets
-} from "rete-connection-plugin";
+import {ClassicPreset, GetSchemes, NodeEditor} from "rete";
+import {Area2D, AreaExtensions, AreaPlugin} from "rete-area-plugin";
+import {ConnectionPlugin, Presets as ConnectionPresets} from "rete-connection-plugin";
 import {ConnectionPathPlugin} from "rete-connection-path-plugin";
-import {
-    HistoryExtensions,
-    HistoryPlugin,
-    Presets as HistoryPresets
-} from "rete-history-plugin";
-import {VuePlugin, Presets, VueArea2D} from "rete-vue-plugin";
+import {HistoryExtensions, HistoryPlugin, Presets as HistoryPresets} from "rete-history-plugin";
+import {Presets, VueArea2D, VuePlugin} from "rete-vue-plugin";
 import {h} from "vue";
 import CustomConnection from "../../components/PropertyConnection.vue";
 import {removeNodeWithConnections} from "./utils.ts";
@@ -18,8 +11,9 @@ import EntityType from "../types/EntityType.ts";
 import ConnectionInterfaceType from "../types/ConnectionInterfaceType.ts";
 import EntityNodeComponent from "../../components/EntityNode.vue";
 import CustomInputControl from "../../components/EntitySelectorInputControl.vue";
-import {noEntity,variableEntityConstructor} from "./constants.ts";
+import {noEntity, variableEntityConstructor} from "./constants.ts";
 import {noDataSource} from "../constants";
+import {deepCopy} from "../utils";
 
 // Each connection holds additional data, which is defined here
 class Connection extends ClassicPreset.Connection<
@@ -96,7 +90,10 @@ export async function createEditor(container: HTMLElement) {
             increaseVariablePropCounter = false;
             highestIdCount++;
         }
-        props.data.property = variableEntityConstructor(highestIdCount.toString())
+
+        if (!props.data.property) {
+            props.data.property = variableEntityConstructor(highestIdCount.toString())
+        }
 
         const label = "connection";
 
@@ -122,9 +119,18 @@ export async function createEditor(container: HTMLElement) {
                 props.data.selected = true;
                 area.update("connection", id);
             },
-            onChanged: (value: EntityType) => {
-                props.data.property = value;
-                area.update("connection", id);
+            onChangedEntitySelector: (value: EntityType) => {
+                // in order to force the editor to notice the change,
+                // I need to create a copy of the connection,
+                // change the entity and add it back.
+                const thisConnection = deepCopy(editor.getConnection(id));
+
+                if (thisConnection) {
+                    thisConnection.property = value
+                    editor.removeConnection(id).then(() => {
+                        editor.addConnection(thisConnection);
+                    });
+                }
             }
         });
     }
