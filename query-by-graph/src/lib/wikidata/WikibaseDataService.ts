@@ -2,7 +2,7 @@ import axios, {AxiosInstance} from "axios";
 import {WikiDataEntityDetails, WikiDataResponse, WikiDataSearchApiResponse} from "./types.ts";
 import { selectedDataSource } from "../../store.ts";
 
-class WikiDataService {
+class WikibaseDataService {
   private api: AxiosInstance;
   private readonly languages: string[];
 
@@ -33,6 +33,11 @@ class WikiDataService {
   ): Promise<WikiDataEntityDetails | null> {
 
     const languages = this.languages;
+
+    // check if it is a variable
+    if (itemId.startsWith('?')) {
+      return null;
+    }
 
     try {
       const response = await this.api.get<WikiDataResponse>('', {
@@ -303,7 +308,7 @@ function chunkArray<T>(array: T[], chunkSize: number): T[][] {
   return chunks;
 }
 
-export default WikiDataService;
+export default WikibaseDataService;
 
 // Example API Response
 /**
