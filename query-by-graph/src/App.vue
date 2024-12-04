@@ -166,7 +166,7 @@ const setDataSource = (source: keyof typeof dataSources) => {
         <div class="w-1/5 bg-amber-50 rounded-tl-2xl">
           <h2 class="text-xl font-semibold bg-amber-100 p-4">
             Metainfo
-            <span v-if="selectedNode?.dataSource" class="inline"> (from {{ selectedNode.dataSource.name}}) </span>
+            <span v-if="selectedNode?.dataSource?.name" class="inline"> (from {{ selectedNode.dataSource.name}}) </span>
           </h2>
           <!-- Metainfowindow content -->
           <div class="p-4 overflow-auto max-h-[40vh]">
