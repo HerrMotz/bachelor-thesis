@@ -1,4 +1,5 @@
 interface WikibaseDataSource {
+    name: string;
     url: string,
     preferredLanguages: string[],
     propertyPrefix: {

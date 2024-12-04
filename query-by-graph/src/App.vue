@@ -70,7 +70,7 @@ const rete = ref();
 
 const code = ref("");
 
-const selectedNode = ref<{ id: any; label: any; entityId: any; metadata: any } | null>(null);
+const selectedNode = ref<{ id: any; label: any; entityId: any; metadata: any; dataSource: any } | null>(null);
 
 
 // for listening to the EntitySelector
@@ -112,19 +112,22 @@ onMounted(async () => {
         const node = editor.value?.getNode(nodeId);
 
         if (node) {
-          const entityId = (node as any).entity.id; // Q number
-          const label = (node as any).entity.label; // Label from Wikidata
+          const entity = (node as any).entity;
+          const entityId = entity.id; // Q number
+          const label = entity.label; // Label from Wikidata
+          const dataSource = entity.dataSource;
 
           // everything but metadata is for debugging, can be removed later
           selectedNode.value = {
             id: nodeId,
             label: label,
             entityId: entityId,
+            dataSource: dataSource,
             metadata: null,
           };
 
           // extract relevant Metadata from wikidata
-          const wds = new WikiDataService();
+          const wds = new WikiDataService(dataSource);
           wds.getItemMetaInfo(entityId).then((metadata) =>{
             selectedNode.value!.metadata = metadata;
           });
@@ -162,7 +165,8 @@ const setDataSource = (source: keyof typeof dataSources) => {
       <div class="flex w-full bg-amber-100 rounded-2xl max-h-[50vh]">
         <div class="w-1/5 bg-amber-50 rounded-tl-2xl">
           <h2 class="text-xl font-semibold bg-amber-100 p-4">
-            Metainfo<br>
+            Metainfo
+            <span v-if="selectedNode?.dataSource" class="inline"> (from {{ selectedNode.dataSource.name}}) </span>
           </h2>
           <!-- Metainfowindow content -->
           <div class="p-4 overflow-auto max-h-[40vh]">
