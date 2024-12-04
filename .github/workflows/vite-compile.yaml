@@ -1,0 +1,43 @@
+name: Build Vite
+
+on:
+  push:
+    branches:
+      - main  # You can adjust this to your branch name
+  pull_request:
+    branches:
+      - main  # You can adjust this to your branch name
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Step 1: Checkout the repository
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      # Step 2: Set up Rust
+      - name: Set up Rust
+        uses: actions/setup-rust@v1
+        with:
+          rust-version: stable  # You can specify a specific version here if needed
+
+      # Step 3: Set up Node.js (You can specify the version you use)
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'  # Change this if you're using a different version
+
+      # Step 4: Install dependencies for Vue.js and Vite
+      - name: Install Node.js dependencies
+        run: npm install
+
+      # Step 5: Run the build script (npm run build)
+      - name: Run build script
+        run: npm run build
+
+      # Step 6: Fail the build if there are errors
+      - name: Fail the build if the build script fails
+        if: ${{ failure() }}
+        run: exit 1
