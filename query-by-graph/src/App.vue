@@ -126,7 +126,7 @@ onMounted(async () => {
           };
 
           // extract relevant Metadata from wikidata
-          const wds = new WikiDataService(dataSource);
+          const wds = new WikibaseDataService(dataSource);
           wds.getItemMetaInfo(entityId).then((metadata) =>{
             selectedNode.value!.metadata = metadata;
           });
@@ -161,7 +161,7 @@ const setDataSource = (source: keyof typeof dataSources) => {
         Press RMB on the canvas to create a new individual and LMB on an individual's socket to create a connection.
         You can delete an individual by pressing RMB on it.
       </p>
-      <div class="flex w-full bg-amber-100 rounded-2xl max-h-[50vh]">
+      <div class="flex w-full bg-amber-100 rounded-2xl h-[50vh]">
         <div class="w-1/5 bg-amber-50 rounded-tl-2xl">
           <h2 class="text-xl font-semibold bg-amber-100 p-4">
             Metainfo
@@ -221,7 +221,7 @@ const setDataSource = (source: keyof typeof dataSources) => {
               Each Box is a SPARQL-Individual and each Connection between them is a SPARQL-Property
             </span>
           </h2>
-          <div ref="rete" class="h-full"></div>
+          <div ref="rete" class="h-[90%]"></div>
         </div>
         <div v-if="editor" class="w-1/5 overflow-auto rounded-tr-2xl">
           <h2 class="text-xl font-semibold bg-amber-200 p-4">
