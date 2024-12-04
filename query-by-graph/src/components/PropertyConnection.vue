@@ -1,17 +1,19 @@
 <template>
-  <svg width="250" height="250" xmlns="http://www.w3.org/2000/svg">
-    <!-- This highlights the path on selection -->
-    <path :d="path" :class="[$props.data.selected ? 'hover:stroke-red-400 stroke-red-500' : 'hover:stroke-blue-400 stroke-blue-600']" />
-    <g>
-      <!-- This positions the label -->
-      <rect :x="centerX" :y="centerY" :width="rectLength" height="40" fill="white" stroke="black"></rect>
-      <text :x="centerX+12" :y="centerY+25" ref="textElement" fill="black" class="font-mono">{{boxText}}</text>
-    </g>
-  </svg>
+  <div>
+    <svg width="250" height="250" xmlns="http://www.w3.org/2000/svg">
+      <!-- This highlights the path on selection -->
+      <path :d="path"
+            :class="[$props.data.selected ? 'hover:stroke-red-400 stroke-red-500' : 'hover:stroke-blue-400 stroke-blue-600']"/>
+    </svg>
+    <div class="absolute" :style="{transform: `translate(${centerX}px,${centerY}px)`}">
+      <EntitySelector type="property" language="en" input-classes="w-32 -ml-16" dropdown-classes="w-80 -ml-40" />
+    </div>
+  </div>
 </template>
 
 <script>
-import { defineComponent } from 'vue'
+import {defineComponent} from 'vue'
+import EntitySelector from "./EntitySelector.vue";
 
 // This connection component has the following features:
 // - it displays a label in the middle of the connection
@@ -20,6 +22,7 @@ import { defineComponent } from 'vue'
 
 export default defineComponent({
   name: "CustomConnection",
+  components: {EntitySelector},
   props: ['data', 'start', 'end', 'path'],
   data() {
     return {
@@ -39,13 +42,13 @@ export default defineComponent({
       if (!this.isMounted) {
         return 0;
       } else if (this.boxText.length < 10) {
-        return this.$refs.textElement?.getBBox().width*2.3;
+        return this.$refs.textElement?.getBBox().width * 2.3;
       } else {
-        return this.$refs.textElement?.getBBox().width*1.1;
+        return this.$refs.textElement?.getBBox().width * 1.1;
       }
     },
     centerX() {
-      return (this.end.x + this.start.x) / 2 - this.rectLength / 2;
+      return (this.end.x + this.start.x) / 2;
     },
     centerY() {
       return (this.end.y + this.start.y) / 2 - 20;
@@ -61,6 +64,7 @@ svg {
   pointer-events: none;
   width: 9999px;
   height: 9999px;
+
   path {
     fill: none;
     stroke-width: 5px;
