@@ -44,8 +44,6 @@ function formatCode() {
   codeEditorRef.value?.getAction('editor.action.formatDocument').run()
 }
 
-import EntityType from "./lib/types/EntityType.ts";
-
 import Button from "./components/Button.vue";
 import ConnectionInterfaceType from "./lib/types/ConnectionInterfaceType.ts";
 import ClipboardButton from "./components/ClipboardButton.vue";
@@ -56,8 +54,6 @@ import { selectedDataSource, dataSources } from './store.ts';
 interface Editor {
   setVueCallback: (callback: (context: any) => void) => void;
   removeSelectedConnections: () => Promise<void>;
-  setSelectedProperty: (property: EntityType) => void;
-  setSelectedIndividual: (property: EntityType) => void;
   undo: () => void;
   redo: () => void;
   exportConnections: () => ConnectionInterfaceType[];

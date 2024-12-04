@@ -49,10 +49,13 @@ fn graph_to_query(connections: Vec<Connection>) -> String {
                                  .map(|entity| entity.id.clone())
                                  .collect::<HashSet<_>>();
 
-    let projection_list = if projection_set.len() == 0 { String::from("*") } else {
-        projection_set.into_iter()
-        .collect::<Vec<_>>()
-        .join("  ")};
+    let projection_list = if projection_set.len() == 0 {
+        String::from("*")
+    } else {
+        let mut sorted_projection_set: Vec<_> = projection_set.into_iter().collect();
+        sorted_projection_set.sort(); // Sort the collection
+        sorted_projection_set.join(" ")
+    };
 
     let prefix_set = connections.iter()
         .flat_map(|connection| {
@@ -91,7 +94,7 @@ fn graph_to_query(connections: Vec<Connection>) -> String {
             };
 
             format!(
-                "{} {} {} {} . # {} -- [{}] -> {}\n",
+                "{} {} {} {} . \n# {} -- [{}] -> {}\n",
                 " ".repeat(INDENTATION_COUNT),
                 source_uri,
                 property_uri,
