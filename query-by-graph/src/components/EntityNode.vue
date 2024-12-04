@@ -58,18 +58,11 @@ export default defineComponent({
     const controls = computed(() => sortByIndex(Object.entries(props.data.controls)));
     const outputs = computed(() => sortByIndex(Object.entries(props.data.outputs)));
 
-    const updateLabel = (e) => {
-      //console.log('Updating label');
-      //console.log('Updating label from: ' , props.data.label, ' to: ', e.id);
-      props.data.label = e.id;
-    };
-
     return {
       nodeStyles,
       inputs,
       controls,
-      outputs,
-      updateLabel
+      outputs
     };
   },
   components: {

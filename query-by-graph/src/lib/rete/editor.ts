@@ -110,14 +110,14 @@ export async function createEditor(container: HTMLElement) {
     function SelectableConnectionBind(props: { data: Schemes["Connection"] }) {
         const id = props.data.id;
 
-        props.data.property = selectedProperty;
-        if (increaseVariablePropCounter) {
-            increaseVariablePropCounter = false;
-            if (selectedProperty?.id.startsWith("?")) {
-                highestIdCount += 1;
-                props.data.property.id = "?" + highestIdCount;
-            }
-        }
+        // props.data.property = selectedProperty;
+        // if (increaseVariablePropCounter) {
+        //     increaseVariablePropCounter = false;
+        //     if (selectedProperty?.id.startsWith("?")) {
+        //         highestIdCount += 1;
+        //         props.data.property.id = "?" + highestIdCount;
+        //     }
+        // }
 
         // TODO write a function that goes through all variables
         //  and makes it a continuous list
@@ -146,6 +146,10 @@ export async function createEditor(container: HTMLElement) {
                 );
                 props.data.selected = true;
                 area.update("connection", id);
+            },
+            onBlur: () => {
+                console.log("sprungmarke Prop changed in EDITOR.TS")
+                // props.data.property = value;
             }
         });
     }
@@ -249,19 +253,19 @@ export async function createEditor(container: HTMLElement) {
                         initial: {id: "", label: "", prefix: {uri: "", abbreviation: ""}, description: ""},
                         change(value) {
                             // DEBUG
-                            console.log("Entity Input called change")
-                            console.log(value)
-                            console.log("node entity value")
-                            console.log(node.getEntity())
+                            // console.log("Entity Input called change")
+                            // console.log(value)
+                            // console.log("node entity value")
+                            // console.log(node.getEntity())
                             node.setEntity(value)
-                            console.log("node value after update")
-                            console.log(node.getEntity())
+                            // console.log("node value after update")
+                            // console.log(node.getEntity())
 
                             editor.getConnections().forEach((c) => {
                                 area.update("connection", c.id)
                             })
 
-                            console.log("update node in area")
+                            // console.log("update node in area")
                             area.update("node", node.id)
                         }
                     })
