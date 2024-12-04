@@ -6,7 +6,16 @@
             :class="[$props.data.selected ? 'hover:stroke-red-400 stroke-red-500' : 'hover:stroke-blue-400 stroke-blue-600']"/>
     </svg>
     <div class="absolute" :style="{transform: `translate(${centerX}px,${centerY}px)`}">
-      <EntitySelector type="property" language="en" input-classes="w-32 -ml-16" dropdown-classes="w-80 -ml-40" />
+      <EntitySelector
+          type="property"
+          language="en"
+          input-classes="w-32 -ml-16"
+          dropdown-classes="w-80 -ml-40"
+          @pointerdown.stop=""
+          @dblclick.stop=""
+          @selected-entity="(prop) => {value = prop; $emit('changed', value)}"
+      />
+      {{data}}
     </div>
   </div>
 </template>
@@ -24,9 +33,11 @@ export default defineComponent({
   name: "CustomConnection",
   components: {EntitySelector},
   props: ['data', 'start', 'end', 'path'],
+  emits: ['changed'],
   data() {
     return {
-      isMounted: false
+      isMounted: false,
+      value: "",
     }
   },
   mounted() {
@@ -48,6 +59,7 @@ export default defineComponent({
       }
     },
     centerX() {
+      this.$emit('changed', "asd")
       return (this.end.x + this.start.x) / 2;
     },
     centerY() {
