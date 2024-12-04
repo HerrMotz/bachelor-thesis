@@ -1,5 +1,7 @@
 <template>
   <EntitySelector type="item" language="en"
+                  @pointerdown.stop=""
+                  @dblclick.stop=""
                   @selected-entity="(prop) => {value = prop; data.options.change(value)}"
   />
 </template>
