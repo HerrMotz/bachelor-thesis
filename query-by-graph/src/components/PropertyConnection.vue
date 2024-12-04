@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="z-10">
     <svg width="250" height="250" xmlns="http://www.w3.org/2000/svg">
       <!-- This highlights the path on selection -->
       <path :d="path"
@@ -13,9 +13,12 @@
           dropdown-classes="w-80 -ml-40"
           @pointerdown.stop=""
           @dblclick.stop=""
-          @selected-entity="(prop) => {value = prop; $emit('changed', value)}"
+          @selected-entity="(prop) => {value = prop; $emit('changedEntitySelector', value)}"
       />
-      <h3 v-if="value" class="font-bold font-mono w-32 -ml-16">
+      <h3 v-if="value" class="font-bold font-mono w-32 -ml-16 bg-amber-50">
+        {{ value.label }}
+      </h3>
+      <h3 v-if="value" class="font-bold font-mono w-32 -ml-16 bg-amber-50">
         {{value.prefix.abbreviation}}{{ value.prefix.abbreviation && ':'}}{{value.id}}
       </h3>
     </div>
@@ -37,7 +40,7 @@ export default defineComponent({
   name: "CustomConnection",
   components: {EntitySelector},
   props: ['data', 'start', 'end', 'path'],
-  emits: ['changed'],
+  emits: ['changedEntitySelector'],
   data() {
     return {
       isMounted: false,
@@ -46,9 +49,6 @@ export default defineComponent({
   },
   mounted() {
     this.isMounted = true;
-    this.$emit("changed",
-      variableEntity
-    )
   },
   computed: {
     centerX() {
