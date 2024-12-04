@@ -109,11 +109,6 @@ fn graph_to_query(connections: Vec<Connection>) -> String {
         })
         .collect();
 
-
-
-
-
-
     format!(
         "{}\nSELECT {} WHERE {{\n{}}}",
         prefix_list, projection_list, where_clause

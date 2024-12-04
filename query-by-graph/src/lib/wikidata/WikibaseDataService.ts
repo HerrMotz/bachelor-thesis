@@ -286,7 +286,7 @@ class WikibaseDataService {
             } else {
               labels[id] = id;
             }
-            console.log('converting property id to label:', id, labels[id]);
+            // console.log('converting property id to label:', id, labels[id]);
           }
         } else {
           console.error('No entities found in response:', response.data);

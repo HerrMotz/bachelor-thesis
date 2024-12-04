@@ -123,14 +123,10 @@ export async function createEditor(container: HTMLElement) {
                 // in order to force the editor to notice the change,
                 // I need to create a copy of the connection,
                 // change the entity and add it back.
-                const thisConnection = deepCopy(editor.getConnection(id));
-
-                if (thisConnection) {
-                    thisConnection.property = value
-                    editor.removeConnection(id).then(() => {
-                        editor.addConnection(thisConnection);
-                    });
-                }
+                props.data.property = value;
+                editor.getConnections().forEach((c) => {
+                    area.update("connection", c.id)
+                })
             }
         });
     }
