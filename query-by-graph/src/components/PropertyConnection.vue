@@ -15,8 +15,11 @@
           @dblclick.stop=""
           @selected-entity="(prop) => {value = prop; $emit('changed', value)}"
       />
-      {{data}}
+      <h3 v-if="value" class="font-bold font-mono w-32 -ml-16">
+        {{value.prefix.abbreviation}}:{{value.id}}
+      </h3>
     </div>
+
   </div>
 </template>
 
@@ -59,7 +62,6 @@ export default defineComponent({
       }
     },
     centerX() {
-      this.$emit('changed', "asd")
       return (this.end.x + this.start.x) / 2;
     },
     centerY() {

@@ -46,11 +46,10 @@ function formatCode() {
 
 import EntityType from "./lib/types/EntityType.ts";
 
-import EntitySelector from "./components/EntitySelector.vue";
 import Button from "./components/Button.vue";
 import ConnectionInterfaceType from "./lib/types/ConnectionInterfaceType.ts";
 import ClipboardButton from "./components/ClipboardButton.vue";
-import WikiDataService from './lib/wikidata/WikiDataService.ts';
+import WikibaseDataService from './lib/wikidata/WikibaseDataService.ts';
 import { selectedDataSource, dataSources } from './store.ts';
 
 
@@ -124,7 +123,7 @@ onMounted(async () => {
           };
 
           // extract relevant Metadata from wikidata
-          const wds = new WikiDataService();
+          const wds = new WikibaseDataService();
           wds.getItemMetaInfo(entityId).then((metadata) =>{
             selectedNode.value!.metadata = metadata;
           });
