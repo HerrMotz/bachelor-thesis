@@ -1,10 +1,14 @@
 <script setup lang="ts">
-import {queryWikidata, WikiDataEntity, WikiDataApiResponse} from "../lib/wikidata/queryDataService.ts";
+import WikiDataService from "../lib/wikidata/WikiDataService.ts";
+import {WikiDataEntity, WikiDataSearchApiResponse} from "../lib/wikidata/types.ts";
+import {computed} from 'vue';
 
 const props = defineProps({
   language: {type: String, required: true},
   type: {type: String, required: true}, // will be passed to the wikidata query, can be e.g. "item" or "property"
 });
+
+const language = computed(() => selectedDataSource.value.preferredLanguages[0]);
 
 // my local data type contains an ID and a label
 // where the ID is the P or Q number
@@ -28,6 +32,7 @@ import {
 } from '@headlessui/vue'
 import EntityType from "../lib/types/EntityType.ts";
 import {noEntity, variableEntity, variableEntityConstructor} from "../lib/rete/constants.ts";
+import {selectedDataSource} from "../store.ts";
 
 const queriedEntities = ref([
   noEntity,
@@ -45,21 +50,28 @@ function displayValue(entity: unknown): string {
 }
 
 function queryHelper(query: string) {
-  queryWikidata({
-    language: props.language,
-    uselang: props.language,
+  console.log(`queryHelper called with query: "${query}"`);
+  const wds = new WikiDataService(selectedDataSource.value);
+  wds.queryWikidata({
+    language: language.value,
+    uselang: language.value,
     type: props.type,
     search: query
-  }).then((data: WikiDataApiResponse) => {
+  }).then((data: WikiDataSearchApiResponse) => {
     queriedEntities.value = data.search.map((entity: WikiDataEntity) => {
+      const prefix = props.type === 'item'
+          ? selectedDataSource.value.entityPrefix
+          : selectedDataSource.value.propertyPrefix
+
       return { // EntityType
         id: entity.id,
         label: entity.display.label.value,
         description: entity.display.description.value,
         prefix: {
-          uri: entity.concepturi,
-          abbreviation: "wd",
-        }
+          uri: prefix.url,
+          abbreviation: prefix.abbreviation,
+        },
+        dataSource: {...selectedDataSource.value} // save datasource 
       }
     }).concat([
         variableEntityConstructor(query.startsWith('?') ? query.slice(1) : query)
@@ -107,7 +119,11 @@ function eventEmitEntityHelper(entity: EntityType) {
                 {{ entity.label }}
               </span>
               </div>
-
+              <div class="flex">
+                <span :class="['ml-2 truncate text-gray-500', active ? 'text-indigo-200' : 'text-gray-500']">
+                  {{ entity.description }}
+                </span>
+              </div>
               <span v-if="selected"
                     :class="['absolute inset-y-0 right-0 flex items-center pr-4', active ? 'text-white' : 'text-indigo-600']">
               <CheckIcon class="h-5 w-5" aria-hidden="true"/>

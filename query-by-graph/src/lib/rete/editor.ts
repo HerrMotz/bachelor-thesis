@@ -19,6 +19,7 @@ import ConnectionInterfaceType from "../types/ConnectionInterfaceType.ts";
 import EntityNodeComponent from "../../components/EntityNode.vue";
 import CustomInputControl from "../../components/EntitySelectorInputControl.vue";
 import {noEntity} from "./constants.ts";
+import {noDataSource} from "../constants";
 
 // Each connection holds additional data, which is defined here
 class Connection extends ClassicPreset.Connection<
@@ -37,9 +38,11 @@ class EntityNodeClass extends ClassicPreset.Node {
     constructor(public label: string, public e: EntityType) {
         super(label);
         this.entity = e;
+        console.log('EntityNodeClass constructor', this.entity);
     }
 
     setEntity(entity: EntityType) {
+        console.log('setter called');
         this.entity = entity;
     }
 
@@ -94,6 +97,7 @@ export async function createEditor(container: HTMLElement) {
             uri: "",
             abbreviation: "",
         },
+        dataSource: noDataSource
     };
     let selectedIndividual: EntityType = {
         id: "?1",
@@ -103,6 +107,7 @@ export async function createEditor(container: HTMLElement) {
             uri: "",
             abbreviation: "",
         },
+        dataSource: noDataSource
     };
 
     function SelectableConnectionBind(props: { data: Schemes["Connection"] }) {
@@ -241,7 +246,7 @@ export async function createEditor(container: HTMLElement) {
                 node.addControl(
                     "entityInput",
                     new EntitySelectorInputControl({
-                        initial: {id: "", label: "", prefix: {uri: "", abbreviation: ""}, description: ""},
+                        initial: {id: "", label: "", prefix: {uri: "", abbreviation: ""}, description: "", dataSource: noDataSource},
                         change(value) {
                             // DEBUG
                             console.log("Entity Input called change")
@@ -336,5 +341,6 @@ export async function createEditor(container: HTMLElement) {
                 };
             })
         },
+        getNode: (id: string) => editor.getNode(id)
     };
 }
