@@ -21,7 +21,7 @@ const factGridDataSource: WikibaseDataSource = {
         abbreviation: "fg"
     },
     propertyPrefix: {
-        url: "https://database.factgrid.de/property/",
+        url: "https://database.factgrid.de/prop/direct/",
         abbreviation: "fgt"
     }
 }
