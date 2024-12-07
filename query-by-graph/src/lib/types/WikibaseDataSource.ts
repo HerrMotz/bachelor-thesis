@@ -9,7 +9,8 @@ interface WikibaseDataSource {
     entityPrefix: {
         url: string,
         abbreviation: string
-    }
+    },
+    queryService: string,
 }
 
 export default WikibaseDataSource;

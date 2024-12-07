@@ -11,7 +11,8 @@ const wikiDataDataSource: WikibaseDataSource = {
     propertyPrefix: {
         url: "http://www.wikidata.org/prop/direct/",
         abbreviation: "wdt"
-    }
+    },
+    queryService: "https://query.wikidata.org/ ",
 }
 
 const factGridDataSource: WikibaseDataSource = {
@@ -25,7 +26,8 @@ const factGridDataSource: WikibaseDataSource = {
     propertyPrefix: {
         url: "https://database.factgrid.de/prop/direct/",
         abbreviation: "fgt"
-    }
+    },
+    queryService: "https://database.factgrid.de/query/",
 }
 
 const noDataSource: WikibaseDataSource = {
@@ -39,7 +41,8 @@ const noDataSource: WikibaseDataSource = {
     entityPrefix: {
         url: "",
         abbreviation: ""
-    }
+    },
+    queryService: "",
 }
 
 export {wikiDataDataSource,factGridDataSource,noDataSource}
