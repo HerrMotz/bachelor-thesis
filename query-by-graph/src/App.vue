@@ -47,6 +47,7 @@ function formatCode() {
 import Button from "./components/Button.vue";
 import ConnectionInterfaceType from "./lib/types/ConnectionInterfaceType.ts";
 import ClipboardButton from "./components/ClipboardButton.vue";
+import QueryButton from './components/QueryButton.vue';
 import WikibaseDataService from './lib/wikidata/WikibaseDataService.ts';
 import { selectedDataSource, dataSources } from './store.ts';
 
@@ -145,6 +146,11 @@ const setDataSource = (source: keyof typeof dataSources) => {
     console.log('selectedDataSource updated to:', selectedDataSource.value);
   }
 };
+
+const gotoLink = (url?: string) => {
+  const link = url || window.location.href;
+  window.open(link, '_blank');
+}
 
 </script>
 
@@ -288,6 +294,17 @@ const setDataSource = (source: keyof typeof dataSources) => {
                 This only works when at least one connection is selected (red).
               </p>
             </div>
+            <div class="flex-col flex gap-2">
+              <h4 class="font-semibold">Open new query builder</h4>
+              <Button
+                @click="gotoLink()">
+                Open builder
+              </Button>
+              <p class="text-gray-600 text-sm hover:text-gray-900 transition-all">
+                <em>Hint:</em>
+                Open a new window for building another graph without deleting the current one. 
+              </p>
+            </div>
           </div>
         </div>
       </div>
@@ -296,7 +313,10 @@ const setDataSource = (source: keyof typeof dataSources) => {
           <!-- This has the same propeties as the toolbox heading -->
           <h2 class="font-semibold text-xl flex justify-between">
             <span>Generated SPARQL Query</span>
-            <ClipboardButton @click="copyToClipboard();"/>
+            <div class="flex items-center space-x-2">
+              <ClipboardButton @click="copyToClipboard();" />
+              <QueryButton @click="gotoLink(selectedDataSource.queryService);" />
+            </div>
           </h2>
           <span class="text-sm font-medium block">
                 This contains the generated SPARQL code. It is updated with every change in the editor.
