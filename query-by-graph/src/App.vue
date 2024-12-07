@@ -256,12 +256,20 @@ const setDataSource = (source: keyof typeof dataSources) => {
             <div class="flex-col flex gap-2">
               <h4 class="font-semibold">Data Source</h4>
               <div class="flex gap-4">
-                <Button @click="setDataSource('wikidata')">Use Wikidata</Button>
-                <Button @click="setDataSource('factgrid')">Use FactGrid</Button>
+                <Button 
+                  :class="{'highlighted': selectedDataSource.name === 'WikiData'}"
+                  @click="setDataSource('wikidata')">
+                  Use Wikidata
+                </Button>
+                <Button 
+                  :class="{'highlighted': selectedDataSource.name === 'FactGrid'}"
+                  @click="setDataSource('factgrid')">
+                  Use FactGrid
+                </Button>
               </div>
               <p class="text-gray-600 text-sm hover:text-gray-900 transition-all">
                 <em>Hint:</em>
-                Select a data source by clicking one of the buttons above.
+                Select a data source by clicking one of the buttons above. The current Source is highlighted in green. 
               </p>
             </div>
             <div class="flex-col flex gap-2">
@@ -318,3 +326,10 @@ const setDataSource = (source: keyof typeof dataSources) => {
     </div>
   </div>
 </template>
+
+<style>
+.highlighted {
+  background-color: #28a745; 
+  color: #ffffff; 
+}
+</style>
