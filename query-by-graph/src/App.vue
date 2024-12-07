@@ -156,21 +156,21 @@ const gotoLink = (url?: string) => {
 
 <template>
   <div>
-    <div class="place-items-center bg-white px-6 pb-24 pt-12 sm:pb-2 sm:pt-12 lg:px-8">
+    <div class="place-items-center bg-white px-6 pb-24 pt-12 sm:pb-2 sm:pt-6 lg:px-8">
       <div class="text-5xl text-center mb-4 font-serif font-bold italic">Query by Graph</div>
       <p class="text-center font-medium text-gray-500 text-sm mb-6 w-[550px] mx-auto">
         This program allows you to build a SPARQL query using visual elements.
         Press RMB on the canvas to create a new individual and LMB on an individual's socket to create a connection.
         You can delete an individual by pressing RMB on it.
       </p>
-      <div class="flex w-full bg-amber-100 rounded-2xl h-[50vh]">
-        <div class="w-1/5 bg-amber-50 rounded-tl-2xl">
+      <div class="flex w-full bg-amber-100 rounded-2xl h-[65vh]">
+        <div class="w-2/12 bg-amber-50 rounded-tl-2xl h-full">
           <h2 class="text-xl font-semibold bg-amber-100 p-4">
             Metainfo
             <span v-if="selectedNode?.dataSource?.name" class="inline"> (from {{ selectedNode.dataSource.name}}) </span>
           </h2>
           <!-- Metainfowindow content -->
-          <div class="p-4 overflow-auto max-h-[40vh]">
+          <div class="p-4 overflow-auto max-h-[90%]">
           <!-- Display when a node is selected -->
           <div v-if="selectedNode">
             <div v-if="selectedNode.metadata">
@@ -215,7 +215,7 @@ const gotoLink = (url?: string) => {
         </div>
 
         </div>
-        <div class="w-3/5 bg-amber-50 rounded-tl-2xl">
+        <div class="w-8/12 bg-amber-50 rounded-tl-2xl h-full">
           <h2 class="text-xl font-semibold bg-amber-100 p-4">
             <!-- This has the same propeties as the toolbox heading -->
             Visual Query Builder
@@ -225,7 +225,7 @@ const gotoLink = (url?: string) => {
           </h2>
           <div ref="rete" class="h-[90%]"></div>
         </div>
-        <div v-if="editor" class="w-1/5 overflow-auto rounded-tr-2xl">
+        <div v-if="editor" class="w-2/12 overflow-auto rounded-tr-2xl h-full">
           <h2 class="text-xl font-semibold bg-amber-200 p-4">
             Toolbox
             <span class="text-sm ml-2 font-medium">
@@ -275,7 +275,7 @@ const gotoLink = (url?: string) => {
               </div>
               <p class="text-gray-600 text-sm hover:text-gray-900 transition-all">
                 <em>Hint:</em>
-                Select a data source by clicking one of the buttons above. The current Source is highlighted in green. 
+                Select a data source by clicking one of the buttons above.  
               </p>
             </div>
             <div class="flex-col flex gap-2">
@@ -303,6 +303,10 @@ const gotoLink = (url?: string) => {
               <p class="text-gray-600 text-sm hover:text-gray-900 transition-all">
                 <em>Hint:</em>
                 Open a new window for building another graph without deleting the current one. 
+              </p>
+              <p class="text-gray-600 text-sm hover:text-gray-900 transition-all">
+              
+               
               </p>
             </div>
           </div>
