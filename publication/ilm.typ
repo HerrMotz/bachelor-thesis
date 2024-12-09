@@ -27,16 +27,41 @@
 
   // The paper size to use.
   paper-size: "a4",
+  
+  cover-german: (
+    faculty: none, 
+    university: none,
+    type-of-work: none,
+    academic-degree: none,
+    field-of-study: none,
+    author-info: none,
+    examiner: none,
+    place-and-submission-date: none,
+  ),
 
-  // Date that will be displayed on cover page.
-  // The value needs to be of the 'datetime' type.
-  // More info: https://typst.app/docs/reference/foundations/datetime/
-  // Example: datetime(year: 2024, month: 03, day: 17)
-  date: none,
+  /** e.g.
+    cover-german: (
+      faculty: "Fakultät für Mathematik und Informatik",
+      university: "Friedrich-Schiller-Universität Jena",
+      type-of-work: "Bachelorarbeit",
+      academic-degree: [Bachelor of Science (B.#sym.space.punct\Sc.)],
+      field-of-study: "Informatik",
+      author-info: "15.07.2001 in Chemnitz",
+      examiner: "Prof. Dr. Clemens Beckstein",
+      place-and-submission-date: "Jena, 12. Januar 2025",
+    ),
+  */
 
-  // Format in which the date will be displayed on cover page.
-  // More info: https://typst.app/docs/reference/foundations/datetime/#format
-  date-format: "[month repr:long] [day padding:zero], [year repr:full]",
+  cover-english: (
+    faculty: none,
+    university: none,
+    type-of-work: none,
+    academic-degree: none,
+    field-of-study: none,
+    author-info: none,
+    examiner: none,
+    place-and-submission-date: none,
+  ),
 
   // An abstract for your work. Can be omitted if you don't have one.
   abstract: none,
@@ -49,6 +74,10 @@
   // Set this to `none`, if you want to disable the table of contents.
   // More info: https://typst.app/docs/reference/model/outline/
   table-of-contents: outline(),
+
+  appendix: none,
+
+  abbreviations: (),
 
   // The result of a call to the `bibliography` function or `none`.
   // Example: bibliography("refs.bib")
@@ -91,7 +120,7 @@
 
   // Set raw text font.
   // Default is Fira Mono at 8.8pt
-  show raw: set text(font: "Noto Mono", size: 9pt)
+  show raw: set text(font: "Fira Code", size: 9pt)
 
   // Configure page size and margins.
   set page(
@@ -99,34 +128,84 @@
     margin: (bottom: 1.75cm, top: 2.25cm),
   )
 
-  // Cover page.
-  page(align(left + horizon, block(width: 90%)[
-      #let v-space = v(2em, weak: true)
-      #text(3em)[*#title*]
+  let cover-page-helper(cover, language-specific-text) = page(align(center + horizon, block(width: 90%)[
+        #let v-space = v(2em, weak: true)
+  
+        #image("fsulogo.svg", width: 10cm)
+        
+        #text(3em)[*#title*]
+        
+        #text(2em, smallcaps[#cover.type-of-work])
+  
+        #language-specific-text.at(0)
+  
+        #cover.academic-degree
+  
+        #language-specific-text.at(1) #cover.field-of-study
+  
+        #v-space
+  
+        #smallcaps[#cover.university]
+  
+        #cover.faculty
+  
+        #v-space
 
-      #v-space
-      #text(1.6em, author)
+        #language-specific-text.at(2)
+  
+        #text(1.6em, author)
+        #v(-3mm)
+        #language-specific-text.at(3) #cover.author-info
 
-      #if abstract != none {
-        v-space
+        #v-space
+  
+        #language-specific-text.at(4)
+        
+        #cover.examiner
+
+        #v(2em)
+        
+        #cover.place-and-submission-date
+  
+    ]))
+
+  // German cover page.
+  if (cover-german.values().all(x => x != none)) {
+      let german-language-specific-text = (
+        "zur Erlangung des akademischen Grades",
+        "im Studienfach",
+        "eingereicht von",
+        "geboren am",
+        "Betreuer"
+      )
+    cover-page-helper(cover-german, german-language-specific-text)
+  }
+
+  if (cover-english.values().all(x => x != none)) {
+    let english-language-specific-text = (
+      "for the attainment of the academic degree",
+      "in",
+      "submitted by",
+      "born on",
+      "Examiner"
+    )
+    cover-page-helper(cover-english, english-language-specific-text)
+  }
+
+  page("")
+
+  page(align(horizon+center, block(width:90%, if abstract != none {
+    smallcaps[Abstract]
         block(width: 80%)[
           // Default leading is 0.65em.
           #par(leading: 0.78em, justify: true, linebreaks: "optimized", abstract)
         ]
-      }
-
-      #if date != none {
-        v-space
-        // Display date as MMMM DD, YYYY
-        text(date.display(date-format))
-      }
-  ]))
+      })))
 
   // Configure paragraph properties.
   // Default leading is 0.65em.
-  set par(leading: 0.7em, justify: true, linebreaks: "optimized")
   // Default spacing is 1.2em.
-  show par: set block(spacing: 1.35em) // change this in typst v0.12.0
+  set par(leading: 0.7em, spacing: 1.35em, justify: true, linebreaks: "optimized")
 
   // Add vertical space after headings.
   show heading: it => {
@@ -136,29 +215,19 @@
   // Do not hyphenate headings.
   show heading: set text(hyphenate: false)
 
-  // Show a small maroon circle next to external links.
-  show link: it => {
-    it
-    // Workaround for ctheorems package so that its labels keep the default link styling.
-    if external-link-circle and type(it.dest) != label  {
-      sym.wj
-      h(1.6pt)
-      sym.wj
-      super(box(height: 3.8pt, circle(radius: 1.2pt, stroke: 0.7pt + rgb("#993333"))))
-    }
-  }
-
-  // Display preface as the second page.
-  if preface != none {
-    page(preface)
-  }
-
   // Indent nested entires in the outline.
   set outline(indent: auto)
 
   // Display table of contents.
   if table-of-contents != none {
     table-of-contents
+  }
+
+  // Display preface as the second page.
+  if preface != none {
+    pagebreak()
+    heading(numbering: none, level: 1)[Preface]
+    preface
   }
 
   // Configure heading numbering.
@@ -230,6 +299,17 @@
       if chapter-pagebreak { colbreak(weak: true) }
       it
     }
+    for a in abbreviations {
+      let abbreviation_ref = "abbreviation_ref_"+a.at(0)
+      body = context {
+        show a.at(0): if query(ref.where(target: "abbreviation_ref_"+a.at(0))).len() > 1 { // todo: make counter work
+            link(locate(label(abbreviation_ref)), text(a.at(1) + " (" + insert-zwsp(a.at(0)) + ")"))
+          } else {
+            link( locate(label("abbreviation_ref_"+a.at(0))), a.at(0))
+          }
+        body
+      }
+    }
     body
   }
 
@@ -240,6 +320,41 @@
     // Use default paragraph properties for bibliography.
     show std-bibliography: set par(leading: 0.65em, justify: false, linebreaks: auto)
     bibliography
+  }
+
+   let abbreviation_index = {
+    heading(level: 1, numbering: none, "Abbreviations")
+    let i = 0
+    while i < abbreviations.len() {
+      context {
+        let k = 0
+        let a = abbreviations.at(i)
+        let width_of_abbrev_text = 14cm-measure(a.at(0)).width
+        let d = if measure(a.at(1)).width > width_of_abbrev_text {
+          width_of_abbrev_text
+        } else {
+          measure(a.at(1)).width
+        }
+        grid(columns: (auto, auto, d), align: (left, center, right),
+          ..while k < 3 {
+            ( ( (k == 0, text(hyphenate: false)[#a.at(0) #label("abbreviation_ref_"+a.at(0))]),
+              (k == 1, repeat[.]),
+              (k == 2, text(hyphenate: true, a.at(1))),
+              ).find(t => t.at(0)).at(1),)
+            k += 1
+            
+          }
+        )
+      }
+      i += 1
+      v(-.6em)
+    }
+  }
+
+  if abbreviations.len() > 0 {
+    page(columns: 1,
+      abbreviation_index
+    )
   }
 
   // Display indices of figures, tables, and listings.
@@ -263,6 +378,12 @@
       if tbls { outline(title: table-index.at("title", default: "Index of Tables"), target: fig-t(table)) }
       if lsts { outline(title: listing-index.at("title", default: "Index of Listings"), target: fig-t(raw)) }
     }
+  }
+
+  if appendix != none {
+    pagebreak()
+    heading(numbering: none, level: 1)[Appendix]
+    appendix
   }
 }
 
