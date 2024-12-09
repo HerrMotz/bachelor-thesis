@@ -1,3 +1,38 @@
+W3C_RDFS_Reference:
+  type: reference
+  title: "RDF Vocabulary Description Language 1.1: RDF Schema"
+  url: 
+    value: https://www.w3.org/TR/rdf11-schema/
+    date: 2024-12-06
+  author:
+    - Brickley,Dan
+    - Guha, R.V.
+    - McBride, Brian
+
+W3C_RDF_1.1_Reference:
+  type: reference
+  title: "RDF 1.1 Concepts and Abstract Syntax"
+  url: 
+    value: https://www.w3.org/TR/rdf11-concepts/
+    date: 2024-12-06
+  author:
+  - Hartig,Olaf
+  - Champin,Pierre-Antoine
+  - Kellogg,Gregg
+  - Seaborne,Andy
+    
+W3C_RDF_1.2_Proposal:
+  type: reference
+  title: "RDF 1.2 Concepts and Abstract Syntax"
+  url: 
+    value: https://www.w3.org/TR/rdf12-concepts/
+    date: 2024-12-06
+  author:
+  - Hartig,Olaf
+  - Champin,Pierre-Antoine
+  - Kellogg,Gregg
+  - Seaborne,Andy
+    
 Vargas2019_RDF_Explorer:
   type: article
   title: "RDF Explorer: A Visual SPARQL Query Builder"
@@ -27,6 +62,24 @@ Vargas2019_RDF_Explorer:
     publisher: Springer International Publishing
     location: Cham
 
+Vargas2020_UI_for_Exploring_KGs:
+  type: article
+  title: A User Interface for Exploring and Querying Knowledge Graphs (Extended Abstract)
+  author:
+  - Vargas, Hernán
+  - Buil-Aranda, Carlos
+  - Hogan, Aidan
+  - López, Claudia
+  date: 2020
+  editor: Bessiere, Christian
+  page-range: 4785–4789
+  url: https://doi.org/10.24963/ijcai.2020/666
+  serial-number:
+    doi: 10.24963/ijcai.2020/666
+  parent:
+    type: proceedings
+    title: Proceedings of the Twenty-Ninth International Joint Conference on Artificial Intelligence, {IJCAI-20}
+    publisher: International Joint Conferences on Artificial Intelligence Organization
     
 KnowledgeGraphExplorationForLaypeople:
   type: article
@@ -52,6 +105,8 @@ KnowledgeGraphExplorationForLaypeople:
     title: Semantic Systems. The Power of AI and Knowledge Graphs
     publisher: Springer International Publishing
     location: Cham
+
+
 ConceptualNavigationInLargeKnowledgeGraphs:
   type: chapter
   title: Conceptual Navigation in Large Knowledge Graphs
@@ -228,6 +283,7 @@ Sack2009_OWL_und_OWL_Semantik:
   date: 2009
   url: https://doi.org/10.5446/11275
   note: Semantic Web WS 2009/10
+  
 Stock2008_Wissensrepräsentation:
   type: book
   title: 'Wissensrepräsentation: Informationen Auswerten und Bereitstellen'
@@ -285,7 +341,15 @@ vanDam2015_RDF2Graph:
 
 wikibooks_sparql_qualifiers:
   type: misc
-  title: '{SPARQL/WIKIDATA Qualifiers, References and Ranks}'
+  title: 'SPARQL/WIKIDATA Qualifiers, References and Ranks'
   author: Wikibooks contributors
   date: 2024
   url: https://en.wikibooks.org/wiki/SPARQL/WIKIDATA_Qualifiers,_References_and_Ranks
+
+
+sparql_specification_w3c:
+  type: misc
+  title: 'W3C SPARQL Language Specification'
+  author: W3C
+  date: 2008
+  url: https://www.w3.org/TR/rdf-sparql-query/
