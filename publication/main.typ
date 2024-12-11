@@ -350,8 +350,6 @@ Such statements are usually called qualifiers @wikibooks_sparql_qualifiers. This
 == Visual Query Graph
 #todo[As proposed by Vargas or the french dude, I don't recall.]
 
-
-
 = Developed architecture / system design / implementation
 
 #todo[
