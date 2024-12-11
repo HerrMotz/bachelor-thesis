@@ -2,7 +2,7 @@ W3C_RDFS_Reference:
   type: reference
   title: "RDF Vocabulary Description Language 1.1: RDF Schema"
   url: 
-    value: https://www.w3.org/TR/rdf11-schema/
+    value: https://www.w3.org/TR/2014/REC-rdf-schema-20140225/
     date: 2024-12-06
   author:
     - Brickley,Dan
@@ -13,7 +13,7 @@ W3C_RDF_1.1_Reference:
   type: reference
   title: "RDF 1.1 Concepts and Abstract Syntax"
   url: 
-    value: https://www.w3.org/TR/rdf11-concepts/
+    value: https://www.w3.org/TR/2014/REC-rdf11-concepts-20140225/
     date: 2024-12-06
   author:
   - Hartig,Olaf
@@ -25,13 +25,22 @@ W3C_RDF_1.2_Proposal:
   type: reference
   title: "RDF 1.2 Concepts and Abstract Syntax"
   url: 
-    value: https://www.w3.org/TR/rdf12-concepts/
+    value: https://www.w3.org/TR/2024/WD-rdf12-concepts-20241121/
     date: 2024-12-06
   author:
   - Hartig,Olaf
   - Champin,Pierre-Antoine
   - Kellogg,Gregg
   - Seaborne,Andy
+
+W3C_SPARQL_Specification:
+  type: misc
+  title: 'W3C SPARQL Language Specification'
+  author: W3C
+  date: 2008
+  url: 
+    value: https://www.w3.org/TR/rdf-sparql-query/
+    date: 2024-11-3
     
 Vargas2019_RDF_Explorer:
   type: article
@@ -121,7 +130,7 @@ ConceptualNavigationInLargeKnowledgeGraphs:
   serial-number:
     doi: 10.1007/978-3-030-93278-7_2
     isbn: 978-3-030-93278-7
-  abstract: A growing part of Big Data is made of knowledge graphs. Major knowledge graphs such as Wikidata, DBpedia or the Google Knowledge Graph count millions of entities and billions of semantic links. A major challenge is to enable their exploration and querying by end-users. The SPARQL query language is powerful but provides no support for exploration by end-users. Question answering is user-friendly but is limited in expressivity and reliability. Navigation in concept lattices supports exploration but is limited in expressivity and scalability. In this paper, we introduce a new exploration and querying paradigm, Abstract Conceptual Navigation (ACN), that merges querying and navigation in order to reconcile expressivity, usability, and scalability. ACN is founded on Formal Concept Analysis (FCA) by defining the navigation space as a concept lattice. We then instantiate the ACN paradigm to knowledge graphs (Graph-ACN) by relying on Graph-FCA, an extension of FCA to knowledge graphs. We continue by detailing how Graph-ACN can be efficiently implemented on top of SPARQL endpoints, and how its expressivity can be increased in a modular way. Finally, we present a concrete implementation available online, Sparklis, and a few application cases on large knowledge graphs.
+  abstract: 'A growing part of Big Data is made of knowledge graphs. Major knowledge graphs such as Wikidata, DBpedia or the Google Knowledge Graph count millions of entities and billions of semantic links. A major challenge is to enable their exploration and querying by end-users. The SPARQL query language is powerful but provides no support for exploration by end-users. Question answering is user-friendly but is limited in expressivity and reliability. Navigation in concept lattices supports exploration but is limited in expressivity and scalability. In this paper, we introduce a new exploration and querying paradigm, Abstract Conceptual Navigation (ACN), that merges querying and navigation in order to reconcile expressivity, usability, and scalability. ACN is founded on Formal Concept Analysis (FCA) by defining the navigation space as a concept lattice. We then instantiate the ACN paradigm to knowledge graphs (Graph-ACN) by relying on Graph-FCA, an extension of FCA to knowledge graphs. We continue by detailing how Graph-ACN can be efficiently implemented on top of SPARQL endpoints, and how its expressivity can be increased in a modular way. Finally, we present a concrete implementation available online, Sparklis, and a few application cases on large knowledge graphs.'
   parent:
     type: book
     title: Complex Data Analytics with Formal Concept Analysis
@@ -344,12 +353,23 @@ wikibooks_sparql_qualifiers:
   title: 'SPARQL/WIKIDATA Qualifiers, References and Ranks'
   author: Wikibooks contributors
   date: 2024
-  url: https://en.wikibooks.org/wiki/SPARQL/WIKIDATA_Qualifiers,_References_and_Ranks
+  url: 
+    value: https://en.wikibooks.org/wiki/SPARQL/WIKIDATA_Qualifiers,_References_and_Ranks
+    date: 2024-11-1
 
-
-sparql_specification_w3c:
-  type: misc
-  title: 'W3C SPARQL Language Specification'
-  author: W3C
-  date: 2008
-  url: https://www.w3.org/TR/rdf-sparql-query/
+terhorst_Completeness_of_RDF:
+  type: article
+  title: Completeness, decidability and complexity of entailment for RDF Schema and a semantic extension involving the OWL vocabulary
+  author: ter Horst, Herman J.
+  date: 2005
+  page-range: 79–115
+  url: https://www.sciencedirect.com/science/article/pii/S1570826805000144
+  serial-number:
+    doi: https://doi.org/10.1016/j.websem.2005.06.001
+    issn: 1570-8268
+  abstract: 'We prove that entailment for RDF Schema (RDFS) is decidable, NP-complete, and in P if the target graph does not contain blank nodes. We show that the standard set of entailment rules for RDFS is incomplete and that this can be corrected by allowing blank nodes in predicate position. We define semantic extensions of RDFS that involve datatypes and a subset of the OWL vocabulary that includes the property-related vocabulary (e.g. FunctionalProperty), the comparisons (e.g. sameAs and differentFrom) and the value restrictions (e.g. allValuesFrom). These semantic extensions are in line with the ‘if-semantics’ of RDFS and weaker than the ‘iff-semantics’ of D-entailment and OWL (DL or Full). For these semantic extensions we present entailment rules, prove completeness results, prove that consistency is in P and that, just as for RDFS, entailment is NP-complete, and in P if the target graph does not contain blank nodes. There are no restrictions on use to obtain decidability: classes can be used as instances.'
+  parent:
+    type: periodical
+    title: Journal of Web Semantics
+    issue: 2
+    volume: 3

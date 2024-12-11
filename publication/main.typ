@@ -52,8 +52,11 @@
   abbreviations: (
     ("W3C", "World Wide Web Consortium (registered trademark)"),
     ("RDF", "Resource Description Framework"),
+    ("RDFS", "Resource Description Framework Schema (Ontology within RDF)"),
     ("SPARQL", "SPARQL Protocol And RDF Query Language (recursive acronym)"),
+    ("IRI", "Internationalised Resource Identifier (similar to URI)"),
     ("OWL", "Web Ontology Language"),
+    ("VQG", "Visual Query Graph (user-built query graph)")
   ),
 
   external-link-circle: true,
@@ -70,6 +73,14 @@
 #exampleCounter.update(0)
 
 #show heading.where(level: 6): set heading(outlined: false)
+
+#show heading.where(
+  level: 4,
+): it => text(
+  weight: "bold",
+  style: "italic",
+  it.body,
+)
 
 #show heading.where(
   level: 6,
@@ -129,6 +140,8 @@
 
 = Aim and Relevance
 #todo[
+
+Contents of Aim and Relevance
 - Context: make sure to link where your work fits in
 - Problem: gap in knowledge, too expensive, too slow, a deficiency, superseded technology
 - Strategy: the way you will address the problem  
@@ -138,14 +151,16 @@ I should also state some general information:
 - describe methods and techniques that build the basis of your work
 ]
 
-== Problem
-Much of the world's knowledge is contained in a format, which for a computer, is mostly incomprehensible, namely, natural language. There have been many attempts to process the semantics of natural language, which did not yet succeed. First and foremost, the computer does not know of any causalities in the real world, which makes certain interpretations unattainable. This is because human language is ambiguous and dependent on context. If we may not get the computer to understand our language, we ought to give it knowledge of our world and express ourselves in a language it can understand.  Now, formalising arbitrary knowledge about the world we know in advance, is a big task. The way around is to simply "formalise as you go": 
+== Problem <problem_heading>
+Much of the world's knowledge is contained in a format, which for a computer, is mostly incomprehensible, namely, natural language. There have been many attempts to process the semantics of natural language, which did not yet succeed. First and foremost, the computer does not know of any causalities in the real world, which makes certain interpretations unattainable. This is because human language is ambiguous and dependent on context. If we may not get the computer to understand our language, we ought to give it knowledge of our world and express ourselves in a language it can understand.  Now, formalising arbitrary knowledge about the world we know in advance is an impossible task --- at least today. One solution is, to simply not formalise.
 
-Most factual knowledge#footnote[in a colloquial sense] #todo[what factual knowledge can not be represented using triples?] mankind learns about the world can be written down as a relationship between an individual. A general way of expressing such relationships could be
+Most factual knowledge#todo[what factual knowledge can not be represented using triples?] mankind learns about the world can be written down as a relationship between an individual. A general way of expressing such relationships could be
 
 $ 
   bold("Subject") xarrow(italic("Predicate")) bold("Object"). \
-$ <triple_structure>
+$
+
+#todo[maybe reference @triples_heading]
 
 Say "Johann Wolfgang von Goethe" is a subject, which relates to an object, the "University of Leipzig", in a specific way: He was "educated at" the "University of Leipzig". Using the formalism above, we get
 $
@@ -155,7 +170,7 @@ $
   "Johann Wolfgang von Goethe" xarrow("educated at") "University of Leipzig"
 $ <spo_goethe_example>
 
-Such statements  are called assertions. Just from this assertion we can deduct that:
+Such assertions are usually referred to as _triples_, because they can be written as a tuple with three entries in the form of $(bold("Subject"), italic("Predicate"), bold("Object"))$ (see @triples_heading). If we interpret this triple as an element of some knowledge base, we can deduct that #todo[such statements are called entailments]:
 - there is something called "Johann Wolfgang von Goethe",
 - under the assumption that a different symbol implies a different object, there is something different, called "University of Leipzig",
 - there is a directed relation called "educated" at and
@@ -163,33 +178,12 @@ Such statements  are called assertions. Just from this assertion we can deduct t
 
 The compter does still not understand what it means to be educated at some place or where Leipzig is, but it can interact with this information in a formally correct way. The human operator can construe meaning in to the result.
 
-Such assertions are often called _triples_, because they can be written as a tuple with three entries in the form of $(bold("Subject"), italic("Predicate"), bold("Object"))$. Some real-world relationships might present to be more complex than something one could model in a single triple. For example, one may want to express that "Goethe" was educated at the "University of Leipzig" from 3 October 1765 to 28 August 1768. One possibility is to let relationships have more than two operands, i.e. increase the arity by one for each additional parameter. "Educated at" would then be called "educated at (#sym.dot) from (#sym.dot) to (#sym.dot)". Another way using the limited triple syntax is to create an implicit object, that assists in modelling the relationship. We use it to describe a new concept; a human might be inclined to give it a name, e.g. "educated at for a certain time":
-$
-  "Goethe" &longArrow("educated at") && "Implicit1", \
-  "Implicit1" &longArrow("educated at") && "Uni Leipzig", \
-  "Implicit1" &longArrow("started at") && 3.10.1765, \
-  "Implicit1" &longArrow("ended at") && 28.08.1768 
-$ <assertions_goethe_education>
-
-Having specified such an implicit concept for our concept "educated at for a certain time", one is free to add a few extra statements about what he studied and whether he graduated:
-
-$
-  "Goethe" &longArrow("educated at") && "Implicit1", \
-  "Implicit1" &longArrow("educated at") && "Uni Leipzig", \
-  "Implicit1" &longArrow("started at") && 3.10.1765, \
-  "Implicit1" &longArrow("ended at") && 28.08.1768, \
-  #text(fill: green)[Implicit1] &longArrow("field of study") && #text(fill: green)[Law], \
-  #text(fill: green)[Implicit1] &longArrow("graduated") && #text(fill: green)[True]
-$ <assertions_goethe_education_revised>
-
-In the context of Wikidata, such statements as these are called qualifiers @wikibooks_sparql_qualifiers. This method of describing information allows us to implicitly define new concepts. The computer does not really care: It merely handles the explicit assertions for an anonymous concept. But, this anonymity poses a challenge to a human interpreter; they handle information better, if they can put it in a drawer.
-
 #todo[
   Therefore challenges are:
   - Making information in an RDF databases understandable and not so abstract for a human interpreter (for example visualising the result in a graph)
 ]
 
-#todo[Connect the following to somewhere]
+#todo[Connect the following to somewhere:]
 
 RDF databases store large amounts of validated data and are freely available, however, they:
 - can only be potently queried using SPARQL, which is not intuitive for non-programmers,
@@ -198,8 +192,14 @@ RDF databases store large amounts of validated data and are freely available, ho
 - can hardly automatically be made consistent with a formal ontology and
 - allow for no systemic consistency checks (i.e. those have to be ran as post-hoc batch jobs).
 
+== Proposed Solution
+Query by Graph aims to
 
+- guide the user during the process of formalising the question,
 
+- allow a layman to write arbitrary SPARQL-select-queries, #todo[find a pretty abbreviation for SPARQL-select-queries and change every occurence in the document and write a macro which detects these occurences and marks it as an error]
+
+- integrate
 
 == Related Works
 
@@ -262,17 +262,23 @@ Questions, which I would like to be answered in this chapter:
 
 // (There are Springer conferences on semantic web technologies: https://suche.thulb.uni-jena.de/Record/1041330375?sid=49057082)
 
-Computers generally lack information about the environment humans live in. Unless formalised, a computer is unaware of the fact, that an arbitrary arrangement of numerals separated by lines, such as `8/7/2000` is supposed to represent a date an historically formed calendar based on the birth of a religious figure. How would a human know of this culture, if it were not taught to him by his parents? Furthermore, a computer can not parse information from a data source, about which it has no meta-information. Even can be reasonably wrong. Here, I picture a European fellow confronted with the date of a booking confirmation, issued by an American hotel company.
+Computers generally lack information about the environment humans live in. Unless formalised, a computer is unaware of the fact, that an arbitrary arrangement of numerals separated by lines, such as `8/7/2000`, is supposed to represent a date an historically formed calendar based on the birth of a religious figure. How would a human know of this culture, if it were not taught to him by his parents? Furthermore, a computer can not parse information from a data source, about which it has no meta-information. Even can be reasonably wrong. Here, I picture a European fellow confronted with the date of a booking confirmation issued by an American company.
 
-Computers generally lack information about the environment humans live in. Unless formalised, a computer is unaware of the fact, that an arbitrary arrangement of numerals separated by lines, such as `8/7/2000` is supposed to represent a date an historically formed calendar based on the birth of a religious figure. How would a human know of this culture, if it were not taught to him by his parents? Furthermore, a computer can not parse information from a data source, about which it has no meta-information. Even can be reasonably wrong. Here, I picture a European fellow confronted with the date of a booking confirmation, issued by an American hotel company. 
 
 The original idea by Tim Berners-Lee, was to annotate web pages using a well-defined, common vocabulary, so that any computer can, without human assistance, extract the important contents of a website. For example, a doctors office might post opening times on a website. Using a vocabulary, the website describes a table as "opening times" and the strings of weekdays and times as entries of the opening times. #todo[insert example code from the book on Semantic Technologies] @Dengel2012_Semantic_Technologies. This concept is not necessarily limited to websites, but can just as well be applied in databases. These deliberations waged the establishment of standards for describing meta information, such as:
-- Resource Description Framework
+- Resource Description Framework (see @heading_rdf_standard)
+- Web Ontology Language (@heading_owl)
 - #todo[List more from the book @Dengel2012_Semantic_Technologies]
 
 
-== RDF Standard
-The W3C#sym.trademark.registered recommends a standard for exchange of semantically annotated information calledestablished the Resource Description Framework (RDF) standard model. The W3C defines i.e. a sy + 
+== RDF Standard <heading_rdf_standard>
+The W3C#sym.trademark.registered recommends a standard for exchange of semantically annotated information calledestablished the Resource Description Framework (RDF) standard model. The most notable recommendations are
+
+- the Internationalised Resource Identifier (see @iri_heading),
+
+- the RDF graph format and triples (see @triples_heading) and
+
+- the query language SPARQL (see @sparql_heading).
 
 #todo[
 - What are alternatives to RDF databases?
@@ -280,39 +286,110 @@ The W3C#sym.trademark.registered recommends a standard for exchange of semantica
 - Which query languages work / are used on RDF databases?
 ]
 
-== SPARQL
+#todo[
+  What is a reifier good for/used for (irl)?
+]
+
+=== Internationalised Resource Identifier <iri_heading>
+
+=== RDF Graph Format and Triples <triples_heading>
+
+==== Modeling Information using Triples
+#todo[Restyle level 3 and 4 headings]
+
+As motivated in @problem_heading, a triple consists of the following structure
+$ 
+  bold("Subject") xarrow(italic("Predicate")) bold("Object"). \
+$ <triple_structure>
+
+Every triple has an equivalent RDF Graph, where the subject and object equate nodes, and the predicate equates a directed connection from subject to object.
+
+#align(center, todo[Insert drawing])
+
+Most real-world relationships might present to be more complex than something one would want to model in a single triple. For example, one may want to express that "Goethe" was educated at the "University of Leipzig" from 3 October 1765 to 28 August 1768. One possibility is to let relationships have more than two operands, i.e. increase the arity by one for each additional parameter. "Educated at" would then be called "educated at (#sym.dot) from (#sym.dot) to (#sym.dot)". Another way using the limited triple syntax is to create an implicit object, that assists in modelling the relationship. We use it to describe a new concept; a human might be inclined to give it a name, e.g. "educated at for a certain time":
+$
+  "Goethe" &longArrow("educated at") && "Implicit1", \
+  "Implicit1" &longArrow("educated at") && "Uni Leipzig", \
+  "Implicit1" &longArrow("started at") && 3.10.1765, \
+  "Implicit1" &longArrow("ended at") && 28.08.1768 
+$ <assertions_goethe_education>
+
+Having specified such an implicit concept for our concept "educated at for a certain time", one is free to add a few extra statements about what he studied and whether he graduated:
+
+$
+  "Goethe" &longArrow("educated at") && "Implicit1", \
+  "Implicit1" &longArrow("educated at") && "Uni Leipzig", \
+  "Implicit1" &longArrow("started at") && 3.10.1765, \
+  "Implicit1" &longArrow("ended at") && 28.08.1768, \
+  #text(fill: green)[Implicit1] &longArrow("field of study") && #text(fill: green)[Law], \
+  #text(fill: green)[Implicit1] &longArrow("graduated") && #text(fill: green)[True]
+$ <assertions_goethe_education_revised>
+
+Such statements are usually called qualifiers @wikibooks_sparql_qualifiers. This method of describing information allows us to implicitly define new concepts. Any program dealing with qualifiers merely handles the explicit assertions for an anonymous concept. But, this anonymity poses a challenge to a human interpreter; implicit concepts usually remain unnamed (#todo[todo below (how does it work)]).
+
+#todo[How do qualifiers actually work in the context of the spec @W3C_RDF_1.2_Proposal? Do they use blank nodes?]
+
+#todo[How do qualifiers get their name in Wikidata?]
+
+#todo[Are qualifiers specific to an RDF implementation?]
+
+=== SPARQL Protocol and RDF Query Language <sparql_heading>
 
 #blockquote[
-  RDF is a directed, labeled graph data format for representing information in the Web. This specification defines the syntax and semantics of the SPARQL query language for RDF. SPARQL can be used to express queries across diverse data sources, whether the data is stored natively as RDF or viewed as RDF via middleware. SPARQL contains capabilities for querying required and optional graph patterns along with their conjunctions and disjunctions. SPARQL also supports extensible value testing and constraining queries by source RDF graph. The results of SPARQL queries can be results sets or RDF graphs. @sparql_specification_w3c
+  SPARQL can be used to express queries across diverse data sources, whether the data is stored natively as RDF or viewed as RDF via middleware. SPARQL contains capabilities for querying required and optional graph patterns along with their conjunctions and disjunctions. SPARQL also supports extensible value testing and constraining queries by source RDF graph. The results of SPARQL queries can be results sets or RDF graphs. @W3C_SPARQL_Specification
 ]
 
 #todo[
   Which features does SPARQL offer?
 ]
 
-== Knowledge Representation
-@Stock2008_Wissensrepräsentation
-
-== OWL
+== Web Ontology Language <heading_owl>
 @Sack2009_OWL_und_OWL_Semantik
 @Lacy2005_OWL
+
+== Visual Query Graph
+#todo[As proposed by Vargas or the french dude, I don't recall.]
 
 
 
 = Developed architecture / system design / implementation
 
 #todo[
+Should contain the following aspects:
 - start with a theoretical approach
 - describe the developed system/algorithm/method from a high-level point of view
 - go ahead in presenting your developments in more detail
 ]
 
-My approach 
+== Architecture
+- Web App (Vite+Vue+Rust+ReteJS+TailwindCSS)
+- All mapping algorithms are written in Rust to ensure completeness and speed
+- Integrates fuzzy search using Wikibase APIs (exemplary implementation for Wikidata and Factgrid)
 
-== Translating SPARQL to a Visual Representation
+== Use in Lecture
+- Patrick Stahl developed for Clemens Beck
+- Changes / contributions by patrick are clearly marked in Version Control
 
-=== SELECT  Queries
-#todo[Which features can I graphically visualise?]
+#todo[How do I license the code? Maybe Rechtsamt fragen.]
+
+== Visual Query Graph-SPARQL Mapping
+Novel to current work:
++ Qualifiers are visualised more intuitively (see Simons Blog) #todo[Create reference for Olaf Simons Blogpost]
++ Multiple datasources and clear prefixes #todo[Check, whether this is actually new]
++ ... more?
+
+== SPARQL-OWL Mapping
+
+=== Select Queries
+#todo[
+  Which features can I graphically visualise?
+  - Triples
+  - Qualifiers
+  - Literals
+  - blank nodes?
+  - Filters?
+  - ...
+]
 
 A SPARQL-SELECT-Query
 
@@ -324,6 +401,13 @@ A SPARQL-SELECT-Query
 - caution: each result/graph must be discussed! what’s the reason for this peak or why have you observed this effect
 ]
 
+= Further Work
+
++ Creating SPARQL assertions (INSERT statement)
+
++ SPARQL FILTER query
+
++ Allow user to specify own data sources
 
 = Declaration of Academic Integrity
 
@@ -335,9 +419,11 @@ A SPARQL-SELECT-Query
    
 2. I understand that this declaration also applies to generative AI tools which cannot be cited (hereinafter referred to as "generative AI").
 
-   I understand that the use of generative AI is not permitted unless the examiner has explicitly authorised its use (Declaration of Permitted Resources). Where the use of generative AI was permitted, I confirm that I have only used it as a resource and that this work is largely my own original work. I take full responsibility for any AI-generated content I included in my work. 
+  I understand that the use of generative AI is not permitted unless the examiner has explicitly authorised its use (Declaration of Permitted Resources). Where the use of generative AI was permitted, I confirm that I have only used it as a resource and that this work is largely my own original work. I take full responsibility for any AI-generated content I included in my work. 
    
-   Where the use of generative AI was permitted to compose this work, I have acknowledged its use in a separate appendix. This appendix includes information about which AI tool was used or a detailed description of how it was used in accordance with the requirements specified in the examiner’s Declaration of Permitted Resources. I have read and understood the requirements contained therein and any use of generative AI in this work has been acknowledged accordingly (e.g. type, purpose and scope as well as specific instructions on how to acknowledge its use). 
+  Where the use of generative AI was permitted to compose this work, I have acknowledged its use in a separate appendix. This appendix includes information about which AI tool was used or a detailed description of how it was used in accordance with the requirements specified in the examiner#sym.quote.single\s Declaration of Permitted Resources. I have read and understood the requirements contained therein and any use of generative AI in this work has been acknowledged accordingly (e.g. type, purpose and scope as well as specific instructions on how to acknowledge its use). 
+
+#todo[Check whether #sym.quote.single is the right thing to use here.]
 
 3. I also confirm that this work has not been previously submitted in an identical or similar form to any other examination authority in Germany or abroad, and that it has not been previously published in German or any other language. 
 

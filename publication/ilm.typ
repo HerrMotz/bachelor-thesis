@@ -120,7 +120,7 @@
 
   // Set raw text font.
   // Default is Fira Mono at 8.8pt
-  show raw: set text(font: "Fira Code", size: 9pt)
+  show raw: set text(font: "Noto Sans Mono", size: 12pt)
 
   // Configure page size and margins.
   set page(
@@ -299,6 +299,7 @@
       if chapter-pagebreak { colbreak(weak: true) }
       it
     }
+
     for a in abbreviations {
       let abbreviation_ref = "abbreviation_ref_"+a.at(0)
       body = context {
