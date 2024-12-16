@@ -8,6 +8,8 @@ import {graph_to_query_wasm} from "../pkg";
 import {VueMonacoEditor} from '@guolao/vue-monaco-editor'
 import * as monaco from "monaco-editor"
 
+import WikibaseDataService from './lib/wikidata/WikibaseDataService.ts'
+
 monaco.editor.defineTheme('custom-theme', {
   base: 'vs', // Use 'vs-light' as the base theme
   inherit: false, // Inherit other colors and styles from 'vs-light'
@@ -44,22 +46,15 @@ function formatCode() {
   codeEditorRef.value?.getAction('editor.action.formatDocument').run()
 }
 
-import EntityType from "./lib/types/EntityType.ts";
-
-import EntitySelector from "./components/EntitySelector.vue";
 import Button from "./components/Button.vue";
 import ConnectionInterfaceType from "./lib/types/ConnectionInterfaceType.ts";
 import ClipboardButton from "./components/ClipboardButton.vue";
-import WikiDataService from './lib/wikidata/WikibaseDataService.ts';
 import QueryButton from './components/QueryButton.vue';
-import { selectedDataSource } from './store.ts';
-import {factGridDataSource, wikiDataDataSource} from "./lib/constants";
+import { selectedDataSource, dataSources } from './store.ts';
 
 interface Editor {
   setVueCallback: (callback: (context: any) => void) => void;
   removeSelectedConnections: () => Promise<void>;
-  setSelectedProperty: (property: EntityType) => void;
-  setSelectedIndividual: (property: EntityType) => void;
   undo: () => void;
   redo: () => void;
   exportConnections: () => ConnectionInterfaceType[];
