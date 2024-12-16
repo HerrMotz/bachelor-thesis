@@ -8,6 +8,8 @@ import {graph_to_query_wasm} from "../pkg";
 import {VueMonacoEditor} from '@guolao/vue-monaco-editor'
 import * as monaco from "monaco-editor"
 
+import WikibaseDataService from './lib/wikidata/WikibaseDataService.ts'
+
 monaco.editor.defineTheme('custom-theme', {
   base: 'vs', // Use 'vs-light' as the base theme
   inherit: false, // Inherit other colors and styles from 'vs-light'
@@ -48,9 +50,7 @@ import Button from "./components/Button.vue";
 import ConnectionInterfaceType from "./lib/types/ConnectionInterfaceType.ts";
 import ClipboardButton from "./components/ClipboardButton.vue";
 import QueryButton from './components/QueryButton.vue';
-import WikibaseDataService from './lib/wikidata/WikibaseDataService.ts';
 import { selectedDataSource, dataSources } from './store.ts';
-
 
 interface Editor {
   setVueCallback: (callback: (context: any) => void) => void;
@@ -262,12 +262,12 @@ const gotoLink = (url?: string) => {
             <div class="flex-col flex gap-2">
               <h4 class="font-semibold">Data Source</h4>
               <div class="flex gap-4">
-                <Button 
+                <Button
                   :class="{'highlighted': selectedDataSource.name === 'WikiData'}"
                   @click="setDataSource('wikidata')">
                   Use Wikidata
                 </Button>
-                <Button 
+                <Button
                   :class="{'highlighted': selectedDataSource.name === 'FactGrid'}"
                   @click="setDataSource('factgrid')">
                   Use FactGrid
@@ -275,7 +275,7 @@ const gotoLink = (url?: string) => {
               </div>
               <p class="text-gray-600 text-sm hover:text-gray-900 transition-all">
                 <em>Hint:</em>
-                Select a data source by clicking one of the buttons above.  
+                Select a data source by clicking one of the buttons above.
               </p>
             </div>
             <div class="flex-col flex gap-2">
@@ -302,11 +302,11 @@ const gotoLink = (url?: string) => {
               </Button>
               <p class="text-gray-600 text-sm hover:text-gray-900 transition-all">
                 <em>Hint:</em>
-                Open a new window for building another graph without deleting the current one. 
+                Open a new window for building another graph without deleting the current one.
               </p>
               <p class="text-gray-600 text-sm hover:text-gray-900 transition-all">
-              
-               
+
+
               </p>
             </div>
           </div>
@@ -353,7 +353,7 @@ const gotoLink = (url?: string) => {
 
 <style>
 .highlighted {
-  background-color: #28a745; 
-  color: #ffffff; 
+  background-color: #28a745;
+  color: #ffffff;
 }
 </style>

@@ -11,7 +11,7 @@ import EntityType from "../types/EntityType.ts";
 import ConnectionInterfaceType from "../types/ConnectionInterfaceType.ts";
 import EntityNodeComponent from "../../components/EntityNode.vue";
 import CustomInputControl from "../../components/EntitySelectorInputControl.vue";
-import {noEntity, variableEntityConstructor} from "./constants.ts";
+import {noEntity,variableEntityConstructor} from "./constants.ts";
 import {noDataSource} from "../constants";
 
 // Each connection holds additional data, which is defined here
@@ -126,7 +126,7 @@ export async function createEditor(container: HTMLElement) {
                 editor.getConnections().forEach((c) => {
                     area.update("connection", c.id)
                 })
-            }
+            },
         });
     }
 
@@ -242,7 +242,7 @@ export async function createEditor(container: HTMLElement) {
             const node = context.data as ClassicPreset.Node;
             console.log(`Node clicked: ${node.id}`);
 
-            if (vueCallback !== undefined){
+            if (vueCallback){
                 vueCallback({
                     type: 'nodeselected',
                     data: node,
@@ -250,7 +250,7 @@ export async function createEditor(container: HTMLElement) {
             }
         }
 
-        if (vueCallback !== undefined) {
+        if (vueCallback) {
             vueCallback(context);
         }
         return context;
