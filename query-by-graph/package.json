@@ -6,7 +6,8 @@
   "scripts": {
     "dev": "wasm-pack build && vite",
     "build": "wasm-pack build && vue-tsc -b && vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "test-rs":  "wasm-pack test --chrome"
   },
   "dependencies": {
     "@guolao/vue-monaco-editor": "^1.5.4",
