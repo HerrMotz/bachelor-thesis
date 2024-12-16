@@ -11,7 +11,7 @@ import EntityType from "../types/EntityType.ts";
 import ConnectionInterfaceType from "../types/ConnectionInterfaceType.ts";
 import EntityNodeComponent from "../../components/EntityNode.vue";
 import CustomInputControl from "../../components/EntitySelectorInputControl.vue";
-import {noEntity,variableEntity,variableEntityConstructor} from "./constants.ts";
+import {noEntity,variableEntityConstructor} from "./constants.ts";
 import {noDataSource} from "../constants";
 
 // Each connection holds additional data, which is defined here
