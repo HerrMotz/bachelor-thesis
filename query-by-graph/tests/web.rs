@@ -12,3 +12,14 @@ wasm_bindgen_test_configure!(run_in_browser);
 fn test_empty_query() {
     assert_eq!(graph_to_query_wasm("[]"), "");
 }
+
+
+#[wasm_bindgen_test]
+fn test_simple_query() {
+    let query = r###"[{"property":{"id":"?variable1","label":"Variable","description":"Variable Entity","prefix":{"uri":"","abbreviation":""},"dataSource":{"name":"","url":"","preferredLanguages":[],"propertyPrefix":{"url":"","abbreviation":""},"entityPrefix":{"url":"","abbreviation":""},"queryService":""}},"source":{"id":"Q5879","label":"Johann Wolfgang von Goethe","description":"German writer, artist, natural scientist and politician (1749–1832)","prefix":{"uri":"http://www.wikidata.org/entity/","abbreviation":"wd"},"dataSource":{"name":"WikiData","url":"https://www.wikidata.org/w/api.php","preferredLanguages":["en"],"entityPrefix":{"url":"http://www.wikidata.org/entity/","abbreviation":"wd"},"propertyPrefix":{"url":"http://www.wikidata.org/prop/direct/","abbreviation":"wdt"},"queryService":"https://query.wikidata.org/ "}},"target":{"id":"Q154804","label":"Leipzig University","description":"university in Leipzig, Saxony, Germany (1409-)","prefix":{"uri":"http://www.wikidata.org/entity/","abbreviation":"wd"},"dataSource":{"name":"WikiData","url":"https://www.wikidata.org/w/api.php","preferredLanguages":["en"],"entityPrefix":{"url":"http://www.wikidata.org/entity/","abbreviation":"wd"},"propertyPrefix":{"url":"http://www.wikidata.org/prop/direct/","abbreviation":"wdt"},"queryService":"https://query.wikidata.org/ "}}}]"###;
+    assert_eq!(graph_to_query_wasm(query), "PREFIX wd: <http://www.wikidata.org/entity/>
+SELECT ?variable1 WHERE {
+     wd:Q5879 ?variable1 wd:Q154804 .
+    # Johann Wolfgang von Goethe -- [Variable] -> Leipzig University
+}")
+}

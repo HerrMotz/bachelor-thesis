@@ -40,77 +40,82 @@ pub fn graph_to_query_wasm(json: &str) -> String {
 }
 
 fn graph_to_query(connections: Vec<Connection>) -> String {
-    let projection_set = connections.iter()
-                                 .flat_map(|connection| {
-                                     vec![&connection.source, &connection.target, &connection.property]
-                                 })
-                                 .filter(|entity| entity.id.starts_with('?'))
-                                 .map(|entity| entity.id.clone())
-                                 .collect::<HashSet<_>>();
-
-    let projection_list = if projection_set.len() == 0 {
-        String::from("*")
+    if connections.len() < 1 {
+        String::from("")
     } else {
-        let mut sorted_projection_set: Vec<_> = projection_set.into_iter().collect();
-        sorted_projection_set.sort(); // Sort the collection
-        sorted_projection_set.join(" ")
-    };
+        let projection_set = connections.iter()
+            .flat_map(|connection| {
+                vec![&connection.source, &connection.target, &connection.property]
+            })
+            .filter(|entity| entity.id.starts_with('?'))
+            .map(|entity| entity.id.clone())
+            .collect::<HashSet<_>>();
 
-    let prefix_set = connections.iter()
-        .flat_map(|connection| {
-            vec![&connection.source, &connection.target, &connection.property]
-        })
-        .filter(|entity| !entity.prefix.uri.is_empty())
-        .map(|entity| entity.prefix.clone())
-        .collect::<HashSet<_>>();
+        let projection_list = if projection_set.len() == 0 {
+            String::from("*")
+        } else {
+            let mut sorted_projection_set: Vec<_> = projection_set.into_iter().collect();
+            sorted_projection_set.sort(); // Sort the collection
+            sorted_projection_set.join(" ")
+        };
 
-    let prefix_list = if prefix_set.len() == 0 { String::from("") } else {
-        prefix_set.into_iter()
-        // PREFIX wd: <http://www.wikidata.org/entity/>
-        .map(|prefix| format!("PREFIX {}: <{}>", prefix.abbreviation, prefix.uri))
-        .collect::<Vec<_>>()
-        .join("\n")
-    };
+        let prefix_set = connections.iter()
+            .flat_map(|connection| {
+                vec![&connection.source, &connection.target, &connection.property]
+            })
+            .filter(|entity| !entity.prefix.uri.is_empty())
+            .map(|entity| entity.prefix.clone())
+            .collect::<HashSet<_>>();
 
-    let where_clause: String = connections.iter()
-        .map(|connection| {
-            let source_uri = if connection.source.prefix.uri.is_empty() {
-                connection.source.id.clone() // Clone the String to avoid moving it
-            } else {
-                format!("{}:{}", connection.source.prefix.abbreviation, connection.source.id)
-            };
+        let prefix_list = if prefix_set.len() == 0 { String::from("") } else {
+            let mut temp = prefix_set.into_iter()
+                // PREFIX wd: <http://www.wikidata.org/entity/>
+                .map(|prefix| format!("PREFIX {}: <{}>", prefix.abbreviation, prefix.uri))
+                .collect::<Vec<_>>();
+            temp.sort();
+            temp.join("\n")
+        };
 
-            let property_uri = if connection.property.prefix.uri.is_empty() {
-                connection.property.id.clone() // Clone the String to avoid moving it
-            } else {
-                format!("{}:{}", connection.property.prefix.abbreviation, connection.property.id)
-            };
+        let where_clause: String = connections.iter()
+            .map(|connection| {
+                let source_uri = if connection.source.prefix.uri.is_empty() {
+                    connection.source.id.clone() // Clone the String to avoid moving it
+                } else {
+                    format!("{}:{}", connection.source.prefix.abbreviation, connection.source.id)
+                };
 
-            let target_uri = if connection.target.prefix.uri.is_empty() {
-                connection.target.id.clone() // Clone the String to avoid moving it
-            } else {
-                format!("{}:{}", connection.target.prefix.abbreviation, connection.target.id)
-            };
+                let property_uri = if connection.property.prefix.uri.is_empty() {
+                    connection.property.id.clone() // Clone the String to avoid moving it
+                } else {
+                    format!("{}:{}", connection.property.prefix.abbreviation, connection.property.id)
+                };
+
+                let target_uri = if connection.target.prefix.uri.is_empty() {
+                    connection.target.id.clone() // Clone the String to avoid moving it
+                } else {
+                    format!("{}:{}", connection.target.prefix.abbreviation, connection.target.id)
+                };
 
 
-            let indentation = " ".repeat(INDENTATION_COUNT);
+                let indentation = " ".repeat(INDENTATION_COUNT);
 
-            format!(
-                "{} {} {} {} . \n{}# {} -- [{}] -> {}\n",
-                indentation,
-                source_uri,
-                property_uri,
-                target_uri,
-                indentation,
-                connection.source.label,
-                connection.property.label,
-                connection.target.label
-            )
-        })
-        .collect();
+                format!(
+                    "{} {} {} {} .\n{}# {} -- [{}] -> {}\n",
+                    indentation,
+                    source_uri,
+                    property_uri,
+                    target_uri,
+                    indentation,
+                    connection.source.label,
+                    connection.property.label,
+                    connection.target.label
+                )
+            })
+            .collect();
 
-    format!(
-        "{}\nSELECT {} WHERE {{\n{}}}",
-        prefix_list, projection_list, where_clause
-    )
+        format!(
+            "{}\nSELECT {} WHERE {{\n{}}}",
+            prefix_list, projection_list, where_clause
+        )
+    }
 }
