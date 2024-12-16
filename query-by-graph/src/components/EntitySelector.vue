@@ -53,7 +53,7 @@ function displayValue(entity: unknown): string {
 
 function queryHelper(query: string) {
   console.log(`queryHelper called with query: "${query}"`);
-  const wds = new WikibaseDataService();
+  const wds = new WikibaseDataService(selectedDataSource.value);
   wds.queryWikidata({
     language: language.value,
     uselang: language.value,
@@ -72,7 +72,8 @@ function queryHelper(query: string) {
         prefix: {
           uri: prefix.url,
           abbreviation: prefix.abbreviation,
-        }
+        },
+        dataSource: {...selectedDataSource.value} // save datasource
       }
     }).concat([
         variableEntityConstructor(query.startsWith('?') ? query.slice(1) : query)
