@@ -1,8 +1,7 @@
 import axios, {AxiosInstance} from "axios";
 import {WikiDataEntityDetails, WikiDataResponse, WikiDataSearchApiResponse} from "./types.ts";
-import { selectedDataSource } from "../../store.ts";
-import WikibaseDataSource from "../types/WikibaseDataSource.ts";
 
+import WikibaseDataSource from "../types/WikibaseDataSource.ts";
 class WikibaseDataService {
   private api: AxiosInstance;
   private readonly languages: string[];
@@ -154,20 +153,20 @@ class WikibaseDataService {
 
     if (precision === 9) {
       formattedDate = year;
-    } 
+    }
     else if (precision === 10) {
       options.year = 'numeric';
       options.month = 'long';
       const date = new Date(`${year}-${month}-01`);
       formattedDate = date.toLocaleDateString(language, options);
-    } 
+    }
     else if (precision >= 11) {
       options.year = 'numeric';
       options.month = 'long';
       options.day = 'numeric';
       const date = new Date(`${year}-${month}-${day}`);
       formattedDate = date.toLocaleDateString(language, options);
-    } 
+    }
     else {
       formattedDate = year;
     }
@@ -287,7 +286,7 @@ class WikibaseDataService {
             } else {
               labels[id] = id;
             }
-            console.log('converting property id to label:', id, labels[id]);
+            // console.log('converting property id to label:', id, labels[id]);
           }
         } else {
           console.error('No entities found in response:', response.data);

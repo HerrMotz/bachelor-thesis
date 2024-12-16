@@ -12,7 +12,6 @@ const INDENTATION_COUNT:usize = 4;
 struct Entity {
     pub id: String,
     pub label: String,
-    pub description: String,
     pub prefix: Prefix
 }
 
@@ -49,10 +48,13 @@ fn graph_to_query(connections: Vec<Connection>) -> String {
                                  .map(|entity| entity.id.clone())
                                  .collect::<HashSet<_>>();
 
-    let projection_list = if projection_set.len() == 0 { String::from("*") } else {
-        projection_set.into_iter()
-        .collect::<Vec<_>>()
-        .join(" ")};
+    let projection_list = if projection_set.len() == 0 {
+        String::from("*")
+    } else {
+        let mut sorted_projection_set: Vec<_> = projection_set.into_iter().collect();
+        sorted_projection_set.sort(); // Sort the collection
+        sorted_projection_set.join(" ")
+    };
 
     let prefix_set = connections.iter()
         .flat_map(|connection| {
@@ -90,12 +92,16 @@ fn graph_to_query(connections: Vec<Connection>) -> String {
                 format!("{}:{}", connection.target.prefix.abbreviation, connection.target.id)
             };
 
+
+            let indentation = " ".repeat(INDENTATION_COUNT);
+
             format!(
-                "{} {} {} {} . # {} -- [{}] -> {}\n",
-                " ".repeat(INDENTATION_COUNT),
+                "{} {} {} {} . \n{}# {} -- [{}] -> {}\n",
+                indentation,
                 source_uri,
                 property_uri,
                 target_uri,
+                indentation,
                 connection.source.label,
                 connection.property.label,
                 connection.target.label

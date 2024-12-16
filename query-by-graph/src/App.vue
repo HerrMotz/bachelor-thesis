@@ -46,12 +46,14 @@ function formatCode() {
 
 import EntityType from "./lib/types/EntityType.ts";
 
+import EntitySelector from "./components/EntitySelector.vue";
 import Button from "./components/Button.vue";
 import ConnectionInterfaceType from "./lib/types/ConnectionInterfaceType.ts";
 import ClipboardButton from "./components/ClipboardButton.vue";
-import WikibaseDataService from './lib/wikidata/WikibaseDataService.ts';
-import { selectedDataSource, dataSources } from './store.ts';
-
+import WikiDataService from './lib/wikidata/WikibaseDataService.ts';
+import QueryButton from './components/QueryButton.vue';
+import { selectedDataSource } from './store.ts';
+import {factGridDataSource, wikiDataDataSource} from "./lib/constants";
 
 interface Editor {
   setVueCallback: (callback: (context: any) => void) => void;
@@ -98,8 +100,8 @@ onMounted(async () => {
         setTimeout(() => {
           const connections = editor.value!.exportConnections()
           // DEBUG
-          console.log("The connections in App.vue")
-          console.log(connections)
+          // console.log("The connections in App.vue")
+          // console.log(connections)
           code.value = graph_to_query_wasm(JSON.stringify(connections));
           formatCode();
         }, 10);
@@ -150,25 +152,30 @@ const setDataSource = (source: keyof typeof dataSources) => {
   }
 };
 
+const gotoLink = (url?: string) => {
+  const link = url || window.location.href;
+  window.open(link, '_blank');
+}
+
 </script>
 
 <template>
   <div>
-    <div class="place-items-center bg-white px-6 pb-24 pt-12 sm:pb-2 sm:pt-12 lg:px-8">
+    <div class="place-items-center bg-white px-6 pb-24 pt-12 sm:pb-2 sm:pt-6 lg:px-8">
       <div class="text-5xl text-center mb-4 font-serif font-bold italic">Query by Graph</div>
       <p class="text-center font-medium text-gray-500 text-sm mb-6 w-[550px] mx-auto">
         This program allows you to build a SPARQL query using visual elements.
         Press RMB on the canvas to create a new individual and LMB on an individual's socket to create a connection.
         You can delete an individual by pressing RMB on it.
       </p>
-      <div class="flex w-full bg-amber-100 rounded-2xl max-h-[50vh]">
-        <div class="w-1/5 bg-amber-50 rounded-tl-2xl">
+      <div class="flex w-full bg-amber-100 rounded-2xl h-[65vh]">
+        <div class="w-2/12 bg-amber-50 rounded-tl-2xl h-full">
           <h2 class="text-xl font-semibold bg-amber-100 p-4">
             Metainfo
             <span v-if="selectedNode?.dataSource?.name" class="inline"> (from {{ selectedNode.dataSource.name}}) </span>
           </h2>
           <!-- Metainfowindow content -->
-          <div class="p-4 overflow-auto max-h-[40vh]">
+          <div class="p-4 overflow-auto max-h-[90%]">
           <!-- Display when a node is selected -->
           <div v-if="selectedNode">
             <div v-if="selectedNode.metadata">
@@ -213,7 +220,7 @@ const setDataSource = (source: keyof typeof dataSources) => {
         </div>
 
         </div>
-        <div class="w-3/5 bg-amber-50 rounded-tl-2xl">
+        <div class="w-8/12 bg-amber-50 rounded-tl-2xl h-full">
           <h2 class="text-xl font-semibold bg-amber-100 p-4">
             <!-- This has the same propeties as the toolbox heading -->
             Visual Query Builder
@@ -221,9 +228,9 @@ const setDataSource = (source: keyof typeof dataSources) => {
               Each Box is a SPARQL-Individual and each Connection between them is a SPARQL-Property
             </span>
           </h2>
-          <div ref="rete" class="h-full"></div>
+          <div ref="rete" class="h-[90%]"></div>
         </div>
-        <div v-if="editor" class="w-1/5 overflow-auto rounded-tr-2xl">
+        <div v-if="editor" class="w-2/12 overflow-auto rounded-tr-2xl h-full">
           <h2 class="text-xl font-semibold bg-amber-200 p-4">
             Toolbox
             <span class="text-sm ml-2 font-medium">
@@ -260,8 +267,16 @@ const setDataSource = (source: keyof typeof dataSources) => {
             <div class="flex-col flex gap-2">
               <h4 class="font-semibold">Data Source</h4>
               <div class="flex gap-4">
-                <Button @click="setDataSource('wikidata')">Use Wikidata</Button>
-                <Button @click="setDataSource('factgrid')">Use FactGrid</Button>
+                <Button
+                  :class="{'highlighted': selectedDataSource.name === 'WikiData'}"
+                  @click="setDataSource('wikidata')">
+                  Use Wikidata
+                </Button>
+                <Button
+                  :class="{'highlighted': selectedDataSource.name === 'FactGrid'}"
+                  @click="setDataSource('factgrid')">
+                  Use FactGrid
+                </Button>
               </div>
               <p class="text-gray-600 text-sm hover:text-gray-900 transition-all">
                 <em>Hint:</em>
@@ -284,6 +299,21 @@ const setDataSource = (source: keyof typeof dataSources) => {
                 This only works when at least one connection is selected (red).
               </p>
             </div>
+            <div class="flex-col flex gap-2">
+              <h4 class="font-semibold">Open new query builder</h4>
+              <Button
+                @click="gotoLink()">
+                Open builder
+              </Button>
+              <p class="text-gray-600 text-sm hover:text-gray-900 transition-all">
+                <em>Hint:</em>
+                Open a new window for building another graph without deleting the current one.
+              </p>
+              <p class="text-gray-600 text-sm hover:text-gray-900 transition-all">
+
+
+              </p>
+            </div>
           </div>
         </div>
       </div>
@@ -292,7 +322,10 @@ const setDataSource = (source: keyof typeof dataSources) => {
           <!-- This has the same propeties as the toolbox heading -->
           <h2 class="font-semibold text-xl flex justify-between">
             <span>Generated SPARQL Query</span>
-            <ClipboardButton @click="copyToClipboard();"/>
+            <div class="flex items-center space-x-2">
+              <ClipboardButton @click="copyToClipboard();" />
+              <QueryButton @click="gotoLink(selectedDataSource.queryService);" />
+            </div>
           </h2>
           <span class="text-sm font-medium block">
                 This contains the generated SPARQL code. It is updated with every change in the editor.
@@ -322,3 +355,10 @@ const setDataSource = (source: keyof typeof dataSources) => {
     </div>
   </div>
 </template>
+
+<style>
+.highlighted {
+  background-color: #28a745;
+  color: #ffffff;
+}
+</style>
