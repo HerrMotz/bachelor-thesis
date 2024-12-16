@@ -2,7 +2,7 @@
   <div class="node" :class="{ selected: data.selected }" :style="nodeStyles" data-testid="node">
     <div class="p-2">
       <h1 class="text-3xl text-white font-bold" data-testid="title">{{ data.entity.label }} </h1>
-      <h2 class="text-2xl text-gray-100 font-bold font-mono">{{data.entity.id}}</h2>
+      <h2 class="text-2xl text-gray-100 font-bold font-mono">{{data.entity.prefix.abbreviation}}{{ data.entity.prefix.abbreviation && ':'}}{{data.entity.id}}</h2>
     </div>
     <!-- Outputs-->
     <div class="output" v-for="[key, output] in outputs" :key="key + seed" :data-testid="'output-' + key">
@@ -58,16 +58,11 @@ export default defineComponent({
     const controls = computed(() => sortByIndex(Object.entries(props.data.controls)));
     const outputs = computed(() => sortByIndex(Object.entries(props.data.outputs)));
 
-    const updateLabel = (e) => {
-      props.data.label = e.id;
-    };
-
     return {
       nodeStyles,
       inputs,
       controls,
-      outputs,
-      updateLabel
+      outputs
     };
   },
   components: {
