@@ -2,6 +2,9 @@
 name = "query-by-graph"
 version = "0.1.0"
 authors = ["Daniel Motz <hello@daniel-motz.de>"]
+description = "Convert Visual Query Graphs to SPARQL queries and vice versa"
+repository = "https://github.com/HerrMotz/bachelor-thesis"
+license = "All Right Reserved."
 edition = "2018"
 
 [lib]
@@ -11,7 +14,7 @@ crate-type = ["cdylib", "rlib"]
 default = ["console_error_panic_hook"]
 
 [dependencies]
-wasm-bindgen = "0.2.84"
+wasm-bindgen = "=0.2.93"
 
 # The `console_error_panic_hook` crate provides better debugging of panics by
 # logging them with `console.error`. This is great for development, but requires

@@ -1,4 +1,6 @@
 import EntityType from "../types/EntityType.ts";
+import {noDataSource} from "../constants";
+import {deepCopy} from "../utils";
 
 const variableEntity: EntityType = { // EntityType
     id: '?',
@@ -8,10 +10,11 @@ const variableEntity: EntityType = { // EntityType
         uri: "",
         abbreviation: "",
     },
+    dataSource: noDataSource
 };
 
 const variableEntityConstructor = (name: string): EntityType => {
-    const newVariable = variableEntity;
+    const newVariable = deepCopy(variableEntity);
     newVariable.id = "?"+name;
     return newVariable;
 }
@@ -23,7 +26,8 @@ const noEntity: EntityType = {
     prefix: {
         uri: "",
         abbreviation: "",
-    }
+    },
+    dataSource: noDataSource
 };
 
 export {noEntity, variableEntity, variableEntityConstructor}

@@ -1,16 +1,9 @@
-import {NodeEditor, GetSchemes, ClassicPreset} from "rete";
-import {AreaPlugin, AreaExtensions, Area2D} from "rete-area-plugin";
-import {
-    ConnectionPlugin,
-    Presets as ConnectionPresets
-} from "rete-connection-plugin";
+import {ClassicPreset, GetSchemes, NodeEditor} from "rete";
+import {Area2D, AreaExtensions, AreaPlugin} from "rete-area-plugin";
+import {ConnectionPlugin, Presets as ConnectionPresets} from "rete-connection-plugin";
 import {ConnectionPathPlugin} from "rete-connection-path-plugin";
-import {
-    HistoryExtensions,
-    HistoryPlugin,
-    Presets as HistoryPresets
-} from "rete-history-plugin";
-import {VuePlugin, Presets, VueArea2D} from "rete-vue-plugin";
+import {HistoryExtensions, HistoryPlugin, Presets as HistoryPresets} from "rete-history-plugin";
+import {Presets, VueArea2D, VuePlugin} from "rete-vue-plugin";
 import {h} from "vue";
 import CustomConnection from "../../components/PropertyConnection.vue";
 import {removeNodeWithConnections} from "./utils.ts";
@@ -89,38 +82,16 @@ export async function createEditor(container: HTMLElement) {
 
     history.addPreset(HistoryPresets.classic.setup());
 
-    let selectedProperty: EntityType = {
-        id: "?1",
-        label: "Variable",
-        description: "",
-        prefix: {
-            uri: "",
-            abbreviation: "",
-        },
-        dataSource: noDataSource
-    };
-    let selectedIndividual: EntityType = {
-        id: "?1",
-        label: "Variable",
-        description: "",
-        prefix: {
-            uri: "",
-            abbreviation: "",
-        },
-        dataSource: noDataSource
-    };
-
     function SelectableConnectionBind(props: { data: Schemes["Connection"] }) {
         const id = props.data.id;
 
-        // props.data.property = selectedProperty;
         if (increaseVariablePropCounter) {
             increaseVariablePropCounter = false;
-            if (selectedProperty?.id.startsWith("?")) {
-                highestIdCount += 1;
-                props.data.property = variableEntity;
-                props.data.property.id = "?" + highestIdCount;
-            }
+            highestIdCount++;
+        }
+
+        if (!props.data.property) {
+            props.data.property = variableEntityConstructor(highestIdCount.toString())
         }
 
         const label = "connection";
@@ -147,9 +118,15 @@ export async function createEditor(container: HTMLElement) {
                 props.data.selected = true;
                 area.update("connection", id);
             },
-            onChanged: (value: EntityType) => {
+            onChangedEntitySelector: (value: EntityType) => {
+                // in order to force the editor to notice the change,
+                // I need to create a copy of the connection,
+                // change the entity and add it back.
                 props.data.property = value;
-            }
+                editor.getConnections().forEach((c) => {
+                    area.update("connection", c.id)
+                })
+            },
         });
     }
 
@@ -188,9 +165,6 @@ export async function createEditor(container: HTMLElement) {
 
     connection.addPreset(ConnectionPresets.classic.setup());
 
-
-    // this is called when something in the editor happens.
-    // you can get a list of event keywords here: https://rete.readthedocs.io/en/latest/Events/
     area.addPipe(async (context) => {
         // this is a workaround to hinder the counter from increasing at every
         // draw method of the editor
@@ -210,23 +184,13 @@ export async function createEditor(container: HTMLElement) {
                 // DEBUG
                 console.log("Add variable node")
 
-                // if so, find the highest variable id, increment it by one and assign
-                // it to the "to be created"-node
-                highestIdCount += 1;
-                // hacky way to make the node instantiation in line (+19) use the correct label, id
-                // selectedIndividual.id = "?" + highestIdCount;
-                // displayLabel = selectedIndividual.id;
-
-                // at this point selectedIndividual.{id,label} contain the correct information
-                // but a variable node should have a label with only "?" and the
-                // input control should hold the text after the "?"
+                highestIdCount++;
 
                 const newEntity = variableEntityConstructor(
                     highestIdCount.toString()
                 )
 
-                const node = new EntityNodeClass(newEntity.label, selectedIndividual);
-                node.setEntity(newEntity)
+                const node = new EntityNodeClass(newEntity.label, newEntity);
 
                 // DEBUG
                 // console.log("Node", node.entity);
@@ -319,12 +283,6 @@ export async function createEditor(container: HTMLElement) {
                     await removeNodeWithConnections(editor, item.id);
                 }
             }
-        },
-        setSelectedProperty: (property: EntityType) => {
-            selectedProperty = property
-        },
-        setSelectedIndividual: (individual: EntityType) => {
-            selectedIndividual = individual;
         },
         undo: () => history.undo(),
         redo: () => history.redo(),
