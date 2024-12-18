@@ -11,8 +11,10 @@ import EntityType from "../types/EntityType.ts";
 import ConnectionInterfaceType from "../types/ConnectionInterfaceType.ts";
 import EntityNodeComponent from "../../components/EntityNode.vue";
 import CustomInputControl from "../../components/EntitySelectorInputControl.vue";
+import LiteralNodeComponent from "../../components/LiteralNode.vue";
 import {noEntity, variableEntityConstructor} from "./constants.ts";
 import {noDataSource} from "../constants";
+import LiteralInputControl from "../../components/LiteralInputControl.vue";
 
 // Each connection holds additional data, which is defined here
 class Connection extends ClassicPreset.Connection<
@@ -44,6 +46,28 @@ class EntityNodeClass extends ClassicPreset.Node {
     }
 }
 
+class LiteralNodeClass extends ClassicPreset.Node {
+    literal: string;
+    entity: EntityType;
+  
+    constructor(public label: string) {
+      super(label);
+      this.literal = '';
+      this.entity = {
+        id: this.literal,
+        label: this.label,
+        description: '',
+        prefix: {
+          uri: '',
+          abbreviation: '',
+        },
+        dataSource: noDataSource,
+      };
+    }
+  
+    // ...existing code...
+  }
+
 declare type InputControlOptions<N> = {
     /** Whether the control is readonly. Default is `false` */
     readonly?: boolean;
@@ -57,10 +81,16 @@ class EntitySelectorInputControl extends ClassicPreset.InputControl<"text", Enti
   constructor(public options: InputControlOptions<EntityType>) {
     super("text", options);
   }
-
 }
 
-type Schemes = GetSchemes<EntityNodeClass, Connection>;
+class LiteralInputControlClass extends ClassicPreset.InputControl<'text', string> {
+    constructor(public options: InputControlOptions<string>)
+    {
+        super("text", options);
+    }
+}
+
+type Schemes = GetSchemes<EntityNodeClass | LiteralNodeClass, Connection>;
 type AreaExtra = VueArea2D<Schemes>;
 
 export async function createEditor(container: HTMLElement) {
@@ -143,8 +173,14 @@ export async function createEditor(container: HTMLElement) {
                 if (data.payload instanceof EntitySelectorInputControl) {
                     return CustomInputControl;
                 }
+                if (data.payload instanceof LiteralInputControlClass) {
+                    return LiteralInputControl;
+                }
             },
-            node(_) {
+            node(data) {
+                if (data.payload instanceof LiteralNodeClass){
+                    return LiteralNodeComponent;
+                }
                 // DEBUG
                 // console.log("Node payload")
                 // console.log(data.payload);
@@ -164,6 +200,31 @@ export async function createEditor(container: HTMLElement) {
     render.use(pathPlugin);
 
     connection.addPreset(ConnectionPresets.classic.setup());
+
+    document.addEventListener('keydown', async (event) => {
+        if (event.shiftKey && event.key === 'L') {
+            highestIdCount++;
+            
+            const node = new LiteralNodeClass('Literal');
+
+            node.addControl(
+                'literalInput',
+                new LiteralInputControlClass({
+                    initial: '',
+                    change: (value) => {
+                      node.literal = value;
+                    },
+                })
+            );
+
+            node.addInput("i0", new ClassicPreset.Input(socket, "", true));
+            node.addOutput('o0', new ClassicPreset.Output(socket, "", true));
+
+            await editor.addNode(node);
+            //area.area.setPointerFrom(event);
+            await area.translate(node.id, area.area.pointer);
+        }
+      });
 
     area.addPipe(async (context) => {
         // this is a workaround to hinder the counter from increasing at every

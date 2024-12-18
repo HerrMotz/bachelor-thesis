@@ -13,6 +13,17 @@ const variableEntity: EntityType = { // EntityType
     dataSource: noDataSource
 };
 
+const literalEntity: EntityType = {
+    id: '!',
+    label: 'Literal',
+    description: 'Literal Value',
+    prefix: {
+      uri: "",
+      abbreviation: "",
+    },
+    dataSource: noDataSource
+  };
+
 const variableEntityConstructor = (name: string): EntityType => {
     const newVariable = deepCopy(variableEntity);
     newVariable.id = "?"+name;
@@ -30,4 +41,4 @@ const noEntity: EntityType = {
     dataSource: noDataSource
 };
 
-export {noEntity, variableEntity, variableEntityConstructor}
+export {noEntity, variableEntity, literalEntity, variableEntityConstructor}

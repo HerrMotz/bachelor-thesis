@@ -33,12 +33,13 @@ import {
   ComboboxOptions,
 } from '@headlessui/vue'
 import EntityType from "../lib/types/EntityType.ts";
-import {noEntity, variableEntity, variableEntityConstructor} from "../lib/rete/constants.ts";
+import {noEntity, variableEntity, literalEntity, variableEntityConstructor} from "../lib/rete/constants.ts";
 import {selectedDataSource} from "../store.ts";
 
 const queriedEntities = ref([
   noEntity,
-  variableEntity
+  variableEntity, 
+  literalEntity
 ]);
 
 const selectedEntity = ref(noEntity);
@@ -51,36 +52,37 @@ function displayValue(entity: unknown): string {
   }
 }
 
+
 function queryHelper(query: string) {
   console.log(`queryHelper called with query: "${query}"`);
-  const wds = new WikibaseDataService(selectedDataSource.value);
-  wds.queryWikidata({
-    language: language.value,
-    uselang: language.value,
-    type: props.type,
-    search: query
-  }).then((data: WikiDataSearchApiResponse) => {
-    queriedEntities.value = data.search.map((entity: WikiDataEntity) => {
-      const prefix = props.type === 'item'
-          ? selectedDataSource.value.entityPrefix
-          : selectedDataSource.value.propertyPrefix
+    const wds = new WikibaseDataService(selectedDataSource.value);
+    wds.queryWikidata({
+      language: language.value,
+      uselang: language.value,
+      type: props.type,
+      search: query
+    }).then((data: WikiDataSearchApiResponse) => {
+      queriedEntities.value = data.search.map((entity: WikiDataEntity) => {
+        const prefix = props.type === 'item'
+            ? selectedDataSource.value.entityPrefix
+            : selectedDataSource.value.propertyPrefix
 
-      return { // EntityType
-        id: entity.id,
-        label: entity.display.label.value,
-        description: entity.display.description.value,
-        prefix: {
-          uri: prefix.url,
-          abbreviation: prefix.abbreviation,
-        },
-        dataSource: {...selectedDataSource.value} // save datasource
-      }
-    }).concat([
-        variableEntityConstructor(query.startsWith('?') ? query.slice(1) : query)
-    ]);
-  }).catch(reason => {
-    console.log(reason);
-  });
+        return { // EntityType
+          id: entity.id,
+          label: entity.display.label.value,
+          description: entity.display.description.value,
+          prefix: {
+            uri: prefix.url,
+            abbreviation: prefix.abbreviation,
+          },
+          dataSource: {...selectedDataSource.value} // save datasource
+        }
+      }).concat([
+          variableEntityConstructor(query.startsWith('?') ? query.slice(1) : query)
+      ]);
+    }).catch(reason => {
+      console.log(reason);
+    });
 }
 
 function eventEmitEntityHelper(entity: EntityType) {
