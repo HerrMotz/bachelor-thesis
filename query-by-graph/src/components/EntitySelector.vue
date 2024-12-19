@@ -7,7 +7,8 @@ const props = defineProps({
   language: {type: String, required: true},
   type: {type: String, required: true}, // will be passed to the wikidata query, can be e.g. "item" or "property"
   inputClasses: {type: String, required: false},
-  dropdownClasses: {type: String, required: false}
+  dropdownClasses: {type: String, required: false},
+  isLiteral: {type: Boolean, required: false},
 });
 
 const language = computed(() => selectedDataSource.value.preferredLanguages[0]);
@@ -33,7 +34,7 @@ import {
   ComboboxOptions,
 } from '@headlessui/vue'
 import EntityType from "../lib/types/EntityType.ts";
-import {noEntity, variableEntity, variableEntityConstructor} from "../lib/rete/constants.ts";
+import {noEntity, variableEntity, variableEntityConstructor, literalEntityConstructor} from "../lib/rete/constants.ts";
 import {selectedDataSource} from "../store.ts";
 
 const queriedEntities = ref([
@@ -43,6 +44,8 @@ const queriedEntities = ref([
 
 const selectedEntity = ref(noEntity);
 
+const inputValue = ref('');
+
 function displayValue(entity: unknown): string {
   if (typeof entity === 'object' && entity !== null && 'label' in entity) {
     return (entity as { label: string }).label;
@@ -51,36 +54,59 @@ function displayValue(entity: unknown): string {
   }
 }
 
-function queryHelper(query: string) {
-  console.log(`queryHelper called with query: "${query}"`);
-  const wds = new WikibaseDataService(selectedDataSource.value);
-  wds.queryWikidata({
-    language: language.value,
-    uselang: language.value,
-    type: props.type,
-    search: query
-  }).then((data: WikiDataSearchApiResponse) => {
-    queriedEntities.value = data.search.map((entity: WikiDataEntity) => {
-      const prefix = props.type === 'item'
-          ? selectedDataSource.value.entityPrefix
-          : selectedDataSource.value.propertyPrefix
-
-      return { // EntityType
-        id: entity.id,
-        label: entity.display.label.value,
-        description: entity.display.description.value,
-        prefix: {
-          uri: prefix.url,
-          abbreviation: prefix.abbreviation,
-        },
-        dataSource: {...selectedDataSource.value} // save datasource
-      }
-    }).concat([
-        variableEntityConstructor(query.startsWith('?') ? query.slice(1) : query)
-    ]);
-  }).catch(reason => {
-    console.log(reason);
+function onEnterPress() {
+  emit('selectedEntity', {
+    id: 'literal',
+    label: inputValue.value,
+    description: 'Literal value',
+    prefix: {
+      uri: '',
+      abbreviation: '',
+    },
+    dataSource: selectedDataSource.value,
+    isLiteral: true,
   });
+}
+
+function queryHelper(query: string) {
+
+  if(props.isLiteral)
+  {
+    console.log("Literal created");
+    emit('selectedEntity', literalEntityConstructor(query));
+  }
+  else
+  {
+    console.log(`queryHelper called with query: "${query}"`);
+    const wds = new WikibaseDataService(selectedDataSource.value);
+    wds.queryWikidata({
+      language: language.value,
+      uselang: language.value,
+      type: props.type,
+      search: query
+    }).then((data: WikiDataSearchApiResponse) => {
+      queriedEntities.value = data.search.map((entity: WikiDataEntity) => {
+        const prefix = props.type === 'item'
+            ? selectedDataSource.value.entityPrefix
+            : selectedDataSource.value.propertyPrefix
+
+        return { // EntityType
+          id: entity.id,
+          label: entity.display.label.value,
+          description: entity.display.description.value,
+          prefix: {
+            uri: prefix.url,
+            abbreviation: prefix.abbreviation,
+          },
+          dataSource: {...selectedDataSource.value} // save datasource
+        }
+      }).concat([
+          variableEntityConstructor(query.startsWith('?') ? query.slice(1) : query)
+      ]);
+    }).catch(reason => {
+      console.log(reason);
+    });
+  }
 }
 
 function eventEmitEntityHelper(entity: EntityType) {
@@ -89,6 +115,7 @@ function eventEmitEntityHelper(entity: EntityType) {
   selectedEntity.value = entity;
   emit('selectedEntity', entity);
 }
+
 </script>
 
 <template>
@@ -96,7 +123,19 @@ function eventEmitEntityHelper(entity: EntityType) {
     <h4 class="">
       <slot></slot>
     </h4>
-    <Combobox as="div" :model-value="selectedEntity" @update:modelValue="($event) => eventEmitEntityHelper($event)">
+    <div v-if="props.isLiteral">
+      <input
+        :class="[
+          'rounded-md border-0 bg-white py-1.5 pl-3 pr-12 text-gray-900 shadow-sm',
+          'ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-indigo-600',
+          'sm:text-sm sm:leading-6',
+          inputClasses ? inputClasses : 'w-full',
+        ]"
+        v-model="inputValue"
+        @keydown.enter="onEnterPress"
+      />
+    </div>
+    <Combobox v-else as="div" :model-value="selectedEntity" @update:modelValue="($event) => eventEmitEntityHelper($event)">
       <ComboboxLabel class="block text-sm font-medium leading-6 text-gray-900"></ComboboxLabel>
       <div class="relative mt-2">
         <ComboboxInput

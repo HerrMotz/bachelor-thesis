@@ -6,7 +6,7 @@
     </div>
     <!-- Outputs-->
     <div class="output" v-for="[key, output] in outputs" :key="key + seed" :data-testid="'output-' + key">
-      <div class="output-title" data-testid="output-title">{{ output.label }}</div>
+      <div class="output-title" data-testid="output-title">{{ output.label }} </div>
       <Ref class="output-socket" :emit="emit"
            :data="{ type: 'socket', side: 'output', key: key, nodeId: data.id, payload: output.socket }"
            data-testid="output-socket" />

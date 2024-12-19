@@ -9,6 +9,7 @@ interface EntityType {
        abbreviation: string,
     };
     dataSource: WikibaseDataSource;
+    isLiteral?: boolean;
 }
 
 export default EntityType;

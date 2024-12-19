@@ -11,7 +11,7 @@ import EntityType from "../types/EntityType.ts";
 import ConnectionInterfaceType from "../types/ConnectionInterfaceType.ts";
 import EntityNodeComponent from "../../components/EntityNode.vue";
 import CustomInputControl from "../../components/EntitySelectorInputControl.vue";
-import {noEntity, variableEntityConstructor} from "./constants.ts";
+import {noEntity, variableEntityConstructor, literalEntityConstructor} from "./constants.ts";
 import {noDataSource} from "../constants";
 
 // Each connection holds additional data, which is defined here
@@ -54,7 +54,7 @@ declare type InputControlOptions<N> = {
 };
 
 class EntitySelectorInputControl extends ClassicPreset.InputControl<"text", EntityType> {
-  constructor(public options: InputControlOptions<EntityType>) {
+    constructor(public options: InputControlOptions<EntityType> & { isLiteral?: boolean }) {
     super("text", options);
   }
 
@@ -168,6 +168,43 @@ export async function createEditor(container: HTMLElement) {
     area.addPipe(async (context) => {
         // this is a workaround to hinder the counter from increasing at every
         // draw method of the editor
+        if (context.type === "pointerdown") { // Left click
+            const event = context.data.event;
+
+            if(event.button===0)
+            {
+                console.log("Leftclick");
+                console.log("Root");
+                event.preventDefault();
+                event.stopPropagation();
+                
+                const node = new EntityNodeClass("Literal", literalEntityConstructor(""));
+                console.log("LiteralNodeId:", node.id);
+                console.log("EntityType: ", node.entity.isLiteral);
+                node.addControl(
+                    "entityInput",
+                    new EntitySelectorInputControl({
+                        initial: literalEntityConstructor(""),
+                        isLiteral: true,
+                        change(value) {
+                            node.setEntity(value);
+                            editor.getConnections().forEach((c) => {
+                                area.update("connection", c.id)
+                            });
+                            area.update("node", node.id);
+                        }
+                    })
+                );
+                node.addInput("i0", new ClassicPreset.Input(socket, "", true));
+                node.addOutput("o0", new ClassicPreset.Output(socket, "", true));
+    
+                await editor.addNode(node);
+                area.area.setPointerFrom(event);
+                await area.translate(node.id, area.area.pointer);
+            }
+        }
+        
+        
         if (context.type === "connectioncreated") {
             increaseVariablePropCounter = true;
         }
