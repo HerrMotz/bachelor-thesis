@@ -373,3 +373,22 @@ terhorst_Completeness_of_RDF:
     title: Journal of Web Semantics
     issue: 2
     volume: 3
+
+Simons_Blog_Entry_Graphic_query:
+  type: blog
+  title: "In einer Graphdatenbank müsste man eigentlich auch graphisch suchen können"
+  author: Simons, Olaf
+  date: 2022-04-01
+  url:
+    value: https://blog.factgrid.de/archives/2596
+    date: 2024-10-01
+  
+
+w3c_iri_paper:
+  type: misc
+  title: Internationalized Resource Identifiers (IRIs)
+  author: Group, Internationalization Interest
+  date: 2001
+  url: 
+    value: https://www.w3.org/2001/Talks/0912-IUC-IRI/paper.html
+    date: 2024-12-20

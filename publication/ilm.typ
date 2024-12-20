@@ -73,7 +73,7 @@
   // The result of a call to the `outline` function or `none`.
   // Set this to `none`, if you want to disable the table of contents.
   // More info: https://typst.app/docs/reference/model/outline/
-  table-of-contents: outline(),
+  table-of-contents: outline(depth: 3),
 
   appendix: none,
 
@@ -120,7 +120,7 @@
 
   // Set raw text font.
   // Default is Fira Mono at 8.8pt
-  show raw: set text(font: "Noto Sans Mono", size: 12pt)
+  show raw: set text(font: "Noto Sans Mono", size: 8.8pt)
 
   // Configure page size and margins.
   set page(
@@ -168,6 +168,8 @@
         #cover.place-and-submission-date
   
     ]))
+
+  page("")
 
   // German cover page.
   if (cover-german.values().all(x => x != none)) {
@@ -219,6 +221,7 @@
   set outline(indent: auto)
 
   // Display table of contents.
+  page("")
   if table-of-contents != none {
     table-of-contents
   }

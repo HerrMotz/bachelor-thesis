@@ -12,16 +12,16 @@
   title: [Query by Graph],
   author: "Friedrich Answin Daniel Motz",
 
-  cover-german: (
-    faculty: "Fakultät für Mathematik und Informatik",
-    university: "Friedrich-Schiller-Universität Jena",
-    type-of-work: "Bachelorarbeit",
-    academic-degree: degree,
-    field-of-study: "Informatik",
-    author-info: "15. Juli 2001 in Chemnitz, Deutschland",
-    examiner: examiner,
-    place-and-submission-date: "Jena, 12. Januar 2025",
-  ),
+  // cover-german: (
+  //   faculty: "Fakultät für Mathematik und Informatik",
+  //   university: "Friedrich-Schiller-Universität Jena",
+  //   type-of-work: "Bachelorarbeit",
+  //   academic-degree: degree,
+  //   field-of-study: "Informatik",
+  //   author-info: "15. Juli 2001 in Chemnitz, Deutschland",
+  //   examiner: examiner,
+  //   place-and-submission-date: "Jena, 12. Januar 2025",
+  // ),
 
   cover-english: (
     faculty: "Faculty for Mathematics and Computer Science",
@@ -56,7 +56,8 @@
     ("SPARQL", "SPARQL Protocol And RDF Query Language (recursive acronym)"),
     ("IRI", "Internationalised Resource Identifier (similar to URI)"),
     ("OWL", "Web Ontology Language"),
-    ("VQG", "Visual Query Graph (user-built query graph)")
+    ("VQG", "Visual Query Graph (user-built query graph)"),
+    ("API", "Application Programming Interface")
   ),
 
   external-link-circle: true,
@@ -69,17 +70,14 @@
 
 /* BEGIN Custom Environment */
 
-#let exampleCounter = counter("exC")
-#exampleCounter.update(0)
-
 #show heading.where(level: 6): set heading(outlined: false)
 
 #show heading.where(
   level: 4,
 ): it => text(
-  weight: "bold",
+  weight: "regular",
   style: "italic",
-  it.body,
+  it.body + [. ]
 )
 
 #show heading.where(
@@ -90,25 +88,34 @@
   it.body,
 )
 
+#show heading.where(
+  level: 7,
+): it => text(
+  weight: "bold",
+  it.body,
+)
+
+#let exampleCounter = counter("exC")
+#exampleCounter.update(0)
+
 #let example(it) = {
   exampleCounter.step()
   context {
     let _n = numbering( "1", exampleCounter.get().at(0))
-    text(style: "italic", [#heading(level: 6, bookmarked: true, numbering: none, "Example " + _n + ": ") #label("example"+_n)]) + it
+    text(style: "italic", [#heading(level: 7, bookmarked: true, numbering: none, "Example " + _n + ". ") #label("example"+_n)]) + it
   }
 }
 
-#let übungCounter = counter("üC")
-#übungCounter.update(0)
+#let definitionCounter = counter("dC")
+#definitionCounter.update(0)
 
-#let übung(it) = {
-  übungCounter.step()
+#let definition(it) = {
+  definitionCounter.step()
   context {
-    let _n = numbering( "1", exampleCounter.get().at(0))
-    text(style: "italic", [#heading(level: 6, bookmarked: true, numbering: none, "Übung " + _n + ": ") #label("excercise"+_n)]) + it
+    let _n = numbering( "1", definitionCounter.get().at(0))
+    text(weight: "bold", [#heading(level: 7, bookmarked: true, numbering: none, "Definition " + _n + ". ") #label("definition"+_n)]) + text(style: "italic", it)
   }
 }
-
 
 #let note(it) = text(fill: luma(150), size: 0.7em, it)
 #let spruch(it) = move(dx: -30pt, text(style: "italic", fill: luma(100), quote(it)))
@@ -125,8 +132,8 @@
 #set heading(numbering: "1.1")
 #set quote(block: true)
 
-#show heading.where(level: 1): it=> [#v(.5cm) #align(center, it) #v(.2cm)]
-#show heading.where(level: 2): it=> [#v(.5cm) #align(center, it) #v(.2cm)]
+#show heading.where(level: 1): it=> [#v(.5cm) #it #v(.2cm)]
+#show heading.where(level: 2): it=> [#v(.5cm) #it #v(.2cm)]
 
 #show raw: set text(
   font: "Cascadia Code",
@@ -139,7 +146,7 @@
 /* END Custom Environment */
 
 = Aim and Relevance
-#todo[
+/*#todo[
 
 Contents of Aim and Relevance
 - Context: make sure to link where your work fits in
@@ -149,34 +156,23 @@ Contents of Aim and Relevance
 I should also state some general information:
 - comment on employed hardware and software
 - describe methods and techniques that build the basis of your work
-]
+]*/
 
 == Problem <problem_heading>
-Much of the world's knowledge is contained in a format, which for a computer, is mostly incomprehensible, namely, natural language. There have been many attempts to process the semantics of natural language, which did not yet succeed. First and foremost, the computer does not know of any causalities in the real world, which makes certain interpretations unattainable. This is because human language is ambiguous and dependent on context. If we may not get the computer to understand our language, we ought to give it knowledge of our world and express ourselves in a language it can understand.  Now, formalising arbitrary knowledge about the world we know in advance is an impossible task --- at least today. One solution is, to simply not formalise.
+Much of the mankind's knowledge is stored in the format of natural language, which can not be accessed without following these steps: 1. rough research on a topic, 2. formulate a question using this map, 3. finding relevant literature to the question, 4. reading the literature, 5. extracting the relevant facts and, 6. reading more literature because the question is more complex than you thought 7. inferring an answer from the retrieved facts. This process can prove to be tedious and many of these steps have been eased for us -- may it be in the form of a librarian or a search engine.
+ 
+The currently most used search engine, Google, uses of course Network Analysis but also Natural Language Processing (NLP) to identify the most relevant results to a topic. And just in recent years Large Language Models (LLMs) have shown interesting capabilities in compressing loads of knowledge using statistical analysis. A LLM is capable of giving an outline of any given topic or question, similar to a librarian, however any response is endangered by confabulation and ought to be verified. So, we successfully taught the computer to handle natural language for specific use cases somewhat reliably. But we might just go the last mile and ...
 
-Most factual knowledge#todo[what factual knowledge can not be represented using triples?] mankind learns about the world can be written down as a relationship between an individual. A general way of expressing such relationships could be
+... let humans formalise knowledge in a computer readable format. Using a formal ontology any given relationship can be theorised and translated into a form processible by computers. This poses as a two-fold advantage: Any statement is put down in clearly interpretable terms and is viewed agnostically concerning eloquence. The difficulty of a formal ontology however, is to think of all (or at least most) things ought to represented in advance. Therefore, ontologies require careful deliberation and their genesis usually goes by the saying: "Many cooks spoil the broth". Collaboration in ontology development is a real challenge but a necessity. Yet, it is difficult to find one ontology to fit all needs.
 
-$ 
-  bold("Subject") xarrow(italic("Predicate")) bold("Object"). \
-$
+So, how could this process be eased, whilst not giving up the advantages of computer-processability? Originally conceptualised by Tim Berners-Lee, the W3C#sym.trademark.registered standardised the Resource Description Framework (RDF). While an ontology consist of a theory (T-Box) and assertions (A-Box, statements which are in compliance with the theory) a RDF knowledge base can consist purely of an A-Box. The T-Box is quietly implicit. Using an RDF schema, a taxonomy can be added (at any time), usually using an "instance-of" assertion, but consistency is no inherent obligation of an RDF database#footnote[although it is obviously good practice to be consistent with the RDF schema].
 
-#todo[maybe reference @triples_heading]
+This "formalise as you go"-approach allows for maximal flexibility of the data model and proves advantageous e.g. in the digital humanities. Recently, historians, among others, started to use centralised RDF databases, allowing for collaboration on research questions and finding connections between the results from different researchers. A grand initiative called FactGrid#footnote[http://factgrid.de -- based out of Erfurt/Gotha/Jena] advertises the use of their public RDF database in the hope of creating synergy effects for future research.
 
-Say "Johann Wolfgang von Goethe" is a subject, which relates to an object, the "University of Leipzig", in a specific way: He was "educated at" the "University of Leipzig". Using the formalism above, we get
-$
-  bold("Subject") := "Johann Wolfgang von Goethe", \
-  italic("Predicate") := "educated at", \
-  bold("Object") := "University of Leipzig", \
-  "Johann Wolfgang von Goethe" xarrow("educated at") "University of Leipzig"
-$ <spo_goethe_example>
+This directly leads to the relevance of this work: RDF databases can only be potently queried using a query language called SPARQL. Most researchers working in the human sciences, such as history, do not have a degree in computer science. Therefore the creation of SPARQL queries pose a challenge. Visual query helpers #todo[list them here] exist, but are limited in their query complexity #todo[quote]. The aim of this work is to lay the groundwork for a visual query builder, which enables a previously unintroduced user to create maximally complex SPARQL queries using a visual interface. This work is heavily inspired by Olaf Simons @Simons_Blog_Entry_Graphic_query.
 
-Such assertions are usually referred to as _triples_, because they can be written as a tuple with three entries in the form of $(bold("Subject"), italic("Predicate"), bold("Object"))$ (see @triples_heading). If we interpret this triple as an element of some knowledge base, we can deduct that #todo[such statements are called entailments]:
-- there is something called "Johann Wolfgang von Goethe",
-- under the assumption that a different symbol implies a different object, there is something different, called "University of Leipzig",
-- there is a directed relation called "educated" at and
-- of course the assertion itself, meaning that the relation applies between these two objects.
-
-The compter does still not understand what it means to be educated at some place or where Leipzig is, but it can interact with this information in a formally correct way. The human operator can construe meaning in to the result.
+/*
+Most factual knowledge can easily be written in terms of relations between individuals.
 
 #todo[
   Therefore challenges are:
@@ -187,19 +183,19 @@ The compter does still not understand what it means to be educated at some place
 
 RDF databases store large amounts of validated data and are freely available, however, they:
 - can only be potently queried using SPARQL, which is not intuitive for non-programmers,
-- can be queried using query builders, which however lack many essential features,
+- can be looked at using several interfaces, which however lack inference capabilities,
 - usually contain no formal ontology to inference on their data,
 - can hardly automatically be made consistent with a formal ontology and
-- allow for no systemic consistency checks (i.e. those have to be ran as post-hoc batch jobs).
+- allow for no systemic consistency checks (i.e. those have to be ran as post-hoc batch jobs).*/
 
 == Proposed Solution
-Query by Graph aims to
+This thesis aims to explore methods and concrete implementation, which guides the user through the process of finding an answer to a given question in an RDF database. This includes:
 
-- guide the user during the process of formalising the question,
+- enabling a layman to create complex SPARQL-select-queries using a visual interface, #todo[find a pretty abbreviation for SPARQL-select-queries and change every occurrence in the document and write a macro which detects these occurrences and marks it as an error]
 
-- allow a layman to write arbitrary SPARQL-select-queries, #todo[find a pretty abbreviation for SPARQL-select-queries and change every occurence in the document and write a macro which detects these occurences and marks it as an error]
+- allow changes to the SPARQL-select-query, which will in turn change the graph in the visual interface
 
-- integrate
+For this, I decided to develop a web application, which at its heart has Rust-code to translate visually built queries to SPARQL queries.#footnote[The code is publicly available at #link("https://github.com/HerrMotz/bachelor-thesis/")[`github.com/HerrMotz/bachelor-thesis`].]
 
 == Related Works
 
@@ -211,7 +207,9 @@ The approach by Vargas et al. @Vargas2019_RDF_Explorer is to show all possible a
   The _Wikidata_ object `wd:Q5879`, also known as _Johann Wolfgang von Goethe_, offers several possible assertions, such as that he is "instance of" human and that he was "educated at" the University of Leipzig. This approach shows these in a sidebar, implying that those might be sensible next steps to specify a question.
 ]
 
-Compared to writing a complex query manually, this approach offers feedback on which queries may yield a result. The user does not even need to run the generated SPARQL query, because the result is already clear from the explorer interaction. #todo[Olaf Simons was puzzled, which sense it makes to run the SPARQL query afterwards, because the result is already clear from the interaction.]
+Compared to writing a complex query manually, this approach offers feedback on which queries may yield a result. The user does not even need to run the generated SPARQL query, because the result is already clear from the explorer interaction.
+
+#todo[Olaf Simons was puzzled, which sense it makes to run the SPARQL query afterwards, because the result is already clear from the interaction.]
 
 A demonstration is available at https://rdfexplorer.org.
 
@@ -247,6 +245,9 @@ https://www.semanticscholar.org/paper/NLQxform%3A-A-Language-Model-based-Questio
 
 === Relevant Takeaways
 Visual Interfaces seem to be promising advantages in the research community and are relevant.
+#todo[Build a bridge between related work and my work]
+
+#todo[Make the summaries of other papers more concise, so that it can be put into one running text]
 
 = Fundamentals
 
@@ -262,21 +263,21 @@ Questions, which I would like to be answered in this chapter:
 
 // (There are Springer conferences on semantic web technologies: https://suche.thulb.uni-jena.de/Record/1041330375?sid=49057082)
 
-Computers generally lack information about the environment humans live in. Unless formalised, a computer is unaware of the fact, that an arbitrary arrangement of numerals separated by lines, such as `8/7/2000`, is supposed to represent a date an historically formed calendar based on the birth of a religious figure. How would a human know of this culture, if it were not taught to him by his parents? Furthermore, a computer can not parse information from a data source, about which it has no meta-information. Even can be reasonably wrong. Here, I picture a European fellow confronted with the date of a booking confirmation issued by an American company.
+Computers generally lack information about the environment humans live in. For example, unless formalised, a computer is unaware of the fact, that an arbitrary arrangement of numerals separated by lines, such as `8/7/2000`, is supposed to represent a date within a calendar based on the birth of a religious figure. How would a human even know of this convention, if it were not taught to him? And even with this knowledge, one can easily stumble upon a false friend: Here, I picture a European fellow confronted with an American booking confirmation. The American interprets the above date as August 7th in the year 2000. In the worst case, the European confidently interprets it as July 8th and would probably be wrong. Explicating the date format would have prevented this disaster.
 
+The original idea by Tim Berners-Lee was to annotate web pages using a well-defined common vocabulary, so that any computer can, without human assistance, extract the relevant contents of a website. For example, a doctors office might post opening times on their website. Using a well-defined and public vocabulary, the website describes a table as "opening times" and the strings of weekdays and times as entries of the opening times. #todo[insert example code from the book on Semantic Technologies] @Dengel2012_Semantic_Technologies. This concept is not necessarily limited to websites, but can just as well be applied for any data storage. These deliberations waged the establishment of standards for describing meta information, such as:
 
-The original idea by Tim Berners-Lee, was to annotate web pages using a well-defined, common vocabulary, so that any computer can, without human assistance, extract the important contents of a website. For example, a doctors office might post opening times on a website. Using a vocabulary, the website describes a table as "opening times" and the strings of weekdays and times as entries of the opening times. #todo[insert example code from the book on Semantic Technologies] @Dengel2012_Semantic_Technologies. This concept is not necessarily limited to websites, but can just as well be applied in databases. These deliberations waged the establishment of standards for describing meta information, such as:
 - Resource Description Framework (see @heading_rdf_standard)
 - Web Ontology Language (@heading_owl)
 - #todo[List more from the book @Dengel2012_Semantic_Technologies]
 
 
 == RDF Standard <heading_rdf_standard>
-The W3C#sym.trademark.registered recommends a standard for exchange of semantically annotated information calledestablished the Resource Description Framework (RDF) standard model. The most notable recommendations are
+The W3C#sym.trademark.registered recommends a standard for exchange of semantically annotated information called the Resource Description Framework (RDF) standard model. The most notable recommendations are
 
-- the Internationalised Resource Identifier (see @iri_heading),
+- the RDF graph format and triples (see @triples_heading),
 
-- the RDF graph format and triples (see @triples_heading) and
+- the Internationalised Resource Identifier (@iri_heading) and
 
 - the query language SPARQL (see @sparql_heading).
 
@@ -290,22 +291,68 @@ The W3C#sym.trademark.registered recommends a standard for exchange of semantica
   What is a reifier good for/used for (irl)?
 ]
 
+=== Graphs and Triples <triples_heading>
+
+An *RDF graph* is a set of RDF triples. An RDF triple is said to be asserted in an RDF graph if it is an element of the RDF graph @W3C_RDF_1.2_Proposal.
+
+#definition[
+  Let *$I$* denote the set of IRIs, *$B$* denote the set containing one blank node $circle.dotted$, *$L$* denote the set of literals and *$V$* denote the set of query variables. Let
+  subject $bold("s") in I union B$,
+  predicate $bold("p") in I$ and
+  object $bold("o") in I union L union B$.
+
+  Then, following @W3C_RDF_1.1_Reference, any triple in an RDF graph is of the form
+
+  $ 
+    bold("s") xarrow(bold("p")) bold("o")\
+  $ <ex_spo>
+  #align(center)[or equivalently]
+  $
+    (bold("s"), bold("p"), bold("o"))
+  $
+]
+
+#example[
+  Suppose a subject is given the name "Johann Wolfgang von Goethe", which relates to an object of the name "University of Leipzig", in the way, that the subject was a student at the object. Using the formalism from @ex_spo, one might be inclined to produce something like:
+  $
+    bold("s") := "Johann Wolfgang von Goethe", \
+    bold("p") := "educated at", \
+    bold("o") := "University of Leipzig",
+  $
+  $
+    "Johann Wolfgang von Goethe" xarrow("educated at") "University of Leipzig."
+  $ <ex_spo_goethe>
+]
+
 === Internationalised Resource Identifier <iri_heading>
 
-=== RDF Graph Format and Triples <triples_heading>
+Internationalised Resource Identifier (IRIs) [#link("https://www.ietf.org/rfc/rfc3987.txt")[RFC3987]] are a superset of Uniform Resource Identifiers (URIs) [#link("https://www.ietf.org/rfc/rfc3986.txt")[RFC3986]]. The details of the differences are not directly relevant to this work, therefore this work will treat IRIs as URIs. Most real-world applications 
 
-==== Modeling Information using Triples
-#todo[Restyle level 3 and 4 headings]
+=== Literals
 
-As motivated in @problem_heading, a triple consists of the following structure
-$ 
-  bold("Subject") xarrow(italic("Predicate")) bold("Object"). \
-$ <triple_structure>
+A *literal* in an RDF graph
 
-Every triple has an equivalent RDF Graph, where the subject and object equate nodes, and the predicate equates a directed connection from subject to object.
+=== Modelling Information using Triples
+
+Suppose, that the assertion from @ex_spo_goethe is part of the A-box of an RDF database. It can be deducted that:
+#todo[such statements are called entailments]:
+- there is something called "Johann Wolfgang von Goethe",
+- using the assumption that a different symbol implies a different object, there is something different from Goethe, called "University of Leipzig",
+- there is a directed relation called "educated" at and
+- of course the assertion itself, meaning that the relation applies between these two objects.
+
+A computer still does not understand what it means to be educated at some place or where Leipzig is, but it can interact with this information in a formally correct way. The human operator can construe meaning, an interpretation grounded in the real world, in to the assertion. 
+
+However, for any structured querying to be possible, the databases ought to be filled according to certain conventions. Preferably such conventions that are interoperable with other data sources (see @heading_lod).
+
+==== RDF Graph
+Every set of triples has an equivalent RDF graph, where the subject and object equate nodes, and the predicate equates a directed connection from subject to object.
 
 #align(center, todo[Insert drawing])
 
+- introduce formalisms from the RDF docs
+
+=== Qualifiers and Blank nodes
 Most real-world relationships might present to be more complex than something one would want to model in a single triple. For example, one may want to express that "Goethe" was educated at the "University of Leipzig" from 3 October 1765 to 28 August 1768. One possibility is to let relationships have more than two operands, i.e. increase the arity by one for each additional parameter. "Educated at" would then be called "educated at (#sym.dot) from (#sym.dot) to (#sym.dot)". Another way using the limited triple syntax is to create an implicit object, that assists in modelling the relationship. We use it to describe a new concept; a human might be inclined to give it a name, e.g. "educated at for a certain time":
 $
   "Goethe" &longArrow("educated at") && "Implicit1", \
@@ -333,6 +380,7 @@ Such statements are usually called qualifiers @wikibooks_sparql_qualifiers. This
 
 #todo[Are qualifiers specific to an RDF implementation?]
 
+
 === SPARQL Protocol and RDF Query Language <sparql_heading>
 
 #blockquote[
@@ -341,14 +389,26 @@ Such statements are usually called qualifiers @wikibooks_sparql_qualifiers. This
 
 #todo[
   Which features does SPARQL offer?
+
+  - How does "describe" work? (because it might be interesting as a graph exploring method)
 ]
+
+== Visual Query Graph
+This chapter mostly follows @Vargas2019_RDF_Explorer. 
+
+#definition[
+  A visual query graph (VQG) is defined as a directed, edge-labelled graph $G=(V,E)$, with vertices $V$ and edges $E$. The vertices of $G$ are a finite set of IRIs, literals or variables: $N subset bold("I") union bold("L") union bold("V")$.
+  The edges of the VQG are a finite set of triples, where each triple indicated a directed edge between two nodes with a label taken from the set of IRIs or variables: $E subset N times (bold("I") union bold("V")) times N$.
+  Note here, that the VQG does not contain blank nodes.
+]
+
+The VQG is _constructed_ using a _visual query language_, consisting of four algebraic operators, which will correspond to atomic user interactions: adding a variable node, adding a literal node, adding an entity
+
+== Linked Open Data <heading_lod>
 
 == Web Ontology Language <heading_owl>
 @Sack2009_OWL_und_OWL_Semantik
 @Lacy2005_OWL
-
-== Visual Query Graph
-#todo[As proposed by Vargas or the french dude, I don't recall.]
 
 = Developed architecture / system design / implementation
 
@@ -362,18 +422,12 @@ Should contain the following aspects:
 == Architecture
 - Web App (Vite+Vue+Rust+ReteJS+TailwindCSS)
 - All mapping algorithms are written in Rust to ensure completeness and speed
-- Integrates fuzzy search using Wikibase APIs (exemplary implementation for Wikidata and Factgrid)
-
-== Use in Lecture
-- Patrick Stahl developed for Clemens Beck
-- Changes / contributions by patrick are clearly marked in Version Control
-
-#todo[How do I license the code? Maybe Rechtsamt fragen.]
+- Integrates fuzzy search using Wikibase APIs (exemplary implementation for Wikidata and FactGrid)
 
 == Visual Query Graph-SPARQL Mapping
 Novel to current work:
-+ Qualifiers are visualised more intuitively (see Simons Blog) #todo[Create reference for Olaf Simons Blogpost]
-+ Multiple datasources and clear prefixes #todo[Check, whether this is actually new]
++ Qualifiers are visualised more intuitively (see Simons Blog @Simons_Blog_Entry_Graphic_query)
++ Multiple data sources and clear prefixes #todo[Check, whether this is actually new]
 + ... more?
 
 == SPARQL-OWL Mapping
@@ -398,6 +452,12 @@ A SPARQL-SELECT-Query
 - usually, adequate graphs help to show the benefits of your approach
 - caution: each result/graph must be discussed! what’s the reason for this peak or why have you observed this effect
 ]
+
+== Practical Application
+- Patrick Stahl developed for Clemens Beck
+- Changes / contributions by patrick are clearly marked in Version Control
+
+#todo[How do I license the code? Maybe Rechtsamt fragen.]
 
 = Further Work
 
