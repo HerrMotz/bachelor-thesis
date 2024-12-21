@@ -357,6 +357,15 @@ wikibooks_sparql_qualifiers:
     value: https://en.wikibooks.org/wiki/SPARQL/WIKIDATA_Qualifiers,_References_and_Ranks
     date: 2024-11-1
 
+wikidata_sparql_qualifiers:
+  type: misc
+  title: 'Wikidata Help:Qualifiers'
+  author: 'Wikidata contributors'
+  date: 2024
+  url: 
+    value: https://www.wikidata.org/wiki/Help:Qualifiers
+    date: 2024-11-1
+
 terhorst_Completeness_of_RDF:
   type: article
   title: Completeness, decidability and complexity of entailment for RDF Schema and a semantic extension involving the OWL vocabulary
