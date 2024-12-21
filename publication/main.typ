@@ -336,7 +336,7 @@ The definitions in this section follow the *RDF v1.2* specifications @W3C_RDF_1.
   + a *language tag*, which allows to add express from which language the *lexical form* stems and
   + a *base direction tag*, which occurs in combination with the *language tag* to indicate the reading direction (left-to-right or right-to-left).
 
-  _Remark: It is important to mention, that the language tag and base direction tag are indicated by two _special IRIs_, which are so to speak non-standard data type IRIs._
+  _Remark: The necessity of the language and base direction tag are indicated by two separate *special IRIs*._
 ]
 
 #definition[
@@ -346,7 +346,7 @@ The definitions in this section follow the *RDF v1.2* specifications @W3C_RDF_1.
     [Literal Type], [Literal Value],
     [has language tag], [(lexical form, language tag)],
     [has direction tag], [(lexical form, language tag, base direction tag)],
-    [has IRI stated in the\ #link("https://www.w3.org/TR/rdf12-concepts/#dfn-recognized-datatype-iri")[list of recognized data type IRIs]], [the literal value interpreted as the indicated data type]
+    [has IRI stated in the\ #link("https://www.w3.org/TR/rdf12-concepts/#dfn-recognized-datatype-iri")[list of recognized data type IRIs]], [the literal value interpreted\ as the indicated data type]
   ))
 ]
 
@@ -363,21 +363,33 @@ A computer still does not understand what it means to be educated at some place 
 
 However, for any structured querying to be possible, the databases ought to be filled according to certain conventions. Preferably such conventions that are interoperable with other data sources (see @heading_lod).
 
-==== RDF Graph
-Every set of triples has an equivalent RDF graph, where the subject and object equate nodes, and the predicate equates a directed connection from subject to object.
-
-#align(center, todo[Insert drawing])
-
-- introduce formalisms from the RDF docs
-
 === Qualifiers and Blank nodes
 Most real-world relationships might present to be more complex than something one would want to model in a single triple. For example, one may want to express that "Goethe" was educated at the "University of Leipzig" from 3 October 1765 to 28 August 1768. One possibility is to let relationships have more than two operands, i.e. increase the arity by one for each additional parameter. "Educated at" would then be called "educated at (#sym.dot) from (#sym.dot) to (#sym.dot)". Another way using the limited triple syntax is to create an implicit object, that assists in modelling the relationship. We use it to describe a new concept; a human might be inclined to give it a name, e.g. "educated at for a certain time":
 $
   "Goethe" &longArrow("educated at") && "Implicit1", \
   "Implicit1" &longArrow("educated at") && "Uni Leipzig", \
-  "Implicit1" &longArrow("started at") && 3.10.1765, \
-  "Implicit1" &longArrow("ended at") && 28.08.1768 
+  "Implicit1" &longArrow("started at") && 3.10.1765, #<ex_qualifier_1> \
+  "Implicit1" &longArrow("ended at") && 28.08.1768.  #<ex_qualifier_2>
 $ <assertions_goethe_education>
+
+Statements specifying a relationship (such as @ex_qualifier_1 and @ex_qualifier_2) are called *qualifiers* @wikidata_sparql_qualifiers @wikibooks_sparql_qualifiers. 
+
+#definition[\
+  Let 
+  $s in L union I$,#sym.space.med
+  $p_1, p_2 in I, i in NN$,#sym.space.med
+  $o_j in L union I, j in NN$,#sym.space.med
+  $b in B$. 
+  Then, a *qualified assertion* is defined as a set of triples
+  $
+    {
+      (s, p_1, b),
+      (b, p_1, o_1),
+      (b, p_2, o_2),
+      ...
+    }
+  $
+]
 
 Having specified such an implicit concept for our concept "educated at for a certain time", one is free to add a few extra statements about what he studied and whether he graduated:
 
@@ -390,7 +402,7 @@ $
   #text(fill: green)[Implicit1] &longArrow("graduated") && #text(fill: green)[True]
 $ <assertions_goethe_education_revised>
 
-Such statements are usually called qualifiers @wikibooks_sparql_qualifiers. This method of describing information allows us to implicitly define new concepts. Any program dealing with qualifiers merely handles the explicit assertions for an anonymous concept. But, this anonymity poses a challenge to a human interpreter; implicit concepts usually remain unnamed (#todo[todo below (how does it work)]).
+This method of describing information allows us to implicitly define new concepts. Any program dealing with qualifiers merely handles the explicit assertions for an anonymous concept. But, this anonymity poses a challenge to a human interpreter; implicit concepts usually remain unnamed (#todo[todo below (how does it work)]).
 
 #todo[How do qualifiers actually work in the context of the spec @W3C_RDF_1.2_Proposal? Do they use blank nodes?]
 
@@ -423,14 +435,14 @@ This chapter mostly follows @Vargas2019_RDF_Explorer.
 The VQG is _constructed_ using a _visual query language_, consisting of four algebraic operators, which will correspond to atomic user interactions:
 
 #figure(
-  table(columns: 1,
-    [User Interaction],
-    [Adding a variable node],
-    [Adding a literal node],
-    [Adding ]
+  table(columns: 2,
+    [User Interaction], [Inverse User Action],
+    [Adding a variable node], [Removing a node],
+    [Adding a literal node], [Removing a node],
+    [Adding a directed edge], [Removing a directed edge],
   )
 )
-adding a variable node, adding a literal node, adding an entity
+
 
 == Linked Open Data <heading_lod>
 
