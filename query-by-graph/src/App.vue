@@ -51,6 +51,7 @@ import ConnectionInterfaceType from "./lib/types/ConnectionInterfaceType.ts";
 import ClipboardButton from "./components/ClipboardButton.vue";
 import QueryButton from './components/QueryButton.vue';
 import { selectedDataSource, dataSources } from './store.ts';
+import WikibaseDataSource from "./lib/types/WikibaseDataSource.ts";
 
 interface Editor {
   setVueCallback: (callback: (context: any) => void) => void;
@@ -140,11 +141,9 @@ const copyToClipboard = () => {
   navigator.clipboard.writeText(code.value);
 }
 
-const setDataSource = (source: keyof typeof dataSources) => {
-  if (dataSources[source]) {
-    selectedDataSource.value = dataSources[source];
-    console.log('selectedDataSource updated to:', selectedDataSource.value);
-  }
+const setDataSource = (source: WikibaseDataSource) => {
+  selectedDataSource.value = source;
+  console.log('selectedDataSource updated to:', selectedDataSource.value);
 };
 
 const gotoLink = (url?: string) => {
@@ -263,14 +262,10 @@ const gotoLink = (url?: string) => {
               <h4 class="font-semibold">Data Source</h4>
               <div class="flex gap-4">
                 <Button
-                  :class="{'highlighted': selectedDataSource.name === 'WikiData'}"
-                  @click="setDataSource('wikidata')">
-                  Use Wikidata
-                </Button>
-                <Button
-                  :class="{'highlighted': selectedDataSource.name === 'FactGrid'}"
-                  @click="setDataSource('factgrid')">
-                  Use FactGrid
+                  v-for="ds in dataSources"
+                  :class="{'highlighted': selectedDataSource.name === ds.name}"
+                  @click="setDataSource(ds)">
+                  Use {{ ds.name }}
                 </Button>
               </div>
               <p class="text-gray-600 text-sm hover:text-gray-900 transition-all">
@@ -317,10 +312,10 @@ const gotoLink = (url?: string) => {
           <!-- This has the same propeties as the toolbox heading -->
           <h2 class="font-semibold text-xl flex justify-between">
             <span>Generated SPARQL Query</span>
-            <div class="flex items-center space-x-2">
+            <span class="flex items-center space-x-2">
               <ClipboardButton @click="copyToClipboard();" />
               <QueryButton @click="gotoLink(selectedDataSource.queryService);" />
-            </div>
+            </span>
           </h2>
           <span class="text-sm font-medium block">
                 This contains the generated SPARQL code. It is updated with every change in the editor.
