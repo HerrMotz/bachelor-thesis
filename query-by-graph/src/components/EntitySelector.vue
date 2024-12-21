@@ -2,7 +2,7 @@
 import WikibaseDataService from "../lib/wikidata/WikibaseDataService.ts";
 import {WikiDataEntity, WikiDataSearchApiResponse} from "../lib/wikidata/types.ts";
 import {computed} from 'vue';
-import { counter } from "../lib/utils/counter.ts";
+import {counter} from "../lib/utils/counter.ts";
 
 const props = defineProps({
   language: {type: String, required: true},
@@ -37,7 +37,6 @@ import {
 import EntityType from "../lib/types/EntityType.ts";
 import {noEntity, variableEntity, variableEntityConstructor} from "../lib/rete/constants.ts";
 import {selectedDataSource} from "../store.ts";
-import { noDataSource } from "../lib/constants/index.ts";
 
 const queriedEntities = ref([
   noEntity,
@@ -58,18 +57,23 @@ function displayValue(entity: unknown): string {
 }
 
 function onEnterPress() {
-  console.log("selectedEntity.id = ", selectedEntity.value.id);
-  const id = counter.getNext();
-  // Create new literal entity with a generated ID if none exists
+  // This is inconsistent if the user creates a literal, creates another entity and then enters something in the 
+  // literal-textfield. Currently there is no better way to solve this since here there is no access to the entity properties
+
+  // a way to fix this would be to either implement a seperate counter for literals (with a unique name like ?lit1) or use the 
+  // counter.getNext() method (than we maybe skip an index in the query but have no duplicate values)
+  const id = counter.getCurrent();
+
+  // because of this a new entity is created here
   selectedEntity.value = {
-    id: `?${id}`, // Generate ID from input value
+    id: `?${id}`,
     label: inputValue.value,
     description: "Literal value",
     prefix: {
       uri: "",
       abbreviation: "" 
     },
-    dataSource: noDataSource,
+    dataSource: selectedDataSource.value,
     isLiteral: true,
   };
 
@@ -77,11 +81,7 @@ function onEnterPress() {
 }
 function queryHelper(query: string) {
 
-  if(props.isLiteral)
-  {
-    // Add functionality later
-  }
-  else
+  if(!props.isLiteral)
   {
     console.log(`queryHelper called with query: "${query}"`);
     const wds = new WikibaseDataService(selectedDataSource.value);

@@ -47,7 +47,7 @@ pub fn graph_to_query_wasm(json: &str) -> String {
 }
 
 fn graph_to_query(connections: Vec<Connection>) -> String {
-    // get all Variables (?...)
+    // get all Variables (?...), dont add literals to the selection
     let projection_set = connections.iter()
                                  .flat_map(|connection| {
                                      vec![&connection.source, &connection.target, &connection.property]

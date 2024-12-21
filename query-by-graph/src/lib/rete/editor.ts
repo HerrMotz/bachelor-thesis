@@ -165,13 +165,19 @@ export async function createEditor(container: HTMLElement) {
 
     connection.addPreset(ConnectionPresets.classic.setup());
 
+
+
     area.addPipe(async (context) => {
         // this is a workaround to hinder the counter from increasing at every
         // draw method of the editor
+        if (context.type === "connectioncreated") {
+            increaseVariablePropCounter = true;
+        }
+
         if (context.type === "pointerdown") { // Left click
             const event = context.data.event;
 
-            if(event.button===0)
+            if(event.altKey && event.button===0)
             {
                 console.log("Leftclick");
                 console.log("Root");
@@ -187,6 +193,7 @@ export async function createEditor(container: HTMLElement) {
                 
                 console.log("LiteralNodeId:", node.id);
                 console.log("EntityType: ", node.entity.isLiteral);
+                
                 
                 node.addControl(
                     "entityInput",
@@ -211,10 +218,6 @@ export async function createEditor(container: HTMLElement) {
             }
         }
         
-        
-        if (context.type === "connectioncreated") {
-            increaseVariablePropCounter = true;
-        }
 
         // This matches a Right Mouse button Click
         if (context.type === "contextmenu") {
