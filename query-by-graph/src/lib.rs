@@ -12,7 +12,9 @@ const INDENTATION_COUNT:usize = 4;
 struct Entity {
     pub id: String,
     pub label: String,
-    pub prefix: Prefix
+    pub prefix: Prefix,
+    pub isLiteral: bool,
+    pub dataSource: WikibaseDataSource
 }
 
 #[derive(Deserialize, Clone, Eq, Hash, PartialEq)]
@@ -28,6 +30,11 @@ struct Connection {
     pub target: Entity,
 }
 
+#[derive(Deserialize)]
+struct WikibaseDataSource{
+    pub preferredLanguages: Vec<String>
+}
+
 // wasm method, to get a string containing a JSON, which converts it to Connection
 // structs and then calls graph_to_query
 #[wasm_bindgen]
@@ -40,14 +47,16 @@ pub fn graph_to_query_wasm(json: &str) -> String {
 }
 
 fn graph_to_query(connections: Vec<Connection>) -> String {
+    // get all Variables (?...)
     let projection_set = connections.iter()
                                  .flat_map(|connection| {
                                      vec![&connection.source, &connection.target, &connection.property]
                                  })
-                                 .filter(|entity| entity.id.starts_with('?'))
+                                 .filter(|entity| entity.id.starts_with('?') && (!entity.isLiteral))
                                  .map(|entity| entity.id.clone())
                                  .collect::<HashSet<_>>();
 
+    // sort all variables and join them like this: ?philosopher ?student ?...
     let projection_list = if projection_set.len() == 0 {
         String::from("*")
     } else {
@@ -56,6 +65,7 @@ fn graph_to_query(connections: Vec<Connection>) -> String {
         sorted_projection_set.join(" ")
     };
 
+    // filters for connections with url and gives them their namespace
     let prefix_set = connections.iter()
         .flat_map(|connection| {
             vec![&connection.source, &connection.target, &connection.property]
@@ -64,6 +74,7 @@ fn graph_to_query(connections: Vec<Connection>) -> String {
         .map(|entity| entity.prefix.clone())
         .collect::<HashSet<_>>();
 
+    // formats to corresponding wikibase/factgrid prefix
     let prefix_list = if prefix_set.len() == 0 { String::from("") } else {
         prefix_set.into_iter()
         // PREFIX wd: <http://www.wikidata.org/entity/>
@@ -72,20 +83,25 @@ fn graph_to_query(connections: Vec<Connection>) -> String {
         .join("\n")
     };
 
+
+    // creates the subject predicate object triples for the where clause
     let where_clause: String = connections.iter()
         .map(|connection| {
+            // wd:Q1234
             let source_uri = if connection.source.prefix.uri.is_empty() {
                 connection.source.id.clone() // Clone the String to avoid moving it
             } else {
                 format!("{}:{}", connection.source.prefix.abbreviation, connection.source.id)
             };
 
+            // wd:P1234
             let property_uri = if connection.property.prefix.uri.is_empty() {
                 connection.property.id.clone() // Clone the String to avoid moving it
             } else {
                 format!("{}:{}", connection.property.prefix.abbreviation, connection.property.id)
             };
 
+            // wd:Q1234
             let target_uri = if connection.target.prefix.uri.is_empty() {
                 connection.target.id.clone() // Clone the String to avoid moving it
             } else {
@@ -95,12 +111,40 @@ fn graph_to_query(connections: Vec<Connection>) -> String {
 
             let indentation = " ".repeat(INDENTATION_COUNT);
 
+            let literal_target = if connection.target.isLiteral {
+                let language = connection.target.dataSource.preferredLanguages[0].clone();
+                format!("{}{} rdfs:label \"{}\"@{} .\n", 
+                    indentation,
+                    target_uri,
+                    connection.target.label,
+                    language
+                )
+            } else {
+                String::new()
+            };
+
+            // from a semantic point it doesnt make sense to allow literals as subjects (they can only be objects)
+            // but for consistancy it is still added
+            let literal_source = if connection.source.isLiteral {
+                let language = connection.source.dataSource.preferredLanguages[0].clone();
+                format!("{}{} rdfs:label \"{}\"@{} .\n", 
+                    indentation,
+                    source_uri,
+                    connection.source.label,
+                    language
+                )
+            } else {
+                String::new()
+            };
+
             format!(
-                "{} {} {} {} . \n{}# {} -- [{}] -> {}\n",
+                "{}{} {} {} .\n{}{}{}# {} -- [{}] -> {}\n",
                 indentation,
                 source_uri,
-                property_uri,
+                property_uri, 
                 target_uri,
+                literal_source,
+                literal_target,
                 indentation,
                 connection.source.label,
                 connection.property.label,

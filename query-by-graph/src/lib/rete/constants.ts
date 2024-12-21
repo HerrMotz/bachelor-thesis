@@ -10,7 +10,8 @@ const variableEntity: EntityType = { // EntityType
         uri: "",
         abbreviation: "",
     },
-    dataSource: noDataSource
+    dataSource: noDataSource,
+    isLiteral: false
 };
 
 const variableEntityConstructor = (name: string): EntityType => {
@@ -19,18 +20,13 @@ const variableEntityConstructor = (name: string): EntityType => {
     return newVariable;
 }
 
-const literalEntityConstructor = (value: string): EntityType => {
-    return {
-        id: `"${value}"`, // Wrap the value in quotes for SPARQL
-        label: value,
-        description: 'Literal value',
-        prefix: {
-            uri: "",
-            abbreviation: "",
-        },
-        dataSource: noDataSource,
-        isLiteral: true
-    };
+const literalEntityConstructor = (name: string): EntityType => {
+    const newLiteral = deepCopy(variableEntity);
+    newLiteral.id = "?"+name;
+    newLiteral.label = "Literal";
+    newLiteral.description = "Literal value";
+    newLiteral.isLiteral = true;
+    return newLiteral;
 };
 
 const noEntity: EntityType = {
@@ -41,7 +37,8 @@ const noEntity: EntityType = {
         uri: "",
         abbreviation: "",
     },
-    dataSource: noDataSource
+    dataSource: noDataSource,
+    isLiteral: false
 };
 
 export {noEntity, variableEntity, variableEntityConstructor, literalEntityConstructor}

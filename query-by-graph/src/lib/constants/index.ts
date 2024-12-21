@@ -31,7 +31,7 @@ const factGridDataSource: WikibaseDataSource = {
 const noDataSource: WikibaseDataSource = {
     name: "",
     url: "",
-    preferredLanguages: [],
+    preferredLanguages: ['en'],
     propertyPrefix: {
         url: "",
         abbreviation: ""

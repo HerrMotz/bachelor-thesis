@@ -13,6 +13,7 @@ import EntityNodeComponent from "../../components/EntityNode.vue";
 import CustomInputControl from "../../components/EntitySelectorInputControl.vue";
 import {noEntity, variableEntityConstructor, literalEntityConstructor} from "./constants.ts";
 import {noDataSource} from "../constants";
+import { counter } from "../utils/counter.ts";
 
 // Each connection holds additional data, which is defined here
 class Connection extends ClassicPreset.Connection<
@@ -75,7 +76,6 @@ export async function createEditor(container: HTMLElement) {
     const history = new HistoryPlugin<Schemes>();
 
     let vueCallback: (context: any) => void;
-    let highestIdCount = 0;
     let increaseVariablePropCounter = false;
 
     HistoryExtensions.keyboard(history);
@@ -87,11 +87,11 @@ export async function createEditor(container: HTMLElement) {
 
         if (increaseVariablePropCounter) {
             increaseVariablePropCounter = false;
-            highestIdCount++;
+            counter.next();
         }
 
         if (!props.data.property) {
-            props.data.property = variableEntityConstructor(highestIdCount.toString())
+            props.data.property = variableEntityConstructor(counter.getCurrent().toString())
         }
 
         const label = "connection";
@@ -178,13 +178,20 @@ export async function createEditor(container: HTMLElement) {
                 event.preventDefault();
                 event.stopPropagation();
                 
-                const node = new EntityNodeClass("Literal", literalEntityConstructor(""));
+                const nextId = counter.getNext();
+                const newLiteral = literalEntityConstructor(
+                    nextId.toString()
+                )
+
+                const node = new EntityNodeClass(newLiteral.label, newLiteral);
+                
                 console.log("LiteralNodeId:", node.id);
                 console.log("EntityType: ", node.entity.isLiteral);
+                
                 node.addControl(
                     "entityInput",
                     new EntitySelectorInputControl({
-                        initial: literalEntityConstructor(""),
+                        initial: newLiteral,
                         isLiteral: true,
                         change(value) {
                             node.setEntity(value);
@@ -221,10 +228,10 @@ export async function createEditor(container: HTMLElement) {
                 // DEBUG
                 console.log("Add variable node")
 
-                highestIdCount++;
+                const nextId = counter.getNext();
 
                 const newEntity = variableEntityConstructor(
-                    highestIdCount.toString()
+                    nextId.toString()
                 )
 
                 const node = new EntityNodeClass(newEntity.label, newEntity);
@@ -235,7 +242,7 @@ export async function createEditor(container: HTMLElement) {
                 node.addControl(
                     "entityInput",
                     new EntitySelectorInputControl({
-                        initial: {id: "", label: "", prefix: {uri: "", abbreviation: ""}, description: "", dataSource: noDataSource},
+                        initial: {id: "", label: "", prefix: {uri: "", abbreviation: ""}, description: "", dataSource: noDataSource, isLiteral: false},
                         change(value) {
                             // DEBUG
                             // console.log("Entity Input called change")

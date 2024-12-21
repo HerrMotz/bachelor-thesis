@@ -2,6 +2,7 @@
 import WikibaseDataService from "../lib/wikidata/WikibaseDataService.ts";
 import {WikiDataEntity, WikiDataSearchApiResponse} from "../lib/wikidata/types.ts";
 import {computed} from 'vue';
+import { counter } from "../lib/utils/counter.ts";
 
 const props = defineProps({
   language: {type: String, required: true},
@@ -34,8 +35,9 @@ import {
   ComboboxOptions,
 } from '@headlessui/vue'
 import EntityType from "../lib/types/EntityType.ts";
-import {noEntity, variableEntity, variableEntityConstructor, literalEntityConstructor} from "../lib/rete/constants.ts";
+import {noEntity, variableEntity, variableEntityConstructor} from "../lib/rete/constants.ts";
 import {selectedDataSource} from "../store.ts";
+import { noDataSource } from "../lib/constants/index.ts";
 
 const queriedEntities = ref([
   noEntity,
@@ -46,6 +48,7 @@ const selectedEntity = ref(noEntity);
 
 const inputValue = ref('');
 
+
 function displayValue(entity: unknown): string {
   if (typeof entity === 'object' && entity !== null && 'label' in entity) {
     return (entity as { label: string }).label;
@@ -55,25 +58,28 @@ function displayValue(entity: unknown): string {
 }
 
 function onEnterPress() {
-  emit('selectedEntity', {
-    id: 'literal',
+  console.log("selectedEntity.id = ", selectedEntity.value.id);
+  const id = counter.getNext();
+  // Create new literal entity with a generated ID if none exists
+  selectedEntity.value = {
+    id: `?${id}`, // Generate ID from input value
     label: inputValue.value,
-    description: 'Literal value',
+    description: "Literal value",
     prefix: {
-      uri: '',
-      abbreviation: '',
+      uri: "",
+      abbreviation: "" 
     },
-    dataSource: selectedDataSource.value,
+    dataSource: noDataSource,
     isLiteral: true,
-  });
-}
+  };
 
+  emit('selectedEntity', selectedEntity.value);
+}
 function queryHelper(query: string) {
 
   if(props.isLiteral)
   {
-    console.log("Literal created");
-    emit('selectedEntity', literalEntityConstructor(query));
+    // Add functionality later
   }
   else
   {
@@ -98,7 +104,8 @@ function queryHelper(query: string) {
             uri: prefix.url,
             abbreviation: prefix.abbreviation,
           },
-          dataSource: {...selectedDataSource.value} // save datasource
+          dataSource: {...selectedDataSource.value}, // save datasource
+          isLiteral: false
         }
       }).concat([
           variableEntityConstructor(query.startsWith('?') ? query.slice(1) : query)
