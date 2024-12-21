@@ -13,7 +13,11 @@
     - Visual Query Graph-SPARQL Mapping
     - SPARQL Select-Query // TODO: What's the concept behind hyphenation?
 
++ Labels for headings follow the scheme: `heading_<name_of_the_heading>`
+
++ Labels for examples follow the scheme: `ex_<name>`
+
++ Labels for definitions follow the scheme: `def_<name>`
+
 # TODOs
 + How do hyphenations work?
-
-+ 
