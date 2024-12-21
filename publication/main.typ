@@ -2,7 +2,12 @@
 #import "@preview/xarrow:0.3.0": xarrow, xarrowSquiggly, xarrowTwoHead
 #import "@preview/equate:0.2.1": equate
 
+// for definition and example subheadings
+#import "@preview/great-theorems:0.1.1": *
+#import "@preview/rich-counters:0.2.2": *
+
 #set text(lang: "en", region: "GB")
+#show: great-theorems-init
 
 #let spct = sym.space.punct
 #let examiner = [Prof.#spct\Dr. Clemens Beckstein\ M.#spct\Sc. Johannes Mitschunas]
@@ -46,7 +51,7 @@
     #set heading(outlined: false)
     #todo[This chapter should contain all code listings, figures, tables and so on.]
     == Use of Generative AI
-    This bachelor thesis was written in assistance of the OpenAI large language models GPT-4o and GPT-o1 preview. The large language models were used to get an overview over a domain, to ease literature research and to point out stylistic, orthographical and grammatical mistakes to the writer. The models were _not_ used to generate passages of this work. 
+    This bachelor thesis was written in assistance of the OpenAI large language models GPT-4o and GPT-o1 preview. The large language models were used at the very start to get an overview over the domain, to ease literature research and to point out stylistic, orthographical and grammatical mistakes to the writer. The models were _not_ used to generate passages of this work. 
   ],
   
   abbreviations: (
@@ -54,13 +59,13 @@
     ("RDF", "Resource Description Framework"),
     ("RDFS", "Resource Description Framework Schema (Ontology within RDF)"),
     ("SPARQL", "SPARQL Protocol And RDF Query Language (recursive acronym)"),
-    ("IRI", "Internationalised Resource Identifier (similar to URI)"),
+    ("IRI", [Internationalised Resource Identifier (see @heading_iri)]),
     ("OWL", "Web Ontology Language"),
     ("VQG", "Visual Query Graph (user-built query graph)"),
-    ("API", "Application Programming Interface")
+    ("API", "Application Programming Interface"),
   ),
 
-  external-link-circle: true,
+  external-link-circle: true, // TURN THIS OFF IF YOU GENERATE THE PRINT VARIANT
   
   figure-index: (enabled: true),
   table-index: (enabled: true),
@@ -70,52 +75,40 @@
 
 /* BEGIN Custom Environment */
 
-#show heading.where(level: 6): set heading(outlined: false)
-
-#show heading.where(
-  level: 4,
-): it => text(
-  weight: "regular",
-  style: "italic",
-  it.body + [. ]
+#let mathcounter = rich-counter(
+  identifier: "mathblocks",
+  inherited_levels: 1
 )
 
-#show heading.where(
-  level: 6,
-): it => text(
-  weight: "regular",
-  style: "italic",
-  it.body,
+#let definition = mathblock(
+  blocktitle: "Definition",
+  counter: mathcounter
 )
 
-#show heading.where(
-  level: 7,
-): it => text(
-  weight: "bold",
-  it.body,
+#let theorem = mathblock(
+  blocktitle: "Theorem",
+  counter: mathcounter,
 )
 
-#let exampleCounter = counter("exC")
-#exampleCounter.update(0)
+#let lemma = mathblock(
+  blocktitle: "Lemma",
+  counter: mathcounter,
+)
 
-#let example(it) = {
-  exampleCounter.step()
-  context {
-    let _n = numbering( "1", exampleCounter.get().at(0))
-    text(style: "italic", [#heading(level: 7, bookmarked: true, numbering: none, "Example " + _n + ". ") #label("example"+_n)]) + it
-  }
-}
+#let example = mathblock(
+  blocktitle: "Example",
+  counter: mathcounter,
+)
 
-#let definitionCounter = counter("dC")
-#definitionCounter.update(0)
+#let remark = mathblock(
+  blocktitle: "Remark",
+  prefix: [_Remark._],
+  inset: 5pt,
+  fill: lime,
+  radius: 5pt,
+)
 
-#let definition(it) = {
-  definitionCounter.step()
-  context {
-    let _n = numbering( "1", definitionCounter.get().at(0))
-    text(weight: "bold", [#heading(level: 7, bookmarked: true, numbering: none, "Definition " + _n + ". ") #label("definition"+_n)]) + text(style: "italic", it)
-  }
-}
+#let proof = proofblock()
 
 #let note(it) = text(fill: luma(150), size: 0.7em, it)
 #let spruch(it) = move(dx: -30pt, text(style: "italic", fill: luma(100), quote(it)))
@@ -275,9 +268,9 @@ The original idea by Tim Berners-Lee was to annotate web pages using a well-defi
 == RDF Standard <heading_rdf_standard>
 The W3C#sym.trademark.registered recommends a standard for exchange of semantically annotated information called the Resource Description Framework (RDF) standard model. The most notable recommendations are
 
-- the RDF graph format and triples (see @triples_heading),
+- the RDF graph format and triples (see @heading_triples),
 
-- the Internationalised Resource Identifier (@iri_heading) and
+- the Internationalised Resource Identifier (@heading_iri) and
 
 - the query language SPARQL (see @sparql_heading).
 
@@ -291,29 +284,31 @@ The W3C#sym.trademark.registered recommends a standard for exchange of semantica
   What is a reifier good for/used for (irl)?
 ]
 
-=== Graphs and Triples <triples_heading>
+=== Graphs and Triples <heading_triples>
 
 An *RDF graph* is a set of RDF triples. An RDF triple is said to be asserted in an RDF graph if it is an element of the RDF graph @W3C_RDF_1.2_Proposal.
 
 #definition[
   Let *$I$* denote the set of IRIs, *$B$* denote the set containing one blank node $circle.dotted$, *$L$* denote the set of literals and *$V$* denote the set of query variables. Let
-  subject $bold("s") in I union B$,
-  predicate $bold("p") in I$ and
-  object $bold("o") in I union L union B$.
+  subject $bold("s") in bold("I") union bold("B")$,
+  predicate $bold("p") in bold("I")$ and
+  object $bold("o") in bold("I") union bold("L") union bold("B")$.
 
-  Then, following @W3C_RDF_1.1_Reference, any triple in an RDF graph is of the form
+  Then, following @W3C_RDF_1.1_Reference, any three-tuple or triple in an RDF graph is of the form
 
-  $ 
-    bold("s") xarrow(bold("p")) bold("o")\
-  $ <ex_spo>
-  #align(center)[or equivalently]
   $
     (bold("s"), bold("p"), bold("o"))
   $
+  #align(center)[or equivalently]
+  $ 
+    bold("s") xarrow(bold("p")) bold("o"),
+  $ <def_spo>
 ]
 
+if subject *$s$* relates to object *$o$* in a way which the predicate *$p$* describes.
+
 #example[
-  Suppose a subject is given the name "Johann Wolfgang von Goethe", which relates to an object of the name "University of Leipzig", in the way, that the subject was a student at the object. Using the formalism from @ex_spo, one might be inclined to produce something like:
+  Suppose a subject is given the name "Johann Wolfgang von Goethe", which relates to an object of the name "University of Leipzig", in the way, that the subject was a student at the object. Using the formalism from @def_spo, one might be inclined to produce something like:
   $
     bold("s") := "Johann Wolfgang von Goethe", \
     bold("p") := "educated at", \
@@ -324,13 +319,36 @@ An *RDF graph* is a set of RDF triples. An RDF triple is said to be asserted in 
   $ <ex_spo_goethe>
 ]
 
-=== Internationalised Resource Identifier <iri_heading>
+=== Internationalised Resource Identifier <heading_iri>
 
-Internationalised Resource Identifier (IRIs) [#link("https://www.ietf.org/rfc/rfc3987.txt")[RFC3987]] are a superset of Uniform Resource Identifiers (URIs) [#link("https://www.ietf.org/rfc/rfc3986.txt")[RFC3986]]. The details of the differences are not directly relevant to this work, therefore this work will treat IRIs as URIs. Most real-world applications 
+Internationalised Resource Identifiers (IRIs) [#link("https://www.ietf.org/rfc/rfc3987.txt")[RFC3987]] are a superset of Uniform Resource Identifiers (URIs) [#link("https://www.ietf.org/rfc/rfc3986.txt")[RFC3986]]. Their purpose is to *refer to a resource*. The resource an IRI points at is called *referent*. 
+
+The main advantage of IRIs over URIs are their enhanced character set. However, the details are not directly relevant to this work, therefore I will simply refer to the quoted RFCs for further reading.
 
 === Literals
 
-A *literal* in an RDF graph
+The definitions in this section follow the *RDF v1.2* specifications @W3C_RDF_1.2_Proposal, which, at the time of writing, is a working draft#footnote[RDF *v1.1* @W3C_RDF_1.1_Reference only allows for the first three elements.]. Again, the technical specifications are not directly relevant to the matters of this work, therefore I will abstract from the implementation details. 
+
+#definition[
+  A *literal* in an RDF graph can be used to express values such as strings, dates and numbers. It can have two elements:
+  + a *lexical form*, which is a Unicode string,
+  + a *data type IRI*, which defines the mapping from the lexical form to the literal value in the user representation. (also note the remark below this list)
+  + a *language tag*, which allows to add express from which language the *lexical form* stems and
+  + a *base direction tag*, which occurs in combination with the *language tag* to indicate the reading direction (left-to-right or right-to-left).
+
+  _Remark: It is important to mention, that the language tag and base direction tag are indicated by two _special IRIs_, which are so to speak non-standard data type IRIs._
+]
+
+#definition[
+  The *literal value* of a *literal* in an RDF graph is defined in dependence of the fields available in the *literal*. These will be reffered to as literal types. The literal value is a tuple. 
+
+  #align(center, table(columns: 2, align: horizon,
+    [Literal Type], [Literal Value],
+    [has language tag], [(lexical form, language tag)],
+    [has direction tag], [(lexical form, language tag, base direction tag)],
+    [has IRI stated in the\ #link("https://www.w3.org/TR/rdf12-concepts/#dfn-recognized-datatype-iri")[list of recognized data type IRIs]], [the literal value interpreted as the indicated data type]
+  ))
+]
 
 === Modelling Information using Triples
 
@@ -402,7 +420,17 @@ This chapter mostly follows @Vargas2019_RDF_Explorer.
   Note here, that the VQG does not contain blank nodes.
 ]
 
-The VQG is _constructed_ using a _visual query language_, consisting of four algebraic operators, which will correspond to atomic user interactions: adding a variable node, adding a literal node, adding an entity
+The VQG is _constructed_ using a _visual query language_, consisting of four algebraic operators, which will correspond to atomic user interactions:
+
+#figure(
+  table(columns: 1,
+    [User Interaction],
+    [Adding a variable node],
+    [Adding a literal node],
+    [Adding ]
+  )
+)
+adding a variable node, adding a literal node, adding an entity
 
 == Linked Open Data <heading_lod>
 
