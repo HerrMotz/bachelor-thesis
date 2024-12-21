@@ -1,10 +1,11 @@
 import { ref } from 'vue';
 import WikibaseDataSource from "./lib/types/WikibaseDataSource.ts";
-import {factGridDataSource, wikiDataDataSource} from "./lib/constants";
+import {factGridDataSource, wikiDataDataSource, testinstanceSource} from "./lib/constants";
 
 
 export const selectedDataSource = ref<WikibaseDataSource>(wikiDataDataSource);
-export const dataSources = {
-        wikidata: wikiDataDataSource,
-        factgrid: factGridDataSource,
-};
+export const dataSources = [
+        wikiDataDataSource,
+        factGridDataSource,
+        testinstanceSource
+];
