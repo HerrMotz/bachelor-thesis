@@ -169,17 +169,17 @@
   
     ]))
 
-  page("")
 
   // German cover page.
   if (cover-german.values().all(x => x != none)) {
-      let german-language-specific-text = (
-        "zur Erlangung des akademischen Grades",
-        "im Studienfach",
-        "eingereicht von",
-        "geboren am",
-        "Betreuer"
-      )
+    let german-language-specific-text = (
+      "zur Erlangung des akademischen Grades",
+      "im Studienfach",
+      "eingereicht von",
+      "geboren am",
+      "Betreuer"
+    )
+    // page("") // empty page for printing
     cover-page-helper(cover-german, german-language-specific-text)
   }
 
@@ -191,10 +191,10 @@
       "born on",
       "Examiner"
     )
+    // page("") // empty page for printing
     cover-page-helper(cover-english, english-language-specific-text)
   }
 
-  page("")
 
   page(align(horizon+center, block(width:90%, if abstract != none {
     smallcaps[Abstract]
@@ -217,6 +217,19 @@
   // Do not hyphenate headings.
   show heading: set text(hyphenate: false)
 
+  // Show a small maroon circle next to external links.
+  show link: it => {
+    it
+    
+    //if external-link-circle and type(it.dest) != label and type(it.dest) != location { // this excludes e.g. ctheorems links and abbreviations in this document
+    if external-link-circle and type(it.dest) == str { // this only adds to links to external websites
+      sym.wj
+      h(1.6pt)
+      sym.wj
+      super(box(height: 3.8pt, circle(radius: 1.2pt, stroke: 0.7pt + rgb("#993333"))))
+    }
+  }
+
   // Indent nested entires in the outline.
   set outline(indent: auto)
 
@@ -235,6 +248,32 @@
 
   // Configure heading numbering.
   set heading(numbering: "1.")
+
+  show heading.where(level: 6): set heading(outlined: false)
+
+  show heading.where(
+    level: 4,
+  ): it => text(
+    weight: "regular",
+    style: "italic",
+    it.body + [. ]
+  )
+  
+  show heading.where(
+    level: 5,
+  ): it => text(
+    weight: "regular",
+    style: "italic",
+    it.body,
+  )
+
+  show heading.where(
+    level: 6,
+  ): it => text(
+    weight: "regular",
+    style: "italic",
+    it.body,
+  )
 
   // Configure page numbering and footer.
   set page(
