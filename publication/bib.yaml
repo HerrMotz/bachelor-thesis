@@ -401,3 +401,19 @@ w3c_iri_paper:
   url: 
     value: https://www.w3.org/2001/Talks/0912-IUC-IRI/paper.html
     date: 2024-12-20
+
+
+wikibase_rdf_mapping_graphic:
+  type: repository
+  title: "Wikibase RDF Mapping Graphic"
+  author: Schönitzer, Michael F.
+  url:
+    value: https://commons.wikimedia.org/w/index.php?curid=63880194
+  note: "Licensed under CC BY 4.0, no changes made"
+
+
+wikibase_rdf_mapping_article:
+  type: reference
+  title: "Wikibase RDF Mapping Article"
+  url:
+    value: https://www.mediawiki.org/wiki/Wikibase/Indexing/RDF_Dump_Format

@@ -6,6 +6,15 @@
 #import "@preview/great-theorems:0.1.1": *
 #import "@preview/rich-counters:0.2.2": *
 
+// for listings
+#import "@preview/codly:1.1.1": *
+#show: codly-init.with()
+#codly(languages: (
+  HTML: (
+    name: "SPARQL", color: green
+  )
+))
+
 #set text(lang: "en", region: "GB")
 #show: great-theorems-init
 
@@ -296,7 +305,7 @@ This chapter introduces the parts of the recommendation which are relevant to th
 An *RDF graph* is a set of RDF triples. An RDF triple is said to be asserted in an RDF graph if it is an element of the RDF graph @W3C_RDF_1.2_Proposal.
 
 #definition[
-  Let *$I$* denote the set of IRIs, *$B$* denote the set containing one blank node $circle.dotted$, *$L$* denote the set of literals and *$V$* denote the set of query variables. Let
+  Let *$I$* denote the set of IRIs (see @heading_iri), *$B$* denote the set containing one blank node $circle.dotted$ and *$L$* denote the set of literals (see @heading_literals). Let
   subject $bold("s") in bold("I") union bold("B")$,
   predicate $bold("p") in bold("I")$ and
   object $bold("o") in bold("I") union bold("L") union bold("B")$.
@@ -332,7 +341,7 @@ Internationalised Resource Identifiers (IRIs) [#link("https://www.ietf.org/rfc/r
 
 The main advantage of IRIs over URIs are their enhanced character set. However, the details are not directly relevant to this work, therefore I will simply refer to the quoted RFCs for further reading.
 
-=== Literals
+=== Literals <heading_literals>
 
 The definitions in this section follow the *RDF v1.2* specifications @W3C_RDF_1.2_Proposal, which, at the time of writing, is a working draft#footnote[RDF *v1.1* @W3C_RDF_1.1_Reference only allows for the first three elements.]. Again, the technical specifications are not directly relevant to the matters of this work, therefore I will abstract from the implementation details. 
 
@@ -344,7 +353,7 @@ The definitions in this section follow the *RDF v1.2* specifications @W3C_RDF_1.
   + a *base direction tag*, which occurs in combination with the *language tag* to indicate the reading direction (left-to-right or right-to-left).
 
   _Remark: The necessity of the language and base direction tag are indicated by two separate *special IRIs*._
-]
+] <def_literals>
 
 #definition[
   The *literal value* of a *literal* in an RDF graph is defined in dependence of the fields available in the *literal*. These will be reffered to as literal types. The literal value is a tuple. 
@@ -373,7 +382,45 @@ A computer still does not understand what it means to be educated at some place 
 
 However, for any structured querying to be possible, the databases ought to be filled according to certain conventions. Preferably such conventions that are interoperable with other data sources (see @heading_lod).*/
 
-=== Qualifiers
+=== SPARQL Protocol and RDF Query Language <sparql_heading>
+
+#blockquote[
+  SPARQL can be used to express queries across diverse data sources, whether the data is stored natively as RDF or viewed as RDF via middleware. SPARQL contains capabilities for querying required and optional graph patterns along with their conjunctions and disjunctions. SPARQL also supports extensible value testing and constraining queries by source RDF graph. The results of SPARQL queries can be results sets or RDF graphs. @W3C_SPARQL_Specification
+]
+
+#todo[
+  Which features does SPARQL offer?
+
+  - How does "describe" work? (because it might be interesting as a graph exploring method)
+
+  - Define prefix
+]
+
+=== RDF Mapping in Wikibase
+Wikibase has a strict data model on top of RDF @wikibase_rdf_mapping_article. An *Item* conists of a whole set of necessary triples. See @fig:rdf_mapping for an impression. Most relevant to this work are the prefix conventions of Wikibase, which will come to play in @heading_qualifiers.
+
+#figure(caption: [An excerpt of IRI prefixes defined by Wikidata],
+```HTML
+PREFIX p: <http://www.wikidata.org/prop/>
+PREFIX pq: <http://www.wikidata.org/prop/qualifier/>
+PREFIX pqv: <http://www.wikidata.org/prop/qualifier/value/>
+PREFIX pr: <http://www.wikidata.org/prop/reference/>
+PREFIX prv: <http://www.wikidata.org/prop/reference/value/>
+PREFIX ps: <http://www.wikidata.org/prop/statement/>
+PREFIX psv: <http://www.wikidata.org/prop/statement/value/>
+PREFIX wd: <http://www.wikidata.org/entity/>
+PREFIX wds: <http://www.wikidata.org/entity/statement/>
+PREFIX wdt: <http://www.wikidata.org/prop/direct/>
+PREFIX wdv: <http://www.wikidata.org/value/>
+PREFIX wikibase: <http://wikiba.se/ontology#>
+```
+)
+
+#figure(caption: [Informal overview of Wikibase conventions for\ mapping information about an Item to the RDF standard @wikibase_rdf_mapping_graphic],
+  image("rdf_mapping.svg")
+) <fig:rdf_mapping>
+
+=== Qualifiers <heading_qualifiers>
 Most real-world relationships might present to be more complex than something one would want to model in a single triple. For example, one may want to express that "Goethe" was educated at the "University of Leipzig" from 3 October 1765 to 28 August 1768. One possibility is to let relationships have more than two operands, i.e. increase the arity by one for each additional parameter. "Educated at" would then be called "educated at (#sym.dot) from (#sym.dot) to (#sym.dot)". Another way using the limited triple syntax is to create an implicit object, that assists in modelling the relationship. We use it to describe a new concept; a human might be inclined to give it a name, e.g. "educated at for a certain time". The triples exemplify a *qualified statement* as seen in Wikibase instances: #todo[Rework formulation]
 $
   "Goethe" &longArrow("educated at") && "Uni Leipzig", \
@@ -391,28 +438,26 @@ $
 $ <assertions_goethe_education_revised>
 
 #definition[
-  Let $Sigma$ be an alphabet and $Sigma^*$ its Kleene closure. Let
-  $f_1, f_2 in Sigma^*$ be IRI prefixes with $f_1 != f_2$,
+  Let $Sigma$ be a valid alphabet and $Sigma^*$ its Kleene closure. Let
+  $f_p, f_q, f_s in I$ be _distinct_ IRI prefixes for *p*\roperties, *q*\ualifiers and property *s*\tatements,
   $s in I$ be a specific subject,#sym.space.med
-  $Q:= { x | u in Sigma^* and x = f_1 compose u}$ a set of qualifier IRIs with $q_i in Q, i in NN$,#sym.space.med 
-  $P:= { x | u in Sigma^* and x = f_2 compose u}$ a set of predicate IRIs, with $P sect Q = emptyset$,#sym.space.med
-  with the limitation that $q_1 = f_2 compose u <=> p = f_1 compose u, u in Sigma^*$,#sym.space.med
-  $o_j in O subset.eq L union I, j in NN$ an arbitrary collection of objects,#sym.space.med
-  $b in B$ a blank node. 
+  $Q:= { x | u in Sigma^* and x = f_q u}, Q subset I$ a set of qualifier IRIs with $q_i in Q$,#sym.space.med 
+  $P:= { x | u in Sigma^* and x = f_p u}, P subset I$ a set of predicate IRIs, with $p in P$,#sym.space.med
+  with the limitation $u in Sigma^*$ and $q_1 = f_q u <=> p = f_p u$. Additionally, let 
+  $p_s := f_s u <=> p := f_p u$ be the property with a statement prefix,#sym.space.med
+  $o in L union I, o_j in O subset.eq L union I$ an arbitrary set of objects and #sym.space.med
+  $b in B$ a blank node. #todo[Is this a blank or unnamed node? Look at a dump.]
   Then, a *qualified statement* is defined as a set containing the triples
   $
-      &(s&, &bold(p), &b)\
-      &(b&, &bold(q_1), &bold(o_1))\
-      &(b&, &q_2, &o_2) #<def_qualifier>\
-      &(b&, &q_3, &o_3)\
-      & #h(22pt) dots.v
+      {(s,bold(p),o), (s, bold(p), b), (b,p_s,o)} union {(b, q_i, o_i) | i in NN}.
   $
-  and staments such as @def_qualifier are called *qualifiers* and $bold(p)$ is called *qualified property*.
-]
+  Statements such as $(b, q_i, o_i)$ are called *qualifiers* and $(s, bold(p), o)$ is called *qualified property*.
+] <def_qualifiers>
 
-#remark[This definition follows the Wikibase implementation, where the *qualified property* is displayed hierarchically above the qualifiers. The term and concept "qualifier" are *not* used or specified in the RDF references @W3C_RDF_1.1_Reference @W3C_RDF_1.2_Proposal. ]
+#remark[
+  The term and concept "qualifier" are *not* used or specified in the RDF references @W3C_RDF_1.1_Reference @W3C_RDF_1.2_Proposal.  This definition follows the Wikibase implementation, where the *qualified property* is displayed hierarchically above the qualifiers. The seemingly duplicate assertion $(s,p,o_1)$ is not erroneous, but an implementation detail of Wikibase and simply for convenience. ]
 
-This method of describing information allows us to implicitly define new concepts. Any program dealing with qualifiers merely handles the explicit assertions for an anonymous concept. But, this anonymity poses a challenge to a human interpreter; implicit concepts usually remain unnamed (#todo[todo below (how does it work)]).
+This method of describing information allows us to implicitly define new concepts. Any program dealing with qualifiers merely handles the explicit assertions for an anonymous concept. But, this anonymity poses a challenge to a human interpreter; implicit concepts usually remain unnamed (#todo[below (how does it work)]).
 
 #todo[
   How do qualifiers actually work in the context of the spec @W3C_RDF_1.2_Proposal? Do they use blank nodes?
@@ -426,18 +471,6 @@ This method of describing information allows us to implicitly define new concept
 
 #todo[Are qualifiers specific to an RDF implementation?]
 
-
-=== SPARQL Protocol and RDF Query Language <sparql_heading>
-
-#blockquote[
-  SPARQL can be used to express queries across diverse data sources, whether the data is stored natively as RDF or viewed as RDF via middleware. SPARQL contains capabilities for querying required and optional graph patterns along with their conjunctions and disjunctions. SPARQL also supports extensible value testing and constraining queries by source RDF graph. The results of SPARQL queries can be results sets or RDF graphs. @W3C_SPARQL_Specification
-]
-
-#todo[
-  Which features does SPARQL offer?
-
-  - How does "describe" work? (because it might be interesting as a graph exploring method)
-]
 
 == Visual Query Graph
 This chapter mostly follows @Vargas2019_RDF_Explorer. 
