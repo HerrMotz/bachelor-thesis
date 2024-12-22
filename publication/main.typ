@@ -103,9 +103,9 @@
 #let remark = mathblock(
   blocktitle: "Remark",
   prefix: [_Remark._],
-  inset: 5pt,
-  fill: lime,
-  radius: 5pt,
+  // inset: 5pt,
+  // fill: lime,
+  // radius: 5pt,
 )
 
 #let proof = proofblock()
@@ -350,6 +350,9 @@ The definitions in this section follow the *RDF v1.2* specifications @W3C_RDF_1.
   ))
 ]
 
+=== Blank nodes
+#todo[Write this section!]
+
 === Modelling Information using Triples
 
 Suppose, that the assertion from @ex_spo_goethe is part of the A-box of an RDF database. It can be deducted that:
@@ -363,33 +366,15 @@ A computer still does not understand what it means to be educated at some place 
 
 However, for any structured querying to be possible, the databases ought to be filled according to certain conventions. Preferably such conventions that are interoperable with other data sources (see @heading_lod).
 
-=== Qualifiers and Blank nodes
-Most real-world relationships might present to be more complex than something one would want to model in a single triple. For example, one may want to express that "Goethe" was educated at the "University of Leipzig" from 3 October 1765 to 28 August 1768. One possibility is to let relationships have more than two operands, i.e. increase the arity by one for each additional parameter. "Educated at" would then be called "educated at (#sym.dot) from (#sym.dot) to (#sym.dot)". Another way using the limited triple syntax is to create an implicit object, that assists in modelling the relationship. We use it to describe a new concept; a human might be inclined to give it a name, e.g. "educated at for a certain time":
+=== Qualifiers
+Most real-world relationships might present to be more complex than something one would want to model in a single triple. For example, one may want to express that "Goethe" was educated at the "University of Leipzig" from 3 October 1765 to 28 August 1768. One possibility is to let relationships have more than two operands, i.e. increase the arity by one for each additional parameter. "Educated at" would then be called "educated at (#sym.dot) from (#sym.dot) to (#sym.dot)". Another way using the limited triple syntax is to create an implicit object, that assists in modelling the relationship. We use it to describe a new concept; a human might be inclined to give it a name, e.g. "educated at for a certain time". The triples exemplify a *qualified statement* as seen in Wikibase instances: #todo[Rework formulation]
 $
+  "Goethe" &longArrow("educated at") && "Uni Leipzig", \
   "Goethe" &longArrow("educated at") && "Implicit1", \
   "Implicit1" &longArrow("educated at") && "Uni Leipzig", \
   "Implicit1" &longArrow("started at") && 3.10.1765, #<ex_qualifier_1> \
   "Implicit1" &longArrow("ended at") && 28.08.1768.  #<ex_qualifier_2>
 $ <assertions_goethe_education>
-
-Statements specifying a relationship (such as @ex_qualifier_1 and @ex_qualifier_2) are called *qualifiers* @wikidata_sparql_qualifiers @wikibooks_sparql_qualifiers. 
-
-#definition[\
-  Let 
-  $s in L union I$,#sym.space.med
-  $p_1, p_2 in I, i in NN$,#sym.space.med
-  $o_j in L union I, j in NN$,#sym.space.med
-  $b in B$. 
-  Then, a *qualified assertion* is defined as a set of triples
-  $
-    {
-      (s, p_1, b),
-      (b, p_1, o_1),
-      (b, p_2, o_2),
-      ...
-    }
-  $
-]
 
 Having specified such an implicit concept for our concept "educated at for a certain time", one is free to add a few extra statements about what he studied and whether he graduated:
 
@@ -401,6 +386,24 @@ $
   #text(fill: green)[Implicit1] &longArrow("field of study") && #text(fill: green)[Law], \
   #text(fill: green)[Implicit1] &longArrow("graduated") && #text(fill: green)[True]
 $ <assertions_goethe_education_revised>
+
+#definition[
+  Let 
+  $s in L union I$ be a specific subject,#sym.space.med
+  $p_i in P' subset.eq I, i in NN$ an arbitrary collection of predicates,#sym.space.med
+  $o_j in O' subset.eq L union I, j in NN$ an arbitrary collection of objects,#sym.space.med
+  $b in B$ a blank node. 
+  Then, a *qualified statement* is defined as a set containing the triples
+  $
+      &(s&, &p_1, &o_1) #<def_qualifier_redundancy>\
+      &(s&, &p_1, &b)\
+      &(b&, &p_1, &o_1)\
+      &(b&, &p_i, &o_j) #<def_qualifier>\
+  $
+  and staments such as @def_qualifier are called *qualifiers*.
+]
+
+#remark[This definition follows the Wikibase implementation. The term "qualifier" is not used or specified in the RDF references @W3C_RDF_1.1_Reference @W3C_RDF_1.2_Proposal. The redundant statement @def_qualifier_redundancy is rectified through the necessity to resolve a query for an assertion of the form $(s, p_1, o_1)$.]
 
 This method of describing information allows us to implicitly define new concepts. Any program dealing with qualifiers merely handles the explicit assertions for an anonymous concept. But, this anonymity poses a challenge to a human interpreter; implicit concepts usually remain unnamed (#todo[todo below (how does it work)]).
 
