@@ -379,12 +379,8 @@ $ <assertions_goethe_education>
 Having specified such an implicit concept for our concept "educated at for a certain time", one is free to add a few extra statements about what he studied and whether he graduated:
 
 $
-  "Goethe" &longArrow("educated at") && "Implicit1", \
-  "Implicit1" &longArrow("educated at") && "Uni Leipzig", \
-  "Implicit1" &longArrow("started at") && 3.10.1765, \
-  "Implicit1" &longArrow("ended at") && 28.08.1768, \
-  #text(fill: green)[Implicit1] &longArrow("field of study") && #text(fill: green)[Law], \
-  #text(fill: green)[Implicit1] &longArrow("graduated") && #text(fill: green)[True]
+  "Implicit1" &longArrow("field of study") && "Law", \
+  "Implicit1" &longArrow("graduated") && "True"
 $ <assertions_goethe_education_revised>
 
 #definition[
@@ -394,22 +390,29 @@ $ <assertions_goethe_education_revised>
   $o_j in O' subset.eq L union I, j in NN$ an arbitrary collection of objects,#sym.space.med
   $b in B$ a blank node. 
   Then, a *qualified statement* is defined as a set containing the triples
+  #todo[I think this is wrong. Wikibase uses a special prefix "pq" for qualifiers.]
   $
-      &(s&, &p_1, &o_1) #<def_qualifier_redundancy>\
-      &(s&, &p_1, &b)\
-      &(b&, &p_1, &o_1)\
+      &(s&, &bold(p_1), &bold(o_1)) #<def_qualifier_redundancy>\
+      &(s&, &bold(p_1), &b)\
+      &(b&, &bold(p_1), &bold(o_1))\
       &(b&, &p_i, &o_j) #<def_qualifier>\
   $
-  and staments such as @def_qualifier are called *qualifiers*.
+  and staments such as @def_qualifier are called *qualifiers*. @def_qualifier_redundancy is called *qualified property*.
 ]
 
-#remark[This definition follows the Wikibase implementation. The term "qualifier" is not used or specified in the RDF references @W3C_RDF_1.1_Reference @W3C_RDF_1.2_Proposal. The redundant statement @def_qualifier_redundancy is rectified through the necessity to resolve a query for an assertion of the form $(s, p_1, o_1)$.]
+#remark[This definition follows the Wikibase implementation, where the *qualified property* is displayed hierarchically above the qualifiers. The term and concept "qualifier" are *not* used or specified in the RDF references @W3C_RDF_1.1_Reference @W3C_RDF_1.2_Proposal. ]
 
 This method of describing information allows us to implicitly define new concepts. Any program dealing with qualifiers merely handles the explicit assertions for an anonymous concept. But, this anonymity poses a challenge to a human interpreter; implicit concepts usually remain unnamed (#todo[todo below (how does it work)]).
 
-#todo[How do qualifiers actually work in the context of the spec @W3C_RDF_1.2_Proposal? Do they use blank nodes?]
+#todo[
+  How do qualifiers actually work in the context of the spec @W3C_RDF_1.2_Proposal? Do they use blank nodes?
+  - They are not specified by RDF
+  - They *probably* use blank nodes. I need to do more research on this.
+]
 
-#todo[How do qualifiers get their name in Wikidata?]
+#todo[How do qualifiers get their name in Wikidata?
+- Don't understand the question. A qualified statement is specified by the first "qualifier" statement
+]
 
 #todo[Are qualifiers specific to an RDF implementation?]
 
