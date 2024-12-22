@@ -353,7 +353,7 @@ The definitions in this section follow the *RDF v1.2* specifications @W3C_RDF_1.
 === Blank nodes
 #todo[Write this section!]
 
-=== Modelling Information using Triples
+/*=== Modelling Information using Triples
 
 Suppose, that the assertion from @ex_spo_goethe is part of the A-box of an RDF database. It can be deducted that:
 #todo[such statements are called entailments]:
@@ -364,7 +364,7 @@ Suppose, that the assertion from @ex_spo_goethe is part of the A-box of an RDF d
 
 A computer still does not understand what it means to be educated at some place or where Leipzig is, but it can interact with this information in a formally correct way. The human operator can construe meaning, an interpretation grounded in the real world, in to the assertion. 
 
-However, for any structured querying to be possible, the databases ought to be filled according to certain conventions. Preferably such conventions that are interoperable with other data sources (see @heading_lod).
+However, for any structured querying to be possible, the databases ought to be filled according to certain conventions. Preferably such conventions that are interoperable with other data sources (see @heading_lod).*/
 
 === Qualifiers
 Most real-world relationships might present to be more complex than something one would want to model in a single triple. For example, one may want to express that "Goethe" was educated at the "University of Leipzig" from 3 October 1765 to 28 August 1768. One possibility is to let relationships have more than two operands, i.e. increase the arity by one for each additional parameter. "Educated at" would then be called "educated at (#sym.dot) from (#sym.dot) to (#sym.dot)". Another way using the limited triple syntax is to create an implicit object, that assists in modelling the relationship. We use it to describe a new concept; a human might be inclined to give it a name, e.g. "educated at for a certain time". The triples exemplify a *qualified statement* as seen in Wikibase instances: #todo[Rework formulation]
