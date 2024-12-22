@@ -47,14 +47,12 @@ pub fn graph_to_query_wasm(json: &str) -> String {
 }
 
 fn graph_to_query(connections: Vec<Connection>) -> String {
-    // get all Variables (?...), dont add literals to the selection
+    // get all Variables (?...), only add the source of a literal to the selection for the label lookup
     let projection_set = connections.iter()
                                 .flat_map(|connection| {
                                     if connection.target.isLiteral {
-                                        // only include the target if it's a literal
                                         vec![&connection.source]
                                     } else {
-                                        // otherwise include source, property and target
                                         vec![&connection.source, &connection.property, &connection.target]
                                     }
                                 })
@@ -62,7 +60,6 @@ fn graph_to_query(connections: Vec<Connection>) -> String {
                                 .map(|entity| entity.id.clone())
                                 .collect::<HashSet<_>>();
 
-    // sort all variables and join them like this: ?philosopher ?student ?...
     let projection_list = if projection_set.len() == 0 {
         String::from("*")
     } else {
@@ -71,7 +68,6 @@ fn graph_to_query(connections: Vec<Connection>) -> String {
         sorted_projection_set.join(" ")
     };
 
-    // filters for connections with url and gives them their namespace
     let prefix_set = connections.iter()
         .flat_map(|connection| {
             vec![&connection.source, &connection.target, &connection.property]
@@ -80,7 +76,6 @@ fn graph_to_query(connections: Vec<Connection>) -> String {
         .map(|entity| entity.prefix.clone())
         .collect::<HashSet<_>>();
 
-    // formats to corresponding wikibase/factgrid prefix
     let prefix_list = if prefix_set.len() == 0 { String::from("") } else {
         prefix_set.into_iter()
         // PREFIX wd: <http://www.wikidata.org/entity/>
@@ -89,34 +84,27 @@ fn graph_to_query(connections: Vec<Connection>) -> String {
         .join("\n")
     };
 
-
-    // creates the subject predicate object triples for the where clause
     let where_clause: String = connections.iter()
         .map(|connection| {
-            // wd:Q1234
             let source_uri = if connection.source.prefix.uri.is_empty() {
                 connection.source.id.clone() // Clone the String to avoid moving it
             } else {
                 format!("{}:{}", connection.source.prefix.abbreviation, connection.source.id)
             };
 
-            // wd:P1234
             let property_uri = if connection.property.prefix.uri.is_empty() {
                 connection.property.id.clone() // Clone the String to avoid moving it
             } else {
                 format!("{}:{}", connection.property.prefix.abbreviation, connection.property.id)
             };
 
-            // wd:Q1234
             let target_uri = if connection.target.prefix.uri.is_empty() {
                 connection.target.id.clone() // Clone the String to avoid moving it
             } else {
                 format!("{}:{}", connection.target.prefix.abbreviation, connection.target.id)
             };
 
-
             let indentation = " ".repeat(INDENTATION_COUNT);
-
 
             if connection.target.isLiteral{
                 let language = connection.target.dataSource.preferredLanguages[0].clone();
