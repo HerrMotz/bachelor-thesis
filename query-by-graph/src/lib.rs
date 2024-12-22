@@ -49,12 +49,18 @@ pub fn graph_to_query_wasm(json: &str) -> String {
 fn graph_to_query(connections: Vec<Connection>) -> String {
     // get all Variables (?...), dont add literals to the selection
     let projection_set = connections.iter()
-                                 .flat_map(|connection| {
-                                     vec![&connection.source, &connection.target, &connection.property]
-                                 })
-                                 .filter(|entity| entity.id.starts_with('?') && (!entity.isLiteral))
-                                 .map(|entity| entity.id.clone())
-                                 .collect::<HashSet<_>>();
+                                .flat_map(|connection| {
+                                    if connection.target.isLiteral {
+                                        // only include the target if it's a literal
+                                        vec![&connection.source]
+                                    } else {
+                                        // otherwise include source, property and target
+                                        vec![&connection.source, &connection.property, &connection.target]
+                                    }
+                                })
+                                .filter(|entity| entity.id.starts_with('?'))
+                                .map(|entity| entity.id.clone())
+                                .collect::<HashSet<_>>();
 
     // sort all variables and join them like this: ?philosopher ?student ?...
     let projection_list = if projection_set.len() == 0 {
@@ -111,45 +117,32 @@ fn graph_to_query(connections: Vec<Connection>) -> String {
 
             let indentation = " ".repeat(INDENTATION_COUNT);
 
-            let literal_target = if connection.target.isLiteral {
-                let language = connection.target.dataSource.preferredLanguages[0].clone();
-                format!("{}{} rdfs:label \"{}\"@{} .\n", 
-                    indentation,
-                    target_uri,
-                    connection.target.label,
-                    language
-                )
-            } else {
-                String::new()
-            };
 
-            // from a semantic point it doesnt make sense to allow literals as subjects (they can only be objects)
-            // but for consistancy it is still added
-            let literal_source = if connection.source.isLiteral {
-                let language = connection.source.dataSource.preferredLanguages[0].clone();
-                format!("{}{} rdfs:label \"{}\"@{} .\n", 
+            if connection.target.isLiteral{
+                let language = connection.target.dataSource.preferredLanguages[0].clone();
+                format!(
+                    "{}{} rdfs:label \"{}\"@{} .\n{}# {} -- [Literal] -> {}\n",
                     indentation,
                     source_uri,
+                    connection.target.label,
+                    language,
+                    indentation,
                     connection.source.label,
-                    language
+                    connection.target.label
                 )
             } else {
-                String::new()
-            };
-
-            format!(
-                "{}{} {} {} .\n{}{}{}# {} -- [{}] -> {}\n",
-                indentation,
-                source_uri,
-                property_uri, 
-                target_uri,
-                literal_source,
-                literal_target,
-                indentation,
-                connection.source.label,
-                connection.property.label,
-                connection.target.label
-            )
+                format!(
+                    "{}{} {} {} .\n{}# {} -- [{}] -> {}\n",
+                    indentation,
+                    source_uri,
+                    property_uri, 
+                    target_uri,
+                    indentation,
+                    connection.source.label,
+                    connection.property.label,
+                    connection.target.label
+                )
+            }
         })
         .collect();
 

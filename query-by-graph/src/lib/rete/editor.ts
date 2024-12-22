@@ -174,13 +174,12 @@ export async function createEditor(container: HTMLElement) {
             increaseVariablePropCounter = true;
         }
 
-        if (context.type === "pointerdown") { // Left click
+        // Matches alt + leftclick, can be changed as needed
+        if (context.type === "pointerdown") { 
             const event = context.data.event;
 
             if(event.altKey && event.button===0)
             {
-                console.log("Leftclick");
-                console.log("Root");
                 event.preventDefault();
                 event.stopPropagation();
                 
