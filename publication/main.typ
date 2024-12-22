@@ -60,6 +60,7 @@
     ("RDFS", "Resource Description Framework Schema (Ontology within RDF)"),
     ("SPARQL", "SPARQL Protocol And RDF Query Language (recursive acronym)"),
     ("IRI", [Internationalised Resource Identifier (see @heading_iri)]),
+    ("Wikibase", [A popular RDF store implementation]),
     ("OWL", "Web Ontology Language"),
     ("VQG", "Visual Query Graph (user-built query graph)"),
     ("API", "Application Programming Interface"),
@@ -274,6 +275,8 @@ The W3C#sym.trademark.registered recommends a standard for exchange of semantica
 
 - the query language SPARQL (see @sparql_heading).
 
+This chapter introduces the parts of the recommendation which are relevant to this work and builds a bridge to concrete conventions around RDF, i.#sym.space.punct\e. Wikibase. 
+
 #todo[
 - What are alternatives to RDF databases?
 - How do RDF databases work?
@@ -282,6 +285,10 @@ The W3C#sym.trademark.registered recommends a standard for exchange of semantica
 
 #todo[
   What is a reifier good for/used for (irl)?
+]
+
+#todo[
+  Important resource: https://www.mediawiki.org/wiki/Wikibase/Indexing/RDF_Dump_Format#Prefixes_used
 ]
 
 === Graphs and Triples <heading_triples>
@@ -384,20 +391,23 @@ $
 $ <assertions_goethe_education_revised>
 
 #definition[
-  Let 
-  $s in L union I$ be a specific subject,#sym.space.med
-  $p_i in P' subset.eq I, i in NN$ an arbitrary collection of predicates,#sym.space.med
-  $o_j in O' subset.eq L union I, j in NN$ an arbitrary collection of objects,#sym.space.med
+  Let $Sigma$ be an alphabet and $Sigma^*$ its Kleene closure. Let
+  $f_1, f_2 in Sigma^*$ be IRI prefixes with $f_1 != f_2$,
+  $s in I$ be a specific subject,#sym.space.med
+  $Q:= { x | u in Sigma^* and x = f_1 compose u}$ a set of qualifier IRIs with $q_i in Q, i in NN$,#sym.space.med 
+  $P:= { x | u in Sigma^* and x = f_2 compose u}$ a set of predicate IRIs, with $P sect Q = emptyset$,#sym.space.med
+  with the limitation that $q_1 = f_2 compose u <=> p = f_1 compose u, u in Sigma^*$,#sym.space.med
+  $o_j in O subset.eq L union I, j in NN$ an arbitrary collection of objects,#sym.space.med
   $b in B$ a blank node. 
   Then, a *qualified statement* is defined as a set containing the triples
-  #todo[I think this is wrong. Wikibase uses a special prefix "pq" for qualifiers.]
   $
-      &(s&, &bold(p_1), &bold(o_1)) #<def_qualifier_redundancy>\
-      &(s&, &bold(p_1), &b)\
-      &(b&, &bold(p_1), &bold(o_1))\
-      &(b&, &p_i, &o_j) #<def_qualifier>\
+      &(s&, &bold(p), &b)\
+      &(b&, &bold(q_1), &bold(o_1))\
+      &(b&, &q_2, &o_2) #<def_qualifier>\
+      &(b&, &q_3, &o_3)\
+      & #h(22pt) dots.v
   $
-  and staments such as @def_qualifier are called *qualifiers*. @def_qualifier_redundancy is called *qualified property*.
+  and staments such as @def_qualifier are called *qualifiers* and $bold(p)$ is called *qualified property*.
 ]
 
 #remark[This definition follows the Wikibase implementation, where the *qualified property* is displayed hierarchically above the qualifiers. The term and concept "qualifier" are *not* used or specified in the RDF references @W3C_RDF_1.1_Reference @W3C_RDF_1.2_Proposal. ]
@@ -475,6 +485,10 @@ Novel to current work:
 + Qualifiers are visualised more intuitively (see Simons Blog @Simons_Blog_Entry_Graphic_query)
 + Multiple data sources and clear prefixes #todo[Check, whether this is actually new]
 + ... more?
+
+#todo[
+  Mention the reason for use of wdt prefix (https://www.mediawiki.org/wiki/Wikibase/Indexing/RDF_Dump_Format#Truthy_statements)
+]
 
 == SPARQL-OWL Mapping
 
