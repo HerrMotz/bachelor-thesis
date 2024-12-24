@@ -23,3 +23,14 @@ SELECT ?variable1 WHERE {
     # Johann Wolfgang von Goethe -- [Variable] -> Leipzig University
 }")
 }
+
+#[wasm_bindgen_test]
+fn graph_to_query_works() {
+    query_to_graph("SELECT ?3 WHERE { <http://www.wikidata.org/entity/Q5879> ?3 <http://www.wikidata.org/entity/Q152838> .}");
+}
+
+#[wasm_bindgen_test]
+fn serialize_graph() {
+    let graph = query_to_graph("SELECT ?3 WHERE { <http://www.wikidata.org/entity/Q5879> ?3 <http://www.wikidata.org/entity/Q152838> .}");
+    print!("{:?}", to_string(&graph).unwrap())
+}

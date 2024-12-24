@@ -2,7 +2,7 @@ mod utils;
 
 use std::collections::HashSet;
 use wasm_bindgen::prelude::*;
-use serde_json::from_str;
+use serde_json::{from_str, to_string};
 use serde::{Deserialize, Serialize};
 use crate::utils::set_panic_hook;
 use spargebra::{Query, SparqlSyntaxError};
@@ -127,14 +127,13 @@ fn parse_query(query: &str) -> Result<Query, SparqlSyntaxError> {
     Query::parse(query, None)
 }
 
-pub fn bgp_to_graph(bgp: Vec<TriplePattern>) -> Vec<Connection> {
+fn bgp_to_graph(bgp: Vec<TriplePattern>) -> Vec<Connection> {
     bgp.iter().map(
         |pattern| {
             Connection {
                 property: Entity {
                     id: pattern.predicate.to_string(),
                     label: "Variable".to_string(),
-                    description: "".to_string(),
                     prefix: Prefix {
                         uri: "".to_string(),
                         abbreviation: "".to_string(),
@@ -143,7 +142,6 @@ pub fn bgp_to_graph(bgp: Vec<TriplePattern>) -> Vec<Connection> {
                 source: Entity {
                     id: pattern.subject.to_string(),
                     label: pattern.subject.to_string(),
-                    description: "".to_string(),
                     prefix: Prefix {
                         uri: "".to_string(),
                         abbreviation: "".to_string(),
@@ -152,7 +150,6 @@ pub fn bgp_to_graph(bgp: Vec<TriplePattern>) -> Vec<Connection> {
                 target: Entity {
                     id: pattern.object.to_string(),
                     label: pattern.object.to_string(),
-                    description: "".to_string(),
                     prefix: Prefix {
                         uri: "".to_string(),
                         abbreviation: "".to_string(),
@@ -164,11 +161,11 @@ pub fn bgp_to_graph(bgp: Vec<TriplePattern>) -> Vec<Connection> {
 }
 
 #[wasm_bindgen]
-pub fn query_to_graph_wasm(query: &str) -> Vec<Connection> {
+pub fn query_to_graph_wasm(query: &str) -> String {
     // for better errors logging in the web browser
     set_panic_hook();
 
-    query_to_graph_wasm(query)
+    to_string(&query_to_graph(query))
 }
 
 /// We get a query, can be a SELECT query or something else.
@@ -198,7 +195,6 @@ fn default_connection() -> Connection {
         property: Entity {
             id: "".to_string(),
             label: "".to_string(),
-            description: "".to_string(),
             prefix: Prefix {
                 uri: "".to_string(),
                 abbreviation: "".to_string(),
@@ -207,7 +203,6 @@ fn default_connection() -> Connection {
         source: Entity {
             id: "".to_string(),
             label: "".to_string(),
-            description: "".to_string(),
             prefix: Prefix {
                 uri: "".to_string(),
                 abbreviation: "".to_string(),
@@ -216,28 +211,10 @@ fn default_connection() -> Connection {
         target: Entity {
             id: "".to_string(),
             label: "".to_string(),
-            description: "".to_string(),
             prefix: Prefix {
                 uri: "".to_string(),
                 abbreviation: "".to_string(),
             },
         },
-    }
-}
-
-
-#[cfg(test)]
-mod tests {
-    use serde_json::to_string;
-    use super::*;
-    #[test]
-    fn graph_to_query_works() {
-        query_to_graph("SELECT ?3 WHERE { <http://www.wikidata.org/entity/Q5879> ?3 <http://www.wikidata.org/entity/Q152838> .}");
-    }
-
-    #[test]
-    fn serialize_graph() {
-        let graph = query_to_graph("SELECT ?3 WHERE { <http://www.wikidata.org/entity/Q5879> ?3 <http://www.wikidata.org/entity/Q152838> .}");
-        print!("{:?}", to_string(&graph).unwrap())
     }
 }
