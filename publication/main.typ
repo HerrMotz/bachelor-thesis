@@ -172,7 +172,7 @@ So, how could this process be eased, whilst not giving up the advantages of comp
 
 This "formalise as you go"-approach allows for maximal flexibility of the data model and proves advantageous e.g. in the digital humanities. Recently, historians, among others, started to use centralised RDF databases, allowing for collaboration on research questions and finding connections between the results from different researchers. A grand initiative called FactGrid#footnote[http://factgrid.de -- based out of Erfurt/Gotha/Jena] advertises the use of their public RDF database in the hope of creating synergy effects for future research.
 
-This directly leads to the relevance of this work: RDF databases can only be potently queried using a query language called SPARQL. Most researchers working in the human sciences, such as history, do not have a degree in computer science. Therefore the creation of SPARQL queries pose a challenge. Visual query helpers #todo[list them here] exist, but are limited in their query complexity #todo[quote]. The aim of this work is to lay the groundwork for a visual query builder, which enables a previously unintroduced user to create maximally complex SPARQL queries using a visual interface. This work is heavily inspired by Olaf Simons @Simons_Blog_Entry_Graphic_query.
+This directly leads to the relevance of this work: RDF databases can only be potently queried using a query language called SPARQL. Most historians will not find the time to study such arbitrary technicalities in-depth. Heavily inspired by Olaf Simons' comment on the allure of a visual query interface, we compared with other visual query helpers #todo[list them here] exist and found them to lack important features in the interaction with one of the most popular knowledge base platforms, such as Wikibase. Therefore, the aim of this work is to lay the groundwork for a visual query builder, which enables a previously unintroduced user to create complex SPARQL queries on Wikibase instances.
 
 /*
 Most factual knowledge can easily be written in terms of relations between individuals.
@@ -198,11 +198,26 @@ This thesis aims to explore methods and concrete implementation, which guides th
 
 - allow changes to the SPARQL-select-query, which will in turn change the graph in the visual interface
 
-For this, I decided to develop a web application, which at its heart has Rust-code to translate visually built queries to SPARQL queries.#footnote[The code is publicly available at #link("https://github.com/HerrMotz/bachelor-thesis/")[`github.com/HerrMotz/bachelor-thesis`].]
+It will use Wikibase-specific features/conventions, such as:
+- the fuzzy search API,
+
+- the metainfo API and
+
+- RDF constructs, such as Qualifiers (see @heading_qualifiers).
+
+The concrete improvements are:
+
+- advancing over @heading_rdf_explorer, Query by Graph offers a special visual element for qualifiers as proposed by @Simons_Blog_Entry_Graphic_query,
+
+- a more intuitive user interface and
+
+- the ability to create federated queries.
+
+For this, I decided to develop a lightweight web application, which at its heart has Rust-code to translate visually built queries to SPARQL queries and vice versa#footnote[The code is publicly available at #link("https://github.com/HerrMotz/bachelor-thesis/")[`github.com/HerrMotz/bachelor-thesis`].]. The program is already in practical application at the time of writing. Changes to the code have been made by a team from the digital humanities at the Friedrich Schiller University Jena under my lead. Any changes which do not originate from my work are clearly marked in the code repository.#todo[lasse ich das wirklich so stehen?]
 
 == Related Works
 
-=== RDF Explorer
+=== RDF Explorer <heading_rdf_explorer>
 
 The approach by Vargas et al. @Vargas2019_RDF_Explorer is to show all possible assertions about an object #todo[Is "object" the right word?] already while building the query. The goal is to guide the formulation of the user's question from a known starting point. This approach uses a fuzzy search prompt for an RDF resource as a starting point. After adding an object from the prompt results to the drawing board, the user can select from a list of all relations to other objects to augment the prompt. The user may also leave the relation unspecified, add a new object and select from a list of all assertions between these two objects. A user may just as well choose to let any object or property be a variable.
 
@@ -397,7 +412,10 @@ However, for any structured querying to be possible, the databases ought to be f
 ]
 
 === RDF Mapping in Wikibase
-Wikibase has a strict data model on top of RDF @wikibase_rdf_mapping_article. An *Item* conists of a whole set of necessary triples. See @fig:rdf_mapping for an impression. Most relevant to this work are the prefix conventions of Wikibase, which will come to play in @heading_qualifiers.
+Wikibase is one of the most widely used softwares for community knowledge bases, storing ~115 million data items. Wikibase instances, such as Wikidata, allow for a mapping from their internal storage to an expression in RDF syntax @wikibase_rdf_mapping_article. (See @fig:rdf_mapping for an impression.) This enables the use of RDF terminology to refer to structures within Wikibase. Also relevant to this work are the prefix conventions of Wikibase, which will come to play in @heading_qualifiers.
+
+==== Wikibase terminology
+A thing is referred to as an *Item* and assigned a unique *Q-Number* within a Wikibase instance. Any predicate is called *Property* and assigned a unique *P-Number*.
 
 #figure(caption: [An excerpt of IRI prefixes defined by Wikidata],
 ```HTML
