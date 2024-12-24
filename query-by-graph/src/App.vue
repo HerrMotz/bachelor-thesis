@@ -1,14 +1,12 @@
 <script setup lang="ts">
-import {onMounted, ref, shallowRef} from 'vue';
+import {onMounted, ref, shallowRef, watch} from 'vue';
 import {createEditor} from "./lib/rete/editor.ts";
 import { ClassicPreset } from 'rete';
 
-import {graph_to_query_wasm} from "../pkg";
+import {graph_to_query_wasm, query_to_graph_wasm} from "../pkg";
 
 import {VueMonacoEditor} from '@guolao/vue-monaco-editor'
 import * as monaco from "monaco-editor"
-
-import WikibaseDataService from './lib/wikidata/WikibaseDataService.ts'
 
 monaco.editor.defineTheme('custom-theme', {
   base: 'vs', // Use 'vs-light' as the base theme
@@ -50,8 +48,9 @@ import Button from "./components/Button.vue";
 import ConnectionInterfaceType from "./lib/types/ConnectionInterfaceType.ts";
 import ClipboardButton from "./components/ClipboardButton.vue";
 import QueryButton from './components/QueryButton.vue';
+import WikibaseDataService from './lib/wikidata/WikibaseDataService.ts';
 import { selectedDataSource, dataSources } from './store.ts';
-import WikibaseDataSource from "./lib/types/WikibaseDataSource.ts";
+
 
 interface Editor {
   setVueCallback: (callback: (context: any) => void) => void;
@@ -66,6 +65,12 @@ const editor = ref<Editor | null>();  // Define the type of editor as Promise<Ed
 const rete = ref();
 
 const code = ref("");
+
+watch(code, async(newValue, _) => {
+  console.log("code changed")
+  const graph = query_to_graph_wasm(newValue);
+  console.log("graph", graph)
+})
 
 const selectedNode = ref<{ id: any; label: any; entityId: any; metadata: any; dataSource: any } | null>(null);
 
@@ -96,8 +101,8 @@ onMounted(async () => {
         setTimeout(() => {
           const connections = editor.value!.exportConnections()
           // DEBUG
-          // console.log("The connections in App.vue")
-          // console.log(connections)
+          console.log("The connections in App.vue")
+          console.log(connections)
           code.value = graph_to_query_wasm(JSON.stringify(connections));
           formatCode();
         }, 10);
@@ -141,9 +146,11 @@ const copyToClipboard = () => {
   navigator.clipboard.writeText(code.value);
 }
 
-const setDataSource = (source: WikibaseDataSource) => {
-  selectedDataSource.value = source;
-  console.log('selectedDataSource updated to:', selectedDataSource.value);
+const setDataSource = (source: keyof typeof dataSources) => {
+  if (dataSources[source]) {
+    selectedDataSource.value = dataSources[source];
+    console.log('selectedDataSource updated to:', selectedDataSource.value);
+  }
 };
 
 const gotoLink = (url?: string) => {
@@ -307,15 +314,15 @@ const gotoLink = (url?: string) => {
           </div>
         </div>
       </div>
-      <div class="mt-10 w-full rounded-t-2xl border-2 border-black">
+      <div class="mt-10 w-full">
         <div class="bg-amber-100 rounded-t-2xl p-4">
           <!-- This has the same propeties as the toolbox heading -->
           <h2 class="font-semibold text-xl flex justify-between">
             <span>Generated SPARQL Query</span>
-            <span class="flex items-center space-x-2">
+            <div class="flex items-center space-x-2">
               <ClipboardButton @click="copyToClipboard();" />
               <QueryButton @click="gotoLink(selectedDataSource.queryService);" />
-            </span>
+            </div>
           </h2>
           <span class="text-sm font-medium block">
                 This contains the generated SPARQL code. It is updated with every change in the editor.
