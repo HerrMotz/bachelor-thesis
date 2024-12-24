@@ -165,7 +165,7 @@ pub fn query_to_graph_wasm(query: &str) -> String {
     // for better errors logging in the web browser
     set_panic_hook();
 
-    to_string(&query_to_graph(query))
+    to_string(&query_to_graph(query)).unwrap()
 }
 
 /// We get a query, can be a SELECT query or something else.
