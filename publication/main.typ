@@ -169,9 +169,9 @@ The currently most used search engine, Google, uses of course Network Analysis b
 
 So, how could this process be eased, whilst not giving up the advantages of computer-processability? Originally conceptualised by Tim Berners-Lee, the W3C#sym.trademark.registered standardised the Resource Description Framework (RDF). While an ontology consist of a theory (T-Box) and assertions (A-Box, statements which are in compliance with the theory) a RDF knowledge base can consist purely of an A-Box. The T-Box is quietly implicit. Using an RDF schema, a taxonomy can be added (at any time), usually using an "instance-of" assertion, but consistency is no inherent obligation of an RDF database#footnote[although it is obviously good practice to be consistent with the RDF schema].
 
-This "formalise as you go"-approach allows for maximal flexibility of the data model and proves advantageous e.g. in the digital humanities. Recently, historians, among others, started to use centralised RDF databases, allowing for collaboration on research questions and finding connections between the results from different researchers. A grand initiative called FactGrid#footnote[http://factgrid.de -- based out of Erfurt/Gotha/Jena] advertises the use of their public RDF database in the hope of creating synergy effects for future research.
+This "formalise as you go"-approach allows for maximal flexibility of the data model and proves advantageous e.g. in the digital humanities. Recently, historians, among others, started to use centralised RDF databases, allowing for collaboration on research questions and finding connections between the results from different researchers. A grand initiative called FactGrid#footnote[http://factgrid.de] advertises the use of their public RDF database in the hope of creating synergy effects for future research.
 
-This directly leads to the relevance of this work: RDF databases can only be potently queried using a query language called SPARQL. Most historians will not find the time to study such arbitrary technicalities in-depth. Heavily inspired by Olaf Simons' comment on the allure of a visual query interface, we compared with other visual query helpers #todo[list them here] exist and found them to lack important features in the interaction with one of the most popular knowledge base platforms, such as Wikibase. Therefore, the aim of this work is to lay the groundwork for a visual query builder, which enables a previously unintroduced user to create complex SPARQL queries on Wikibase instances.
+This directly leads to the relevance of this work: RDF databases can only be potently queried using a query language called SPARQL. Most historians will not find the time to study such arbitrary technicalities in-depth. Heavily inspired by Olaf Simons' comment on the allure of a visual query interface, we reviewed several visual query helpers #todo[list them here] and found them to have room for improvement in routine use. The aim of this work is to lay the groundwork for a visual query builder, which enables a previously unintroduced user to create complex SPARQL queries on Wikibase instances in daily use.
 
 /*
 Most factual knowledge can easily be written in terms of relations between individuals.
@@ -411,7 +411,7 @@ However, for any structured querying to be possible, the databases ought to be f
 ]
 
 === RDF Mapping in Wikibase
-Wikibase is one of the most widely used softwares for community knowledge bases, storing ~115 million data items. Wikibase instances, such as Wikidata, allow for a mapping from their internal storage to an expression in RDF syntax @wikibase_rdf_mapping_article. (See @fig:rdf_mapping for an impression.) This enables the use of RDF terminology to refer to structures within Wikibase. Also relevant to this work are the prefix conventions of Wikibase, which will come to play in @heading_qualifiers.
+Wikibase is one of the most widely used softwares for community knowledge bases, storing \~115 million data items. Wikibase instances, such as Wikidata#footnote[http://wikidata.org --- an initiative for a free community knowledge base], allow for a mapping from their internal storage to an expression in RDF syntax @wikibase_rdf_mapping_article. (See @fig:rdf_mapping for an impression.) This invertible mapping permits the use of RDF terminology to refer to structures within Wikibase. Also relevant to this work are the prefix conventions of Wikibase, which will come to play in @heading_qualifiers.
 
 ==== Wikibase terminology
 A thing is referred to as an *Item* and assigned a unique *Q-Number* within a Wikibase instance. Any predicate is called *Property* and assigned a unique *P-Number*.
@@ -434,7 +434,7 @@ PREFIX wikibase: <http://wikiba.se/ontology#>
 )
 
 #figure(caption: [Informal overview of Wikibase conventions for\ mapping information about an Item to the RDF standard @wikibase_rdf_mapping_graphic],
-  image("rdf_mapping.svg")
+  image("rdf_mapping.svg", width: 87%)
 ) <fig:rdf_mapping>
 
 === Qualifiers <heading_qualifiers>
