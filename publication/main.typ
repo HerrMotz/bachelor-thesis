@@ -69,7 +69,6 @@
     ("RDFS", "Resource Description Framework Schema (Ontology within RDF)"),
     ("SPARQL", "SPARQL Protocol And RDF Query Language (recursive acronym)"),
     ("IRI", [Internationalised Resource Identifier (see @heading_iri)]),
-    ("Wikibase", [A popular RDF store implementation]),
     ("OWL", "Web Ontology Language"),
     ("VQG", "Visual Query Graph (user-built query graph)"),
     ("API", "Application Programming Interface"),
