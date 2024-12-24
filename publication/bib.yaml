@@ -357,6 +357,15 @@ wikibooks_sparql_qualifiers:
     value: https://en.wikibooks.org/wiki/SPARQL/WIKIDATA_Qualifiers,_References_and_Ranks
     date: 2024-11-1
 
+wikidata_sparql_qualifiers:
+  type: misc
+  title: 'Wikidata Help:Qualifiers'
+  author: 'Wikidata contributors'
+  date: 2024
+  url: 
+    value: https://www.wikidata.org/wiki/Help:Qualifiers
+    date: 2024-11-1
+
 terhorst_Completeness_of_RDF:
   type: article
   title: Completeness, decidability and complexity of entailment for RDF Schema and a semantic extension involving the OWL vocabulary
@@ -373,3 +382,38 @@ terhorst_Completeness_of_RDF:
     title: Journal of Web Semantics
     issue: 2
     volume: 3
+
+Simons_Blog_Entry_Graphic_query:
+  type: blog
+  title: "In einer Graphdatenbank müsste man eigentlich auch graphisch suchen können"
+  author: Simons, Olaf
+  date: 2022-04-01
+  url:
+    value: https://blog.factgrid.de/archives/2596
+    date: 2024-10-01
+  
+
+w3c_iri_paper:
+  type: misc
+  title: Internationalized Resource Identifiers (IRIs)
+  author: Group, Internationalization Interest
+  date: 2001
+  url: 
+    value: https://www.w3.org/2001/Talks/0912-IUC-IRI/paper.html
+    date: 2024-12-20
+
+
+wikibase_rdf_mapping_graphic:
+  type: repository
+  title: "Wikibase RDF Mapping Graphic"
+  author: Schönitzer, Michael F.
+  url:
+    value: https://commons.wikimedia.org/w/index.php?curid=63880194
+  note: "Licensed under CC BY 4.0, no changes made"
+
+
+wikibase_rdf_mapping_article:
+  type: reference
+  title: "Wikibase RDF Mapping Article"
+  url:
+    value: https://www.mediawiki.org/wiki/Wikibase/Indexing/RDF_Dump_Format
