@@ -19,7 +19,7 @@ pub struct Entity {
 }
 
 #[derive(Serialize, Deserialize, Clone, Eq, Hash, PartialEq)]
-struct Prefix {
+pub struct Prefix {
     uri: String,
     abbreviation: String,
 }
@@ -133,7 +133,7 @@ fn bgp_to_graph(bgp: Vec<TriplePattern>) -> Vec<Connection> {
             Connection {
                 property: Entity {
                     id: pattern.predicate.to_string(),
-                    label: "Variable".to_string(),
+                    label: pattern.predicate.to_string(),
                     prefix: Prefix {
                         uri: "".to_string(),
                         abbreviation: "".to_string(),
