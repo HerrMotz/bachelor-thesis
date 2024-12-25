@@ -23,7 +23,8 @@ SELECT ?relation WHERE {
 #[test]
 fn serialize_graph() {
     let graph = query_to_graph_wasm("SELECT ?3 WHERE { <http://www.wikidata.org/entity/Q5879> ?3 <http://www.wikidata.org/entity/Q152838> .}");
-    print!("{:?}", to_string(&graph).unwrap())
+    print!("{:?}", to_string(&graph).unwrap());
+    assert_eq!(graph, "")
 }
 
 

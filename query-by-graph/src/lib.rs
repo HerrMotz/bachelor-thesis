@@ -130,32 +130,11 @@ fn parse_query(query: &str) -> Result<Query, SparqlSyntaxError> {
 fn bgp_to_graph(bgp: Vec<TriplePattern>) -> Vec<Connection> {
     bgp.iter().map(
         |pattern| {
-            Connection {
-                property: Entity {
-                    id: pattern.predicate.to_string(),
-                    label: pattern.predicate.to_string(),
-                    prefix: Prefix {
-                        uri: "".to_string(),
-                        abbreviation: "".to_string(),
-                    },
-                },
-                source: Entity {
-                    id: pattern.subject.to_string(),
-                    label: pattern.subject.to_string(),
-                    prefix: Prefix {
-                        uri: "".to_string(),
-                        abbreviation: "".to_string(),
-                    },
-                },
-                target: Entity {
-                    id: pattern.object.to_string(),
-                    label: pattern.object.to_string(),
-                    prefix: Prefix {
-                        uri: "".to_string(),
-                        abbreviation: "".to_string(),
-                    },
-                },
-            }
+            connection_constructor(
+                pattern.subject.to_string(), 
+                pattern.predicate.to_string(), 
+                pattern.object.to_string()
+            )
         }
     ).collect()
 }
@@ -182,35 +161,37 @@ fn query_to_graph(query: &str) -> Vec<Connection> {
     match parsed_query {
         Ok(Query::Select { pattern: p, .. }) => match p {
             GraphPattern::Bgp { patterns: bgp } => bgp_to_graph(bgp),
-            GraphPattern::Path { .. } => vec![default_connection()],
-            _ => vec![default_connection()]
+            GraphPattern::Path { 
+                subject: s, 
+                path: p, 
+                object: o 
+            } => vec![connection_constructor(s.to_string(), p.to_string(), o.to_string())],
+            _ => vec![]
         },
-        _ => vec![default_connection()],
+        _ => vec![],
     }
 }
-
-// Helper function to generate a default `Connection` object.
-fn default_connection() -> Connection {
+fn connection_constructor(subject_name: String, predicate_name: String, object_name: String) -> Connection {
     Connection {
         property: Entity {
-            id: "".to_string(),
-            label: "".to_string(),
+            id: predicate_name.clone(),
+            label: predicate_name.clone(),
             prefix: Prefix {
                 uri: "".to_string(),
                 abbreviation: "".to_string(),
             },
         },
         source: Entity {
-            id: "".to_string(),
-            label: "".to_string(),
+            id: subject_name.clone(),
+            label: subject_name.clone(),
             prefix: Prefix {
                 uri: "".to_string(),
                 abbreviation: "".to_string(),
             },
         },
         target: Entity {
-            id: "".to_string(),
-            label: "".to_string(),
+            id: object_name.clone(),
+            label: object_name.clone(),
             prefix: Prefix {
                 uri: "".to_string(),
                 abbreviation: "".to_string(),
