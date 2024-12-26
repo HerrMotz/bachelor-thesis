@@ -68,7 +68,7 @@
     ("RDF", "Resource Description Framework"),
     ("RDFS", "Resource Description Framework Schema (Ontology within RDF)"),
     ("SPARQL", "SPARQL Protocol And RDF Query Language (recursive acronym)"),
-    ("IRI", [Internationalised Resource Identifier (see @heading_iri)]),
+    ("IRI", [Internationalised Resource Identifier (see @heading:iri)]),
     ("OWL", "Web Ontology Language"),
     ("VQG", "Visual Query Graph (user-built query graph)"),
     ("API", "Application Programming Interface"),
@@ -163,15 +163,15 @@ I should also state some general information:
 == Problem <problem_heading>
 Much of the mankind's knowledge is stored in the format of natural language, which can not be accessed without following these steps: 1. rough research on a topic, 2. formulate a question using this map, 3. finding relevant literature to the question, 4. reading the literature, 5. extracting the relevant facts and, 6. reading more literature because the question is more complex than you thought 7. inferring an answer from the retrieved facts. This process can prove to be tedious and many of these steps have been eased for us -- may it be in the form of a librarian or a search engine.
  
-The currently most used search engine, Google, uses of course Network Analysis but also Natural Language Processing (NLP) to identify the most relevant results to a topic. And just in recent years Large Language Models (LLMs) have shown interesting capabilities in compressing loads of knowledge using statistical analysis. A LLM is capable of giving an outline of any given topic or question, similar to a librarian, however any response is endangered by confabulation and ought to be verified. So, we successfully taught the computer to handle natural language for specific use cases somewhat reliably. But we might just go the last mile and ...
+The currently most used search engine, Google, uses of course Network Analysis but also Natural Language Processing (NLP) to identify the most relevant results to a topic. And just in recent years Large Language Models (LLMs) have shown interesting capabilities in compressing loads of knowledge using statistical analysis. An LLM is capable of giving an outline of any given topic or question, similar to a librarian, however any response is endangered by confabulation and ought to be verified. So, engineers successfully taught the computer to handle natural language for specific use cases somewhat reliably. But we might just go the last mile and ...
 
-... let humans formalise knowledge in a computer readable format. Using a formal ontology any given relationship can be theorised and translated into a form processible by computers. This poses as a two-fold advantage: Any statement is put down in clearly interpretable terms and is viewed agnostically concerning eloquence. The difficulty of a formal ontology however, is to think of all (or at least most) things ought to represented in advance. Therefore, ontologies require careful deliberation and their genesis usually goes by the saying: "Many cooks spoil the broth". Collaboration in ontology development is a real challenge but a necessity. Yet, it is difficult to find one ontology to fit all needs.
+... let humans formalise knowledge in a computer-processible format. Using a formal ontology, any given relationship can be theorised #todo[Check whether I can make this statement]. This presents a two-fold advantage: Any statement is expressed in clearly interpretable terms and is viewed independently of any natural language constructs. The difficulty with formal ontologies, however, is anticipating all (or at least most) things and relations that need to be represented in advance. Therefore, ontologies require careful deliberation and their genesis usually goes by the saying: "Many cooks spoil the broth". Collaboration in ontology development is a real challenge, but a necessity.
 
-So, how could this process be eased, whilst not giving up the advantages of computer-processability? Originally conceptualised by Tim Berners-Lee, the W3C#sym.trademark.registered standardised the Resource Description Framework (RDF). While an ontology consist of a theory (T-Box) and assertions (A-Box, statements which are in compliance with the theory) a RDF knowledge base can consist purely of an A-Box. The T-Box is quietly implicit. Using an RDF schema, a taxonomy can be added (at any time), usually using an "instance-of" assertion, but consistency is no inherent obligation of an RDF database#footnote[although it is obviously good practice to be consistent with the RDF schema].
+So, how could this process avoided (or even supported), whilst not giving up the advantages of computer-processability? Originally conceptualised by Tim Berners-Lee, the W3C#sym.trademark.registered standardised the Resource Description Framework (RDF). While an ontology consist of a theory (T-Box) and assertions (A-Box, statements which are in compliance with the theory) a RDF knowledge base can consist purely of an A-Box. The T-Box is quietly implicit. Using an RDF schema, a taxonomy can be added (at any time), usually using an "instance-of" assertion, but consistency is no inherent obligation of an RDF database#footnote[although it is obviously good practice to be consistent with the RDF schema].
 
-This "formalise as you go"-approach allows for maximal flexibility of the data model and proves advantageous e.g. in the digital humanities. Recently, historians, among others, started to use centralised RDF databases, allowing for collaboration on research questions and finding connections between the results from different researchers. A grand initiative called FactGrid#footnote[http://factgrid.de] advertises the use of their public RDF database in the hope of creating synergy effects for future research.
+This "formalise as you go"-approach allows for maximal flexibility of the data model and proves advantageous, e.g. in the digital humanities. Recently, historians, among others, started to use centralised knowledge bases, allowing for collaboration on research questions and finding connections between the results from different researchers. A grand initiative called FactGrid#footnote[http://factgrid.de] hosts a free-to-use Wikibase instance tailored for the digital humanities, in the hope of creating synergy effects for future research.
 
-This directly leads to the relevance of this work: RDF databases can only be potently queried using a query language called SPARQL. Most historians will not find the time to study such arbitrary technicalities in-depth. Heavily inspired by Olaf Simons' comment on the allure of a visual query interface, we reviewed several visual query helpers #todo[list them here] and found them to have room for improvement in routine use. The aim of this work is to lay the groundwork for a visual query builder, which enables a previously unintroduced user to create complex SPARQL queries on Wikibase instances in daily use.
+This directly leads to the relevance of this work: Wikibase is a popular software for community knowledge bases and is RDF compatible. Such RDF databases#footnote[Technically, Wikibase uses a different internal representation and only maps to the RDF standard. @fig:rdf_mapping gives an overlook over the mapping.], however, can only be potently queried using a query language called SPARQL. Most researchers in the humanities will not find the time to study such arbitrary technicalities in-depth. Heavily inspired by Olaf Simons' article on the allure of a visual query interface, I reviewed several visual query helpers @Vargas2019_RDF_Explorer @KnowledgeGraphExplorationForLaypeople @Sparnatural and found them to have room for improvement in routine use and expressability. The aim of this work is to lay the groundwork for a visual query builder, which enables a previously unintroduced user to create complex SPARQL queries on Wikibase instances in daily use.
 
 /*
 Most factual knowledge can easily be written in terms of relations between individuals.
@@ -193,30 +193,32 @@ RDF databases store large amounts of validated data and are freely available, ho
 == Proposed Solution
 This thesis aims to explore methods and concrete implementation, which guides the user through the process of finding an answer to a given question in an RDF database. This includes:
 
-- enabling a layman to create complex SPARQL-select-queries using a visual interface, #todo[find a pretty abbreviation for SPARQL-select-queries and change every occurrence in the document and write a macro which detects these occurrences and marks it as an error]
+- enabling a layman to create complex SPARQL-SELECT-queries using a visual interface and
 
-- allow changes to the SPARQL-select-query, which will in turn change the graph in the visual interface
+- allow changes to the SPARQL-SELECT-query, which will in turn change the graph in the visual interface.
 
-It will use Wikibase-specific features/conventions, such as:
+It will use Wikibase-specific features and conventions, such as:
 - the fuzzy search API,
 
-- the metainfo API and
+- the meta-info API and
 
-- RDF constructs, such as Qualifiers (see @heading_qualifiers).
+- RDF constructs, i.e. Qualifiers (see @heading:qualifiers).
 
-The concrete improvements are:
+The concrete improvements over other approaches are: #todo[Move this to the Results section?]
 
-- advancing over @heading_rdf_explorer, Query by Graph offers a special visual element for qualifiers as proposed by @Simons_Blog_Entry_Graphic_query,
+- the advancement regarding user-friendlyness of similar visual query builders, such as @Vargas2019_RDF_Explorer,
 
-- a more intuitive user interface and
+- the ability to create federated queries over multiple data sources,
 
-- the ability to create federated queries.
+- the ability to import existing SPARQL queries
 
-For this, I decided to develop a lightweight web application, which at its heart has Rust-code to translate visually built queries to SPARQL queries and vice versa#footnote[The code is publicly available at #link("https://github.com/HerrMotz/bachelor-thesis/")[`github.com/HerrMotz/bachelor-thesis`].]. The program is already in practical application at the time of writing. Changes to the code have been made by a team from the digital humanities at the Friedrich Schiller University Jena under my lead. Any changes which do not originate from my work are clearly marked in the code repository.#todo[lasse ich das wirklich so stehen?]
+- #todo[list more :-)]
 
-== Related Works
+For this, I decided to develop a lightweight web application, which at its heart has Rust-code to translate visually built queries to SPARQL queries and vice versa#footnote[The code is publicly available at #link("https://github.com/HerrMotz/bachelor-thesis/")[`http://github.com/HerrMotz/bachelor-thesis`].] (see @heading:implementation). The program is already in practical application at the time of writing. Changes to the code have been made by a team from the digital humanities at the Friedrich Schiller University Jena under my lead, where a hands-on session with students was conducted. Any changes which do not originate from my work are clearly marked in the code repository.#todo[lasse ich das wirklich so stehen?]
 
-=== RDF Explorer <heading_rdf_explorer>
+== Related Work
+
+=== RDF Explorer <heading:rdf_explorer>
 
 The approach by Vargas et al. @Vargas2019_RDF_Explorer is to show all possible assertions about an object #todo[Is "object" the right word?] already while building the query. The goal is to guide the formulation of the user's question from a known starting point. This approach uses a fuzzy search prompt for an RDF resource as a starting point. After adding an object from the prompt results to the drawing board, the user can select from a list of all relations to other objects to augment the prompt. The user may also leave the relation unspecified, add a new object and select from a list of all assertions between these two objects. A user may just as well choose to let any object or property be a variable.
 
@@ -284,17 +286,17 @@ Computers generally lack information about the environment humans live in. For e
 
 The original idea by Tim Berners-Lee was to annotate web pages using a well-defined common vocabulary, so that any computer can, without human assistance, extract the relevant contents of a website. For example, a doctors office might post opening times on their website. Using a well-defined and public vocabulary, the website describes a table as "opening times" and the strings of weekdays and times as entries of the opening times. #todo[insert example code from the book on Semantic Technologies] @Dengel2012_Semantic_Technologies. This concept is not necessarily limited to websites, but can just as well be applied for any data storage. These deliberations waged the establishment of standards for describing meta information, such as:
 
-- Resource Description Framework (see @heading_rdf_standard)
-- Web Ontology Language (@heading_owl)
+- Resource Description Framework (see @heading:rdf_standard)
+- Web Ontology Language (@heading:owl)
 - #todo[List more from the book @Dengel2012_Semantic_Technologies]
 
 
-== RDF Standard <heading_rdf_standard>
+== RDF Standard <heading:rdf_standard>
 The W3C#sym.trademark.registered recommends a standard for exchange of semantically annotated information called the Resource Description Framework (RDF) standard model. The most notable recommendations are
 
-- the RDF graph format and triples (see @heading_triples),
+- the RDF graph format and triples (see @heading:triples),
 
-- the Internationalised Resource Identifier (@heading_iri) and
+- the Internationalised Resource Identifier (@heading:iri) and
 
 - the query language SPARQL (see @sparql_heading).
 
@@ -314,12 +316,12 @@ This chapter introduces the parts of the recommendation which are relevant to th
   Important resource: https://www.mediawiki.org/wiki/Wikibase/Indexing/RDF_Dump_Format#Prefixes_used
 ]
 
-=== Graphs and Triples <heading_triples>
+=== Graphs and Triples <heading:triples>
 
 An *RDF graph* is a set of RDF triples. An RDF triple is said to be asserted in an RDF graph if it is an element of the RDF graph @W3C_RDF_1.2_Proposal.
 
 #definition[
-  Let *$I$* denote the set of IRIs (see @heading_iri), *$B$* denote the set containing one blank node $circle.dotted$ and *$L$* denote the set of literals (see @heading_literals). Let
+  Let *$I$* denote the set of IRIs (see @heading:iri), *$B$* denote the set containing one blank node $circle.dotted$ and *$L$* denote the set of literals (see @heading:literals). Let
   subject $bold("s") in bold("I") union bold("B")$,
   predicate $bold("p") in bold("I")$ and
   object $bold("o") in bold("I") union bold("L") union bold("B")$.
@@ -349,13 +351,13 @@ if subject *$s$* relates to object *$o$* in a way which the predicate *$p$* desc
   $ <ex_spo_goethe>
 ]
 
-=== Internationalised Resource Identifier <heading_iri>
+=== Internationalised Resource Identifier <heading:iri>
 
 Internationalised Resource Identifiers (IRIs) [#link("https://www.ietf.org/rfc/rfc3987.txt")[RFC3987]] are a superset of Uniform Resource Identifiers (URIs) [#link("https://www.ietf.org/rfc/rfc3986.txt")[RFC3986]]. Their purpose is to *refer to a resource*. The resource an IRI points at is called *referent*. 
 
 The main advantage of IRIs over URIs are their enhanced character set. However, the details are not directly relevant to this work, therefore I will simply refer to the quoted RFCs for further reading.
 
-=== Literals <heading_literals>
+=== Literals <heading:literals>
 
 The definitions in this section follow the *RDF v1.2* specifications @W3C_RDF_1.2_Proposal, which, at the time of writing, is a working draft#footnote[RDF *v1.1* @W3C_RDF_1.1_Reference only allows for the first three elements.]. Again, the technical specifications are not directly relevant to the matters of this work, therefore I will abstract from the implementation details. 
 
@@ -394,7 +396,7 @@ Suppose, that the assertion from @ex_spo_goethe is part of the A-box of an RDF d
 
 A computer still does not understand what it means to be educated at some place or where Leipzig is, but it can interact with this information in a formally correct way. The human operator can construe meaning, an interpretation grounded in the real world, in to the assertion. 
 
-However, for any structured querying to be possible, the databases ought to be filled according to certain conventions. Preferably such conventions that are interoperable with other data sources (see @heading_lod).*/
+However, for any structured querying to be possible, the databases ought to be filled according to certain conventions. Preferably such conventions that are interoperable with other data sources (see @heading:lod).*/
 
 === SPARQL Protocol and RDF Query Language <sparql_heading>
 
@@ -411,7 +413,7 @@ However, for any structured querying to be possible, the databases ought to be f
 ]
 
 === RDF Mapping in Wikibase
-Wikibase is one of the most widely used softwares for community knowledge bases, storing \~115 million data items. Wikibase instances, such as Wikidata#footnote[http://wikidata.org --- an initiative for a free community knowledge base], allow for a mapping from their internal storage to an expression in RDF syntax @wikibase_rdf_mapping_article. (See @fig:rdf_mapping for an impression.) This invertible mapping permits the use of RDF terminology to refer to structures within Wikibase. Also relevant to this work are the prefix conventions of Wikibase, which will come to play in @heading_qualifiers.
+Wikibase is one of the most widely used softwares for community knowledge bases, storing \~115 million data items. Wikibase instances, such as Wikidata#footnote[http://wikidata.org --- an initiative for a free community knowledge base], allow for a mapping from their internal storage to an expression in RDF syntax @wikibase_rdf_mapping_article. (See @fig:rdf_mapping for an impression.) This invertible mapping permits the use of RDF terminology to refer to structures within Wikibase. Also relevant to this work are the prefix conventions of Wikibase, which will come to play in @heading:qualifiers.
 
 ==== Wikibase terminology
 A thing is referred to as an *Item* and assigned a unique *Q-Number* within a Wikibase instance. Any predicate is called *Property* and assigned a unique *P-Number*.
@@ -437,7 +439,7 @@ PREFIX wikibase: <http://wikiba.se/ontology#>
   image("rdf_mapping.svg", width: 87%)
 ) <fig:rdf_mapping>
 
-=== Qualifiers <heading_qualifiers>
+=== Qualifiers <heading:qualifiers>
 Most real-world relationships might present to be more complex than something one would want to model in a single triple. For example, one may want to express that "Goethe" was educated at the "University of Leipzig" from 3 October 1765 to 28 August 1768. One possibility is to let relationships have more than two operands, i.e. increase the arity by one for each additional parameter. "Educated at" would then be called "educated at (#sym.dot) from (#sym.dot) to (#sym.dot)". Another way using the limited triple syntax is to create an implicit object, that assists in modelling the relationship. We use it to describe a new concept; a human might be inclined to give it a name, e.g. "educated at for a certain time". The triples exemplify a *qualified statement* as seen in Wikibase instances: #todo[Rework formulation]
 $
   "Goethe" &longArrow("educated at") && "Uni Leipzig", \
@@ -510,13 +512,13 @@ The VQG is _constructed_ using a _visual query language_, consisting of four alg
 )
 
 
-== Linked Open Data <heading_lod>
+== Linked Open Data <heading:lod>
 
-== Web Ontology Language <heading_owl>
+== Web Ontology Language <heading:owl>
 @Sack2009_OWL_und_OWL_Semantik
 @Lacy2005_OWL
 
-= Developed architecture / system design / implementation
+= Developed architecture / system design / implementation <heading:implementation>
 
 #todo[
 Should contain the following aspects:
@@ -525,10 +527,38 @@ Should contain the following aspects:
 - go ahead in presenting your developments in more detail
 ]
 
+== Approach and Considerations
+
+The goal of this work is to create two mostly separate programs:
++ the _visual query building interface_ (forthon called *frontend*) and
++ the _translator from VGQ to SPARQL_ and vice versa (forthon called *backend*).
+
+The most important aspects for the choice of software and UX design were usability and maintability. The aim is to lay the basis for a software, which can be applied in day-to-day as an "almost-no-code" query builder. The development of Query by Graph will be continued in the project _HisQu_ by the #link("https://www.mephisto.uni-jena.de/")[MEPHisto group] funded by #link("https://4memory.de")[NFDI4Memory]. Therefore, the focus lay on building an extensible, future-proof platform, rather than implementing every thought-of feature.
+
 == Architecture
+Since SPARQL is mostly used in the context of a web browser, the choice for a web app seemed obvious.
+Now, the backend had to be watertight regarding explainability and traceability. There are several good choices,
+especially functional programming language, but since Rust#footnote[http://www.rust-lang.org] can be compiled to WebAssembly#footnote[http://webassembly.org] and therefore executed natively in a browser, the choice fell well in its favor over a server-client architecture. This combination of architectures proves to be robust, quick and still formally precise.
+
+=== Frontend
+The *frontend* was written using Vite (MIT License), Vue3 (MIT License), ReteJS (MIT License) and TailwindCSS (MIT License). Its purpose is to allow 
++ the user to build a VQG,
++ searching for items and properties in arbitrary Wikibase instances and
++ display meta-information on items and properties.
+
+For 
+
 - Web App (Vite+Vue+Rust+ReteJS+TailwindCSS)
 - All mapping algorithms are written in Rust to ensure completeness and speed
 - Integrates fuzzy search using Wikibase APIs (exemplary implementation for Wikidata and FactGrid)
+
+=== Backend
+- mention which tools I used (spargebra)
+- and how the algorithm comes to its results
+
+
+== Feature List
+#todo[Decide on how detailed do I want this to be.]
 
 == Visual Query Graph-SPARQL Mapping
 Novel to current work:
@@ -571,11 +601,16 @@ A SPARQL-SELECT-Query
 
 = Further Work
 
-+ Creating SPARQL assertions (INSERT statement)
++ Creating/Manipulating RDF assertions (INSERT and UPDATE statements)
 
-+ SPARQL FILTER query
++ Many language features of SPARQL:
+  - FILTER
+  - JOIN
+  - Aggregate
+  - SUBSTR
+  - ...
 
-+ Allow user to specify own data sources
++ Implementing the OWL integration within Query by Graph
 
 = Declaration of Academic Integrity
 
