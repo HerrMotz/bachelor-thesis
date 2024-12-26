@@ -160,17 +160,27 @@ fn query_to_graph(query: &str) -> Vec<Connection> {
     // Match on the query type.
     match parsed_query {
         Ok(Query::Select { pattern: p, .. }) => match p {
-            GraphPattern::Bgp { patterns: bgp } => bgp_to_graph(bgp),
-            GraphPattern::Path { 
-                subject: s, 
-                path: p, 
-                object: o 
-            } => vec![connection_constructor(s.to_string(), p.to_string(), o.to_string())],
-            _ => vec![]
+            GraphPattern::Project {variables: _, inner: i} => match i {
+                _ => match_bgp_or_path_to_graph(*i)
+            }
+            _ => match_bgp_or_path_to_graph(p)
         },
         _ => vec![],
     }
 }
+
+fn match_bgp_or_path_to_graph(p: GraphPattern) -> Vec<Connection> {
+    match p {
+        GraphPattern::Bgp { patterns: bgp } => bgp_to_graph(bgp),
+        GraphPattern::Path {
+            subject: s,
+            path: p,
+            object: o
+        } => vec![connection_constructor(s.to_string(), p.to_string(), o.to_string())],
+        _ => vec![]
+    }
+}
+
 fn connection_constructor(subject_name: String, predicate_name: String, object_name: String) -> Connection {
     Connection {
         property: Entity {
