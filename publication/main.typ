@@ -147,7 +147,7 @@
 
 /* END Custom Environment */
 
-= Aim and Relevance
+= Aim and Relevance <heading:introduction>
 /*#todo[
 
 Contents of Aim and Relevance
@@ -268,7 +268,7 @@ Visual Interfaces seem to be promising advantages in the research community and 
 
 #todo[Make the summaries of other papers more concise, so that it can be put into one running text]
 
-= Fundamentals
+= Fundamentals <heading:fundamentals>
 
 == Semantic Technologies
 #todo[
@@ -359,7 +359,7 @@ The main advantage of IRIs over URIs are their enhanced character set. However, 
 
 === Literals <heading:literals>
 
-The definitions in this section follow the *RDF v1.2* specifications @W3C_RDF_1.2_Proposal, which, at the time of writing, is a working draft#footnote[RDF *v1.1* @W3C_RDF_1.1_Reference only allows for the first three elements.]. Again, the technical specifications are not directly relevant to the matters of this work, therefore I will abstract from the implementation details. 
+The definitions in this section follow the *RDF v1.2* specifications @W3C_RDF_1.2_Proposal, which, at the time of writing, is a working draft. Again, the technical specifications are not directly relevant to the matters of this work, therefore I will abstract from the implementation details. 
 
 #definition[
   A *literal* in an RDF graph can be used to express values such as strings, dates and numbers. It can have two elements:
@@ -369,15 +369,17 @@ The definitions in this section follow the *RDF v1.2* specifications @W3C_RDF_1.
   + a *base direction tag*, which occurs in combination with the *language tag* to indicate the reading direction (left-to-right or right-to-left).
 
   _Remark: The necessity of the language and base direction tag are indicated by two separate *special IRIs*._
+
+  _The only difference to RDF v1.1 is, that is does not allow for a base direction tag._ 
 ] <def_literals>
 
 #definition[
-  The *literal value* of a *literal* in an RDF graph is defined in dependence of the fields available in the *literal*. These will be reffered to as literal types. The literal value is a tuple. 
+  The *literal value* of a *literal* in an RDF graph is defined in dependence of the fields available in the *literal*. The availability of a tuple entry is characterising for the *literal type*. The literal value is a tuple. #todo[mention, whether this is supported in the implementation]
 
   #align(center, table(columns: 2, align: horizon,
     [Literal Type], [Literal Value],
-    [has language tag], [(lexical form, language tag)],
-    [has direction tag], [(lexical form, language tag, base direction tag)],
+    [language-tagged], [(lexical form, language tag)],
+    [direction-tagged], [(lexical form, language tag, base direction tag)],
     [has IRI stated in the\ #link("https://www.w3.org/TR/rdf12-concepts/#dfn-recognized-datatype-iri")[list of recognized data type IRIs]], [the literal value interpreted\ as the indicated data type]
   ))
 ]
@@ -555,6 +557,12 @@ For
 === Backend
 - mention which tools I used (spargebra)
 - and how the algorithm comes to its results
+
+
+#todo[
+The pipeline from VQG to SPARQL query and vice versa needs to be made clear:
+- especially comment on optimisations, like when something is semantically equal i do not redraw the VQG
+]
 
 
 == Feature List
