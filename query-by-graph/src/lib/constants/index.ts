@@ -1,15 +1,15 @@
-import WikibaseDataSource from "../types/WikibaseDataSource.ts";
+import {WikibaseDataSource} from "../types/WikibaseDataSource.ts";
 
 const wikiDataDataSource: WikibaseDataSource = {
     name: "WikiData",
-    url: "https://www.wikidata.org/w/api.php",
+    uri: "https://www.wikidata.org/w/api.php",
     preferredLanguages: ['en'],
-    entityPrefix: {
-        url: "http://www.wikidata.org/entity/",
+    itemPrefix: {
+        uri: "http://www.wikidata.org/entity/",
         abbreviation: "wd"
     },
     propertyPrefix: {
-        url: "http://www.wikidata.org/prop/direct/",
+        uri: "http://www.wikidata.org/prop/direct/",
         abbreviation: "wdt"
     },
     queryService: "https://query.wikidata.org/ ",
@@ -17,14 +17,14 @@ const wikiDataDataSource: WikibaseDataSource = {
 
 const factGridDataSource: WikibaseDataSource = {
     name: "FactGrid",
-    url: "https://database.factgrid.de/w/api.php",
+    uri: "https://database.factgrid.de/w/api.php",
     preferredLanguages: ['de'],
-    entityPrefix: {
-        url: "https://database.factgrid.de/entity/",
+    itemPrefix: {
+        uri: "https://database.factgrid.de/entity/",
         abbreviation: "fg"
     },
     propertyPrefix: {
-        url: "https://database.factgrid.de/prop/direct/",
+        uri: "https://database.factgrid.de/prop/direct/",
         abbreviation: "fgt"
     },
     queryService: "https://database.factgrid.de/query/",
@@ -32,14 +32,14 @@ const factGridDataSource: WikibaseDataSource = {
 
 const testinstanceSource: WikibaseDataSource = {
     name: "Test Instance",
-    url: "https://daniels-test-instance.wikibase.cloud/",
+    uri: "https://daniels-test-instance.wikibase.cloud/",
     preferredLanguages: ['en'],
-    entityPrefix: {
-        url: "https://daniels-test-instance.wikibase.cloud/entity/",
+    itemPrefix: {
+        uri: "https://daniels-test-instance.wikibase.cloud/entity/",
         abbreviation: "ti"
     },
     propertyPrefix: {
-        url: "https://daniels-test-instance.wikibase.cloud/prop/direct/",
+        uri: "https://daniels-test-instance.wikibase.cloud/prop/direct/",
         abbreviation: "tt"
     },
     queryService: "https://daniels-test-instance.wikibase.cloud/query/",
@@ -47,14 +47,14 @@ const testinstanceSource: WikibaseDataSource = {
 
 const noDataSource: WikibaseDataSource = {
     name: "",
-    url: "",
+    uri: "",
     preferredLanguages: [],
     propertyPrefix: {
-        url: "",
+        uri: "",
         abbreviation: ""
     },
-    entityPrefix: {
-        url: "",
+    itemPrefix: {
+        uri: "",
         abbreviation: ""
     },
     queryService: "",

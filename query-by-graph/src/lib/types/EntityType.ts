@@ -1,4 +1,4 @@
-import WikibaseDataSource from "./WikibaseDataSource";
+import {WikibaseDataSource} from "./WikibaseDataSource";
 
 interface EntityType {
     id: string,

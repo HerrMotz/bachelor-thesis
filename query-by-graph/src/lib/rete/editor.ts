@@ -13,6 +13,82 @@ import EntityNodeComponent from "../../components/EntityNode.vue";
 import CustomInputControl from "../../components/EntitySelectorInputControl.vue";
 import {noEntity,variableEntityConstructor} from "./constants.ts";
 import {noDataSource} from "../constants";
+import {dataSources} from "../../store.ts";
+
+function exportConnectionsHelper(editor:any) {
+    return editor.getConnections().map((connection:any) => {
+        const c = editor.getConnection(connection.id)
+        const source = editor.getNode(c.source);
+        const target = editor.getNode(c.target);
+        return {
+            property: c.property || noEntity,
+            source: source.entity,
+            target: target.entity
+        };
+    })
+}
+
+const fqdnRegex = new RegExp(/(?:[\w-]+\.)+[\w-]+/);
+
+function convertConnectionsToPrefixedRepresentation(connections: Array<ConnectionInterfaceType>): Array<ConnectionInterfaceType> {
+    // this function takes in a connections array from e.g. the rust backend
+    // and replaces the full URL with prefixes
+
+    // if no prefix can be found, this means that the item is not from a data source the visual query builder knows
+    // In this case, the prefix will not be replaced.
+
+    return connections.map(connection => {
+        const { property, source, target } = connection;
+
+        function replaceWithPrefix(entity:EntityType) {
+            // find, which data source the entity might belong to
+
+            const fqdn = fqdnRegex.exec(entity.id);
+            if (!fqdn || !fqdn[0]) {
+                return entity;
+            }
+
+            function _replace_helper(str: string, uri: string, abbreviation: string) {
+                return str.replace(uri, abbreviation + ":").replace("<", "").replace(">", "")
+            }
+
+            // for this method to work, the prefixes must be prefix-free to each other.
+            // maybe change this in the future, if it causes issues in practical application.
+            const matchingDatasourceForItem = dataSources.find(s => s.itemPrefix.uri.includes(fqdn[0]));
+            if (matchingDatasourceForItem) {
+                return {
+                    ...entity,
+                    id: _replace_helper(entity.id, matchingDatasourceForItem.itemPrefix.uri, matchingDatasourceForItem.itemPrefix.abbreviation),
+                    prefix: matchingDatasourceForItem.itemPrefix,
+                    dataSource: matchingDatasourceForItem
+                }
+            }
+
+            // TODO: I could also fill the remaining fields with the information have from the current VQG
+            //  1. find a matching node in the VQG
+            //  2. if there is no node, fetch from the Wikidata API
+
+            const matchingDatasourceForProperty = dataSources.find(s => s.itemPrefix.uri.includes(fqdn[0]));
+            if (matchingDatasourceForProperty) {
+                return {
+                    ...entity,
+                    id: _replace_helper(entity.id, matchingDatasourceForProperty.propertyPrefix.uri, matchingDatasourceForProperty.propertyPrefix.abbreviation),
+                    prefix: matchingDatasourceForProperty.propertyPrefix,
+                    dataSource: matchingDatasourceForProperty
+                }
+            }
+
+            return entity;
+        }
+
+        return {
+            property: replaceWithPrefix(property),
+            source: replaceWithPrefix(source),
+            target: replaceWithPrefix(target)
+        };
+    });
+}
+
 
 // Each connection holds additional data, which is defined here
 class Connection extends ClassicPreset.Connection<
@@ -287,17 +363,21 @@ export async function createEditor(container: HTMLElement) {
         undo: () => history.undo(),
         redo: () => history.redo(),
         destroy: () => area.destroy(),
+        importConnections: (connections: ConnectionInterfaceType[]): boolean => {
+            // this function takes in connections, checks whether
+            // the graph needs to be changed
+
+            // if the graph needs to be changed, it will also auto-align the graph
+            const convertedConnections = convertConnectionsToPrefixedRepresentation(connections);
+            // DEBUG
+            console.log("Converted Connections")
+            console.log(convertedConnections);
+            return convertedConnections != exportConnectionsHelper(editor);
+
+
+        },
         exportConnections: (): ConnectionInterfaceType[] => {
-            return editor.getConnections().map(connection => {
-                const c = editor.getConnection(connection.id)
-                const source = editor.getNode(c.source);
-                const target = editor.getNode(c.target);
-                return {
-                    property: c.property || noEntity,
-                    source: source.entity,
-                    target: target.entity
-                };
-            })
+            return exportConnectionsHelper(editor)
         },
         getNode: (id: string) => editor.getNode(id)
     };

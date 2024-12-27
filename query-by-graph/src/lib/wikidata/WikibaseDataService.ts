@@ -7,7 +7,7 @@ class WikibaseDataService {
   private dataSource: WikibaseDataSource;
 
   constructor(dataSource: WikibaseDataSource) {
-    const baseURL = dataSource.url;
+    const baseURL = dataSource.uri;
     this.languages = dataSource.preferredLanguages;
     this.dataSource = dataSource;
 

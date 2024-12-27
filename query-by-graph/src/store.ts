@@ -1,5 +1,5 @@
 import { ref } from 'vue';
-import WikibaseDataSource from "./lib/types/WikibaseDataSource.ts";
+import {WikibaseDataSource} from "./lib/types/WikibaseDataSource.ts";
 import {factGridDataSource, wikiDataDataSource, testinstanceSource} from "./lib/constants";
 
 

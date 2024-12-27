@@ -1,13 +1,13 @@
 export interface WikibaseDataSource {
     name: string;
-    url: string,
+    uri: string,
     preferredLanguages: string[],
     propertyPrefix: {
-        url: string,
+        uri: string,
         abbreviation: string
     },
-    entityPrefix: {
-        url: string,
+    itemPrefix: {
+        uri: string,
         abbreviation: string
     },
     queryService: string,

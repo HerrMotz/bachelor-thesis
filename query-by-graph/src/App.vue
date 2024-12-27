@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import {onMounted, ref, shallowRef, watch} from 'vue';
+import {onMounted, ref, shallowRef} from 'vue';
 import {createEditor} from "./lib/rete/editor.ts";
 import { ClassicPreset } from 'rete';
 
@@ -57,6 +57,7 @@ interface Editor {
   removeSelectedConnections: () => Promise<void>;
   undo: () => void;
   redo: () => void;
+  importConnections: (connections: ConnectionInterfaceType[]) => boolean;
   exportConnections: () => ConnectionInterfaceType[];
   getNode: (nodeId: string) => ClassicPreset.Node | undefined;
 }
@@ -66,11 +67,14 @@ const rete = ref();
 
 const code = ref("");
 
-watch(code, async(newValue, _) => {
-  console.log("code changed")
-  const graph = query_to_graph_wasm(newValue);
-  console.log("graph", graph)
-})
+function codeChangeEvent() {
+  if (editor.value) {
+    console.log("code changed")
+    const graph = JSON.parse(query_to_graph_wasm(code.value));
+    editor.value.importConnections(graph);
+    console.log("graph", graph)
+  }
+}
 
 const selectedNode = ref<{ id: any; label: any; entityId: any; metadata: any; dataSource: any } | null>(null);
 
@@ -336,6 +340,7 @@ const gotoLink = (url?: string) => {
               language="sparql"
               :options="MONACO_EDITOR_OPTIONS"
               @mount="handleMount"
+              @change="codeChangeEvent()"
           />
         </div>
       </div>

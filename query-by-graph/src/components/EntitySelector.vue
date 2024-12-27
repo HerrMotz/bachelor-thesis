@@ -62,7 +62,7 @@ function queryHelper(query: string) {
   }).then((data: WikiDataSearchApiResponse) => {
     queriedEntities.value = data.search.map((entity: WikiDataEntity) => {
       const prefix = props.type === 'item'
-          ? selectedDataSource.value.entityPrefix
+          ? selectedDataSource.value.itemPrefix
           : selectedDataSource.value.propertyPrefix
 
       return { // EntityType
@@ -70,7 +70,7 @@ function queryHelper(query: string) {
         label: entity.display.label.value,
         description: entity.display.description.value,
         prefix: {
-          uri: prefix.url,
+          uri: prefix.uri,
           abbreviation: prefix.abbreviation,
         },
         dataSource: {...selectedDataSource.value} // save datasource
