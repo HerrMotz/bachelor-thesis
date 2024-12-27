@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import WikibaseDataService from "../lib/wikidata/WikibaseDataService.ts";
-import {WikiDataEntity, WikiDataSearchApiResponse} from "../lib/wikidata/types.ts";
+import {WikiDataEntity, WikiDataSearchApiResponse} from "../lib/types/WikibaseDataSource.ts";
 import {computed} from 'vue';
 
 const props = defineProps({
