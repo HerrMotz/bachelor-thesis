@@ -138,7 +138,7 @@
 #show heading.where(level: 2): it=> [#v(.5cm) #it #v(.2cm)]
 
 #show raw: set text(
-  font: "Cascadia Code",
+  font: "Noto Sans Mono",
   weight: 300,
   ligatures: true,
   discretionary-ligatures: true,
@@ -533,6 +533,11 @@ Should contain the following aspects:
 - go ahead in presenting your developments in more detail
 ]
 
+#todo[
+  My work also has the advantage, that all conventions are regulated in a configuration file specifically for data sources. A user (in the future) can add
+  new conventions at a central place and will know, which effects changes have. 
+]
+
 == Approach and Considerations
 
 The goal of this work is to create two mostly separate programs:
@@ -580,6 +585,32 @@ Novel to current work:
 
 #todo[
   Mention the reason for use of wdt prefix (https://www.mediawiki.org/wiki/Wikibase/Indexing/RDF_Dump_Format#Truthy_statements)
+]
+
+#todo[
+  Explain why I can just use propertyPrefix and itemPrefix. Should it even be this way?
+  ```javascript
+  export interface WikibaseDataSource {
+    name: string;
+    url: string,
+    preferredLanguages: string[],
+    propertyPrefix: {
+        url: string,
+        abbreviation: string
+    },
+    itemPrefix: {
+        url: string,
+        abbreviation: string
+    },
+    queryService: string,
+}
+  ```
+]
+
+
+#todo[
+  For the convertConnectionsToPrefixedRepresentation to work,
+  the item and property prefixes must be prefix-free (one may not be prefix of the other).
 ]
 
 == SPARQL-OWL Mapping
